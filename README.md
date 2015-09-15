@@ -4,6 +4,7 @@
 Project is currently up to date with Phase 0.
 
 Completed Deliverables include:
+
 1. Team/App Name and Concept
 2. Intellectual Property Agreement
 3. Selected Development Frameworks
