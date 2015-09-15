@@ -14,39 +14,55 @@ Notes: Any requirements that relate to a non-admin user managing a group, busine
 
 Requirements:
 - User Requirements (The following are things the user can do with or in the app):
-  - Able to create an account and log into the site.
-  - Able to reset their password.
-  - Able to edit their profile.
-  - Able to delete their account from the system.
-  - Able to post to their timeline.
-  - Able to search for a user, group or business by name or category.
-  - Able to add a user they know as a friend.
-  - Able to remove a friend from their friend's list.
-  - Able to define categories and set friends into them.
-  - Able to create a group.
-  - Able to edit a group's information.
-  - Able to delete a group.
-  - Able to create an event.
-  - Able to edit an event's information.
-  - Able to delete an event.
-  - Able to invite friends, groups or followers(business) to an event.
-  - Able to create a business profile.
-  - Able to edit a business profile.
-  - Able to delete a business profile.
-  - Able to join a group.
-  - Able to leave a group.
-  - Able to post to a group's timeline (if they are a member of this group).
-  - Able to join an event.
-  - Able to leave an event.
-  - Able to read an event's timeline (if they have joined this event).
-  - Able to follow a business' profile.
-  - Able to un-follow a business' profile.
+  - Able to create an account and log into the site. (Core)
+  - Able to reset their password. (Core)
+  - Able to edit their profile. (Core)
+  - Able to delete their account from the system. (Core)
+  - Able to post to their timeline. (Core)
+  - Able to search for a user, group or business by name or category. (Core)
+  - Able to add a user they know as a friend. (Core)
+  - Able to remove a friend from their friend's list. (Core)
+  - Able to define categories and set friends into them. (Core)
+  - Able to create a group. (Core)
+  - Able to edit a group's information. (Core)
+  - Able to delete a group. (Core)
+  - Able to create an event. (Core)
+  - Able to edit an event's information. (Core)
+  - Able to delete an event. (Core)
+  - Able to invite friends to an event. (Desired)
+  - Able to invite followers to an event (business). (Desired)
+  - Able to invite a group to an event. (Desired)
+  - Able to create a business profile. (Core)
+  - Able to edit a business profile. (Core)
+  - Able to delete a business profile. (Core)
+  - Able to join a group. (Core)
+  - Able to leave a group. (Core)
+  - Able to invite friends to join a group. (Desired)
+  - Able to post to a group's timeline (if they are a member of this group). (Core)
+  - Able to join an event. (Core)
+  - Able to leave an event. (Core)
+  - Able to read an event's timeline (if they have joined this event). (Core)
+  - Able to follow a business' profile. (Core)
+  - Able to un-follow a business' profile. (Core)
+  - Able to accept or deny friends requests.  (Desired)
+  - Able to accept or deny users joining a group. (Optional)
+  - Able to acceopt or deny users joining an event.  (Optional)
+  - Able to email everyone who has joined an event. (Optional)
+  - Able to email all followers of an business. (Optional)
+  - Able to email all friends. (Optional)
+  - Able to specify a location for an event or business using google maps or similar technology. (Optional)
+  - Able to add events to google calendar or similar technology. (Optional)
+  - Able to see events that user has joined in a calendar plugin. (Desired)
+  - Recieves events or groups of similar interests as suggestions. (Optional)
+  - Able to edit a post they have created. (Desired)
+  - Able to reply to posts.  (Desired)
 
 - System Requirements (The following are things the app will do on its own either automatically or via prompts from the user depending on the specific case): 
-  - Will send email notifications to reset a user's password.
-  - Will send periodical emails (daily, weekly, monthly...etc.) to users to let them know of posts to their timeline, posts by businesses they follow, and events happening in the near future.
-  - Will send immediate emails to notify users of posts to their timeline of events happening in the very near future.
-  - Will allow users to opt out of recieving immediate emails.
+  - Will send email notifications to reset a user's password. (Core)
+  - Will send periodical emails (daily, weekly, monthly...etc.) to users to let them know of posts to their timeline, posts by businesses they follow, and events happening in the near future. (Core)
+  - Will send immediate emails to notify users of posts to their timeline of events happening in the very near future. (Desired)
+  - Will allow users to opt out of recieving immediate emails. (Desired)
+  - Will filter out mispelled or unused categories, and replace them with the proper or closest matches. (Optional)
 
 
 The Project will be split into protoype phases that will coincide with the Sprints mentioned in the ICOM5016F15-ClassProject1 documenation, as such they will be named the same. (Phase 1 = Sprint 1, Phase 2 = Sprint 2... etc.) Each phase completion will also be a milestone, but in addition, completing sets of related requirements will also accomplish a milestone. As such the following are a list of high-level milestones for this project:
