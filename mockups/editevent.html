@@ -2,7 +2,7 @@
 <html >
   <head>
     <meta charset="UTF-8">
-    <title>GroupFinder Groups</title>
+    <title>GroupFinder Edit Event A</title>
     
     <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'>
 
@@ -64,68 +64,41 @@
               <li><a href="#">Friends</a></li>   
               <li><a href="#">Groups</a></li>              
               <li><a href="#">Events</a></li>
-              <li><a href="#">Business</a></li>               
+              <li><a href="#">Business</a></li>              
             </ul>
         </div>
 
-        <!-- Table -->
+
+        <!-- Content -->
           <div class="col-xs-12 col-sm-9">
             <div class="page-header">
-                <h1 id="timeline">Groups</h1>
+                <h1 id="timeline">Edit Event A</h1>
+                <!-- Event Info-->
+                <form role="form">
+                  <div class="form-group">
+                    <label for="eventName">Name</label>
+                    <input class="form-control" id="eventName" type="text" style="width:40%" />
+                  </div>
+                  <div class="form-group">
+                   <label for="eventCategory">Category</label>
+                    <input class="form-control" id="eventCategory" type="text" style="width:40%" />
+                  </div>
+                  <div class="form-group">
+                   <label for="eventLocation">Location</label>
+                    <input class="form-control" id="eventLocation" type="text" style="width:40%" />
+                  </div>
+                  <div class="form-group">
+                   <label for="eventTime">Time</label>
+                    <input class="form-control" id="eventTime" type="text" style="width:40%" />
+                  </div>
+                </form>
+
+                <!-- Save, Cancel or Delete -->
+                <p></p>
+                <button type="submit" class="btn btn-default">Save</button>
+                <button type="submit" class="btn btn-default">Cancel</button>
+                <button type="submit" class="btn btn-default">Delete</button>
             </div>
-
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-12">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>
-                          Group Name
-                        </th>
-                        <th>
-                          Category
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="active">
-                        <td>
-                          <a href="#">Group A</a>
-                        </td>
-                        <td>
-                          <a href="#">A</a>
-                        </td>
-                      </tr>
-                      <tr class="success">
-                        <td>
-                          <a href="#">Group B</a>
-                        </td>
-                        <td>
-                          <a href="#">C</a>
-                        </td>
-                      </tr>
-                      <tr class="warning">
-                        <td>
-                          <a href="#">Group C</a>
-                        </td>
-                        <td>
-                          <a href="#">B</a>
-                      </tr>
-                      <tr class="danger">
-                        <td>
-                          <a href="#">Group D</a>
-                        </td>
-                        <td>
-                          <a href="#">C</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- Table end -->
-
          </div>
         </div>
       </div>
