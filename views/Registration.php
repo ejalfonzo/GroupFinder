@@ -54,6 +54,18 @@ class Registration
             $this->errors[] = "Email cannot be longer than 64 characters";
         } elseif (!filter_var($_POST['user_email'], FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = "Your email address is not in a valid email format";
+
+        }elseif (empty($_POST['studentID'])) {
+            $this->errors[] = "Empty ID";
+        }elseif (empty($_POST['name'])) {
+            $this->errors[] = "Empty Name";
+        }elseif (empty($_POST['initial'])) {
+            $this->errors[] = "Empty Initial";
+        }elseif (strlen($_POST['initial']) > 1) {
+            $this->errors[] = "Initial has a maximum length of 1 character";
+        }elseif (empty($_POST['last_name'])) {
+            $this->errors[] = "Empty Last Name"; 
+
         } elseif (!empty($_POST['user_name'])
             && strlen($_POST['user_name']) <= 64
             && strlen($_POST['user_name']) >= 2
@@ -88,23 +100,15 @@ class Registration
                 $user_password_hash = password_hash($user_password, PASSWORD_DEFAULT);
 
                 // check if user or email address already exists
-                $sql = "SELECT * FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+                $sql = "SELECT * FROM RUMatriculaUsers WHERE user_name = '" . $user_name . "' OR user_email = '" . $user_email . "';";
                 $query_check_user_name = $this->db_connection->query($sql);
+
 
                 if ($query_check_user_name->num_rows == 1) {
                     $this->errors[] = "Sorry, that username / email address is already taken.";
                 } else {
-                    // write new user's data into database
-                    $sql = "INSERT INTO users (user_name, user_password_hash as password, user_email as email)
-                            VALUES('" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "');";
-                    $query_new_user_insert = $this->db_connection->query($sql);
 
-                    // if user has been added successfully
-                    if ($query_new_user_insert) {
-                        $this->messages[] = "Your account has been created successfully. You can now log in.";
-                    } else {
-                        $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
-                    }
+   
                 }
             } else {
                 $this->errors[] = "Sorry, no database connection.";

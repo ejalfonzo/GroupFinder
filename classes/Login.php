@@ -69,7 +69,7 @@ class Login
 
                 // database query, getting all the info of the selected user (allows login via email address in the
                 // username field)        user_password_hash,
-                $sql = "SELECT id, email, firstName, lastName, salt, password as user_password_hash, isAdmin 
+                $sql = "SELECT id, email, first_name, last_name, salt, password as user_password_hash, isAdmin
                         FROM users
                         WHERE email = '" . $email . "';";
                         // SELECT id, email, firstName, lastName, salt, password, isAdmin
@@ -97,7 +97,7 @@ class Login
                         // $_SESSION['studentID'] = $result_row->studentID;
 
                         $_SESSION['user_login_status'] = 1;
-
+                        echo("<script>console.log('PHP: LOGGED IN');</script>");
                     } else {
                         $this->errors[] = "Wrong password. Try again.";
                     }

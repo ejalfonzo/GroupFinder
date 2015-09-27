@@ -32,3 +32,4 @@ $registration = new Registration();
 
 // show the register view (with the registration form, and messages/errors)
 include("views/register.php");
+// header("views/not_logged_in.php");

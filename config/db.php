@@ -13,5 +13,5 @@
  */
 define("DB_HOST", "ejalfonzos.ebabilon.com");
 define("DB_NAME", "ebabilon");
-define("DB_USER", "bdgroupfinder");
-define("DB_PASS", "bdmanager");
+define("DB_USER", "dbgroupfinder");
+define("DB_PASS", "dbmanager");
