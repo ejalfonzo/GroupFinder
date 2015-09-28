@@ -33,17 +33,21 @@ $login = new Login();
 
 // ... ask if we are logged in here:
 if ($login->isUserLoggedIn() == true) {
+    echo("<script>console.log('INDEX: Is Logged In');</script>");
     // the user is logged in. you can do whatever you want here.
     // for demonstration purposes, we simply show the "you are logged in" view.
     if($login->defaultUser() == true){
-	    header("Location: views/default/home.php");
+        echo("<script>console.log('INDEX: admin');</script>");
+        include("views/logged_in.php");
+	    // header("Location: views/logged_in.php");
+    }else{
+        echo("<script>console.log('INDEX: Not Admin');</script>");
+        include("views/logged_in.php");
     }
-    // else if($login->buisnessUser() == true){
-	//     include("Location: views/buisness/home.php");
+
+    // else if($login->adminUser() == true){
+	//     header("Location: views/admin/home.php");
     // }
-    else if($login->adminUser() == true){
-	    header("Location: views/admin/home.php");
-    }
 
 } else {
     // the user is not logged in. you can do whatever you want here.

@@ -1,5 +1,22 @@
 <!doctype html>
 <?php
+// show potential errors / feedback (from login object)
+if (isset($login)) {
+    if ($login->errors) {
+        foreach ($login->errors as $error) {
+            // echo $error;
+            echo("<script>console.log('PHP: ".json_encode($error)."');</script>");
+        }
+    }
+    if ($login->messages) {
+        foreach ($login->messages as $message) {
+            // echo $message;
+            echo("<script>console.log('PHP: ".json_encode($message)."');</script>");
+        }
+    }
+}
+?>
+<?php
 /**
  * A simple, clean and secure PHP Login Script / MINIMAL VERSION
  * For more versions (one-file, advanced, framework-like) visit http://www.php-login.net
@@ -234,16 +251,16 @@ $registration = new Registration();
                         <form method="post" action="index.php" name="loginform" class="form-signin">
                             <!-- <h2 class="form-signin-heading">Please sign in</h2> -->
                             <label for="inputEmail" class="sr-only">Email address</label>
-                            <input type="email" id="inputEmail" style="margin: 10px 0px 10px;" class="form-control" placeholder="Email address" required autofocus>
+                            <input type="email" id="inputEmail" name="login_email" style="margin: 10px 0px 10px;" class="form-control" placeholder="Email address" required autofocus>
                             <label for="inputPassword" class="sr-only">Password</label>
-                            <input type="password" id="inputPassword" style="margin-bottom: 20px;" class="form-control" placeholder="Password" required>
-                            <div class="checkbox">
+                            <input type="password" id="inputPassword" name="login_password" style="margin-bottom: 20px;" class="form-control" placeholder="Password" required>
+                            <!-- <div class="checkbox"> -->
                             <!-- <div class="togglebutton">
                                 <label>
                                     <input type="checkbox" checked=""> Remember Me
                                 </label>
                             </div> -->
-                            </div>
+                            <!-- </div> -->
                             <button class="btn btn-lg btn-success btn-block" type="submit" name="login" value="Log in">Sign in</button>
                             <button class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-dismiss="modal" data-target="#RegisterM">Register</button>
                         </form>
@@ -287,7 +304,7 @@ $registration = new Registration();
                             }
                         ?>
                         <!-- register form:      action="/register.php" -->
-                        <form method="post"  name="registerform">
+                        <form method="post" action="index.php" name="registerform">
 
                             <input id="login_input_firstname" class="login_input form-control" placeholder="First Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="first_name" style="margin: 10px 0px 0px;" required />
                             <input id="login_input_lastname" class="login_input form-control" placeholder="Last Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="last_name" style="margin: 10px 0px 0px;" required />

@@ -47,11 +47,13 @@ class Login
     private function dologinWithPostData()
     {
         // check login form contents
-        if (empty($_POST['email'])) {
+        if (empty($_POST['login_email'])) {
             $this->errors[] = "Username field was empty.";
-        } elseif (empty($_POST['user_password'])) {
+            echo("<script>console.log('LOGIN: Empty Username or Email');</script>");
+        } elseif (empty($_POST['login_password'])) {
             $this->errors[] = "Password field was empty.";
-        } elseif (!empty($_POST['email']) && !empty($_POST['user_password'])) {
+            echo("<script>console.log('LOGIN: Empty Password');</script>");
+        } elseif (!empty($_POST['login_email']) && !empty($_POST['login_password'])) {
 
             // create a database connection, using the constants from config/db.php (which we loaded in index.php)
             $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -65,11 +67,11 @@ class Login
             if (!$this->db_connection->connect_errno) {
 
                 // escape the POST stuff
-                $email = $this->db_connection->real_escape_string($_POST['email']);
+                $email = $this->db_connection->real_escape_string($_POST['login_email']);
 
                 // database query, getting all the info of the selected user (allows login via email address in the
                 // username field)        user_password_hash,
-                $sql = "SELECT id, email, first_name, last_name, salt, password as user_password_hash, isAdmin
+                $sql = "SELECT id, email, user_name, first_name, last_name, salt, password as user_password_hash, isAdmin
                         FROM users
                         WHERE email = '" . $email . "';";
                         // SELECT id, email, firstName, lastName, salt, password, isAdmin
@@ -86,10 +88,10 @@ class Login
 
                     // using PHP 5.5's password_verify() function to check if the provided password fits
                     // the hash of that user's password
-                    if (password_verify($_POST['user_password'], $result_row->user_password_hash)) {
+                    if (password_verify($_POST['login_password'], $result_row->user_password_hash)) {
 
                         // write user data into PHP SESSION (a file on your server)
-                        $_SESSION['email'] = $result_row->email;
+                        $_SESSION['email'] = $result_row->login_email;
                         // $_SESSION['email'] = $result_row->user_email;
 
                         $_SESSION['accountType'] = $result_row->accountType;
@@ -97,15 +99,18 @@ class Login
                         // $_SESSION['studentID'] = $result_row->studentID;
 
                         $_SESSION['user_login_status'] = 1;
-                        echo("<script>console.log('PHP: LOGGED IN');</script>");
+                        echo("<script>console.log('LOGIN: LOGGED IN');</script>");
                     } else {
                         $this->errors[] = "Wrong password. Try again.";
+                        echo("<script>console.log('LOGIN: Wrong Password');</script>");
                     }
                 } else {
                     $this->errors[] = "This user does not exist.";
+                    echo("<script>console.log('LOGIN: User Doest Not Exists');</script>");
                 }
             } else {
                 $this->errors[] = "Database connection problem.";
+                echo("<script>console.log('LOGIN: DB Problems');</script>");
             }
         }
     }
@@ -136,8 +141,8 @@ class Login
         return false;
     }
 
-    public function regularUser(){
-	    if ($_SESSION['accountType']== 'regular'){
+    public function defaultUser(){
+	    if ($_SESSION['isAdmin']){
 		    return true;
 	    }
 	    return false;

@@ -36,26 +36,47 @@ class Registration
      */
     private function registerNewUser()
     {
+        echo("<script>console.log('Register New User');</script>");
         if (empty($_POST['user_name'])) {
             $this->errors[] = "Empty Username";
+            echo("<script>console.log('Error: Empty Username');</script>");
+
         } elseif (empty($_POST['user_password_new']) || empty($_POST['user_password_repeat'])) {
             $this->errors[] = "Empty Password";
+            echo("<script>console.log('Error: Empty Password');</script>");
+
         }elseif (empty($_POST['first_name']) || empty($_POST['last_name'])) { // ADDED for First & Last Name
-                $this->errors[] = "Empty Name";
+            $this->errors[] = "Empty Name";
+            echo("<script>console.log('Error: Empty Names');</script>");
+
         } elseif ($_POST['user_password_new'] !== $_POST['user_password_repeat']) {
             $this->errors[] = "Password and password repeat are not the same";
-        } elseif (strlen($_POST['8']) < 6) {
+            echo("<script>console.log('Error: Passwords dont match');</script>");
+
+        } elseif (strlen($_POST['user_password_new']) < 6) {
             $this->errors[] = "Password has a minimum length of 6 characters";
+            echo("<script>console.log('Error: Password to short');</script>");
+
         } elseif (strlen($_POST['user_name']) > 64 || strlen($_POST['user_name']) < 2) {
             $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
+            echo("<script>console.log('Error: Username to short');</script>");
+
         } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['user_name'])) {
             $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+            echo("<script>console.log('Error: Username bad schema');</script>");
+
         } elseif (empty($_POST['user_email'])) {
             $this->errors[] = "Email cannot be empty";
+            echo("<script>console.log('Error: Empty Email');</script>");
+
         } elseif (strlen($_POST['user_email']) > 64) {
             $this->errors[] = "Email cannot be longer than 64 characters";
+            echo("<script>console.log('Error: Email to long');</script>");
+
         } elseif (!filter_var($_POST['user_email'], FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = "Your email address is not in a valid email format";
+            echo("<script>console.log('Error: Email not valid');</script>");
+
         } elseif (!empty($_POST['user_name'])
             && strlen($_POST['user_name']) <= 64
             && strlen($_POST['user_name']) >= 2
@@ -67,17 +88,19 @@ class Registration
             && !empty($_POST['user_password_repeat'])
             && ($_POST['user_password_new'] === $_POST['user_password_repeat'])
         ) {
+            echo("<script>console.log('Good: All Clear');</script>");
             // create a database connection
             $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
             // change character set to utf8 and check it
             if (!$this->db_connection->set_charset("utf8")) {
                 $this->errors[] = $this->db_connection->error;
+                echo("<script>console.log('Error: DB not utf8');</script>");
             }
 
             // if no connection errors (= working database connection)
             if (!$this->db_connection->connect_errno) {
-
+                echo("<script>console.log('Good: DB Connection');</script>");
                 // escaping, additionally removing everything that could be (html/javascript-) code
                 $first_name = $this->db_connection->real_escape_string(strip_tags($_POST['first_name'], ENT_QUOTES));
                 $last_name = $this->db_connection->real_escape_string(strip_tags($_POST['last_name'], ENT_QUOTES));
@@ -87,7 +110,8 @@ class Registration
                 $user_email = $this->db_connection->real_escape_string(strip_tags($_POST['user_email'], ENT_QUOTES));
 
                 $user_password = $_POST['user_password_new'];
-
+                //Test Debug
+                echo("<script>console.log('PHP: ".json_encode($user_name)."');</script>");
                 // crypt the user's password with PHP 5.5's password_hash() function, results in a 60 character
                 // hash string. the PASSWORD_DEFAULT constant is defined by the PHP 5.5, or if you are using
                 // PHP 5.3/5.4, by the password hashing compatibility library
