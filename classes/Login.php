@@ -29,7 +29,6 @@ class Login
         // create/read session, absolutely necessary
         session_start();
 
-
         // check the possible login actions:
         // if user tried to log out (happen when user clicks logout button)
         if (isset($_GET["logout"])) {
@@ -120,11 +119,13 @@ class Login
      */
     public function doLogout()
     {
+        echo("<script>console.log('LOGIN: TRY Logged Out');</script>");
         // delete the session of the user
         $_SESSION = array();
         session_destroy();
         // return a little feeedback message
         $this->messages[] = "You have been logged out.";
+        echo("<script>console.log('LOGIN: Logged Out');</script>");
 
     }
 

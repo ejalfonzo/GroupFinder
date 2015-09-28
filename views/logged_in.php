@@ -1,16 +1,23 @@
 <!doctype html>
 <?php
-/**
- * A simple, clean and secure PHP Login Script / MINIMAL VERSION
- * For more versions (one-file, advanced, framework-like) visit http://www.php-login.net
- *
- * Uses PHP SESSIONS, modern password-hashing and salting and gives the basic functions a proper login system needs.
- *
- * @author Panique
- * @link https://github.com/panique/php-login-minimal/
- * @license http://opensource.org/licenses/MIT MIT License
- */
-
+// show potential errors / feedback (from login object)
+if (isset($login)) {
+    if ($login->errors) {
+        foreach ($login->errors as $error) {
+            // echo $error;
+            echo("<script>console.log('PHP: ".json_encode($error)."');</script>");
+        }
+    }
+    if ($login->messages) {
+        foreach ($login->messages as $message) {
+            // echo $message;
+            echo("<script>console.log('PHP: ".json_encode($message)."');</script>");
+        }
+    }
+}
+?>
+<?php
+session_start();
 // checking for minimum PHP version
 if (version_compare(PHP_VERSION, '5.3.7', '<')) {
     exit("Sorry, Simple PHP Login does not run on a PHP version smaller than 5.3.7 !");
@@ -22,14 +29,6 @@ if (version_compare(PHP_VERSION, '5.3.7', '<')) {
 
 // include the configs / constants for the database connection
 require_once("config/db.php");
-
-// load the registration class
-require_once("classes/Registration.php");
-
-// create the registration object. when this object is created, it will do all registration stuff automatically
-// so this single line handles the entire registration process.
-$registration = new Registration();
-
 
 ?>
 <html lang="en"><head>
@@ -138,7 +137,6 @@ $registration = new Registration();
           version    : 'v2.4'
         });
       };
-
       (function(d, s, id){
          var js, fjs = d.getElementsByTagName(s)[0];
          if (d.getElementById(id)) {return;}
@@ -169,7 +167,20 @@ $registration = new Registration();
                     <div id="status">
                     </div>
                     <!-- Trigger the modal with a button -->
-                    <!-- <button type="button" class="btn" data-toggle="modal" data-target="#SignIn" style="background:#e7e7e7;">Sign In</button> -->
+                    <li class="dropdown">
+                        <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">
+                            <i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="javascript:void(0)">Action</a></li>
+                            <li><a href="javascript:void(0)">Another action</a></li>
+                            <li><a href="javascript:void(0)">Something else here</a></li>
+                            <li class="divider"></li>
+                            <li><a href="/index.php?logout" type="submit" name="logout" value="Log out">Logout</a></li>
+                        </ul>
+                    </li>
+                    <!-- <button type="button" class="btn" data-toggle="modal" data-target="#UserDrop" style="background:#e7e7e7;"> -->
+                    <?php //echo ($_SESSION['first_name']); ?>
+                    <!-- </button> -->
                 </ul>
             </div><!--/.nav-collapse -->
         </div>
@@ -221,7 +232,7 @@ $registration = new Registration();
         </section>
 
         <!-- Sign In Modal -->
-        <div id="SignIn" class="modal fade" role="dialog">
+        <div id="UserDrop" class="modal fade" role="dialog">
             <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -231,29 +242,10 @@ $registration = new Registration();
                         <h1 class="modal-title" style="font-size:25px;">Group Finder</h1>
                     </div>
                     <div class="modal-body">
-                        <form method="post" action="index.php" name="loginform" class="form-signin">
-                            <!-- <h2 class="form-signin-heading">Please sign in</h2> -->
-                            <label for="inputEmail" class="sr-only">Email address</label>
-                            <input type="email" id="inputEmail" style="margin: 10px 0px 10px;" class="form-control" placeholder="Email address" required autofocus>
-                            <label for="inputPassword" class="sr-only">Password</label>
-                            <input type="password" id="inputPassword" style="margin-bottom: 20px;" class="form-control" placeholder="Password" required>
-                            <div class="checkbox">
-                            <!-- <div class="togglebutton">
-                                <label>
-                                    <input type="checkbox" checked=""> Remember Me
-                                </label>
-                            </div> -->
-                            </div>
-                            <button class="btn btn-lg btn-success btn-block" type="submit" name="login" value="Log in">Sign in</button>
-                            <button class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-dismiss="modal" data-target="#RegisterM">Register</button>
-                        </form>
+                        HELLO
                     </div>
                     <div class="modal-footer" style="text-align:center;">
-                        <div class="fb-login-button btn-block" style="display:inline-block; border-radius:5px; overflow:hidden;" scope="public_profile,email" onlogin="checkLoginState();" data-max-rows="1" data-size="xlarge" data-show-faces="false" data-auto-logout-link="false">
-                         Login with Facebook</div>
-                        <!-- <fb:login-button >
-                        </fb:login-button> -->
-                      <!-- <button type="button" class="btn btn-default" data-dismiss="modal">Close</button> -->
+
                     </div>
                 </div>
             </div>
