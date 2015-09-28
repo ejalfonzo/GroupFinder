@@ -40,9 +40,11 @@ class Registration
             $this->errors[] = "Empty Username";
         } elseif (empty($_POST['user_password_new']) || empty($_POST['user_password_repeat'])) {
             $this->errors[] = "Empty Password";
+        }elseif (empty($_POST['first_name']) || empty($_POST['last_name'])) { // ADDED for First & Last Name
+                $this->errors[] = "Empty Name";
         } elseif ($_POST['user_password_new'] !== $_POST['user_password_repeat']) {
             $this->errors[] = "Password and password repeat are not the same";
-        } elseif (strlen($_POST['user_password_new']) < 6) {
+        } elseif (strlen($_POST['8']) < 6) {
             $this->errors[] = "Password has a minimum length of 6 characters";
         } elseif (strlen($_POST['user_name']) > 64 || strlen($_POST['user_name']) < 2) {
             $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
@@ -77,6 +79,10 @@ class Registration
             if (!$this->db_connection->connect_errno) {
 
                 // escaping, additionally removing everything that could be (html/javascript-) code
+                $first_name = $this->db_connection->real_escape_string(strip_tags($_POST['first_name'], ENT_QUOTES));
+                $last_name = $this->db_connection->real_escape_string(strip_tags($_POST['last_name'], ENT_QUOTES));
+                $salt = "0";
+
                 $user_name = $this->db_connection->real_escape_string(strip_tags($_POST['user_name'], ENT_QUOTES));
                 $user_email = $this->db_connection->real_escape_string(strip_tags($_POST['user_email'], ENT_QUOTES));
 
@@ -95,8 +101,9 @@ class Registration
                     $this->errors[] = "Sorry, that username / email address is already taken.";
                 } else {
                     // write new user's data into database
-                    $sql = "INSERT INTO users (user_name, user_password_hash as password, user_email as email)
-                            VALUES('" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "');";
+                    // $sql = "INSERT INTO users (user_name, user_password_hash as password, user_email as email)
+                    $sql = "INSERT INTO users (user_name, password, email, salt, first_name, last_name)
+                            VALUES('" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "', '" . $salt ."', '" . $first_name . "', '" . $last_name . "');";
                     $query_new_user_insert = $this->db_connection->query($sql);
 
                     // if user has been added successfully

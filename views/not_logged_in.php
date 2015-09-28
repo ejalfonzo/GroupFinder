@@ -30,7 +30,6 @@ require_once("classes/Registration.php");
 // so this single line handles the entire registration process.
 $registration = new Registration();
 
-
 ?>
 <html lang="en"><head>
     <meta charset="utf-8">
@@ -190,7 +189,7 @@ $registration = new Registration();
                     </span>
                 </div><!-- /input-group -->
             </div>
-            <p>Hello World, this is our main home screen where you will be able to search or view featured group and/or catalog of groups</p>
+            <p>Under Development, this is our main home screen where you will be able to search or view featured group and/or catalog of groups</p>
             <div
                 class="fb-like"
                 data-share="true"
@@ -231,6 +230,7 @@ $registration = new Registration();
                         <h1 class="modal-title" style="font-size:25px;">Group Finder</h1>
                     </div>
                     <div class="modal-body">
+
                         <form method="post" action="index.php" name="loginform" class="form-signin">
                             <!-- <h2 class="form-signin-heading">Please sign in</h2> -->
                             <label for="inputEmail" class="sr-only">Email address</label>
@@ -286,14 +286,16 @@ $registration = new Registration();
                                 }
                             }
                         ?>
-                        <!-- register form -->
-                        <form method="post" action="register.php" name="registerform">
+                        <!-- register form:      action="/register.php" -->
+                        <form method="post"  name="registerform">
 
+                            <input id="login_input_firstname" class="login_input form-control" placeholder="First Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="first_name" style="margin: 10px 0px 0px;" required />
+                            <input id="login_input_lastname" class="login_input form-control" placeholder="Last Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="last_name" style="margin: 10px 0px 0px;" required />
                             <!-- the user name input field uses a HTML5 pattern check -->
                             <input id="login_input_username" class="login_input form-control" placeholder="Username (only letters and numbers, 2 to 64 characters)" type="text" pattern="[a-zA-Z0-9]{2,64}" name="user_name" style="margin: 10px 0px 10px;" required />
 
                             <!-- the email input field uses a HTML5 email type check -->
-                            <input id="login_input_email" class="login_input form-control" placeholder="User's email" type="email" name="user_email" style="margin-bottom: 10px;" required />
+                            <input id="login_input_email" class="login_input form-control" placeholder="Email" type="email" name="user_email" style="margin-bottom: 10px;" required />
 
                             <input id="login_input_password_new" class="login_input form-control" placeholder="Password (min. 6 characters)" type="password" name="user_password_new" style="margin-bottom: 10px;" pattern=".{6,}" required autocomplete="off" />
 
