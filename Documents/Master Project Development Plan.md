@@ -68,11 +68,11 @@ Requirements:
 The Project will be split into protoype phases that will coincide with the Sprints mentioned in the ICOM5016F15-ClassProject1 documenation, as such they will be named the same. (Phase 1 = Sprint 1, Phase 2 = Sprint 2... etc.) Each phase completion will also be a milestone, but in addition, completing sets of related requirements will also accomplish a milestone. As such the following are a list of high-level milestones for this project:
 
 1. Phase 1
-  1. Base Site running
-  2. Working DBMS running
-  3. Mockups on site
-  4. Home Page Search Protype
-  5. User Basic functionality
+ ~~ 1. Base Site running ~~
+ ~~ 2. Working DBMS running ~~
+ ~~ 3. Mockups on site ~~
+ ~~ 4. Home Page Search Protype ~~
+ ~~ 5. User Basic functionality ~~
 2. Phase 2
   1. User page
   2. Post functionality
