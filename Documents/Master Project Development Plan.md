@@ -71,7 +71,7 @@ The Project will be split into protoype phases that will coincide with the Sprin
   1. ~~Base Site running ~~
   2. ~~Working DBMS running ~~
   3. ~~Mockups on site ~~
-  4. ~~Home Page Search Protype ~~
+  4. ~~Home Page Search Prototype ~~
   5. ~~User Basic functionality ~~
 2. Phase 2
   1. User page
