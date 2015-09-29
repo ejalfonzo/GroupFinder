@@ -123,5 +123,6 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
+    <script type="text/javascript" src="/js/modernizr.js"></script>
   </body>
 </html>

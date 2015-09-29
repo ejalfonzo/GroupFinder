@@ -269,8 +269,8 @@ if (isset($login)) {
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
     <script type="text/javascript" src="/js/timeline.js"></script>
-    <script type="text/javascript" src="/js/timeline-modernizr.js"></script>
+    <script type="text/javascript" src="/js/modernizr.js"></script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 </body>
 </html>
