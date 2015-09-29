@@ -42,7 +42,7 @@ if ($login->isUserLoggedIn() == true) {
 	    // header("Location: views/logged_in.php");
     }else if($login->defaultUser() == false){
         echo("<script>console.log('INDEX: Not Admin');</script>");
-        include("views/logged_in.php");
+        include("views/home.php");
     }
 
     // else if($login->adminUser() == true){
@@ -53,5 +53,5 @@ if ($login->isUserLoggedIn() == true) {
     // the user is not logged in. you can do whatever you want here.
     // for demonstration purposes, we simply show the "you are not logged in" view.
     echo("<script>console.log('INDEX: Not Logged In');</script>");
-    include("views/not_logged_in.php");
+    include("views/home.php");
 }

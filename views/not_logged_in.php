@@ -177,8 +177,9 @@ $registration = new Registration();
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <li><a href="#" class="active btn btn-flat btn-sm">Home</a></li>
-                    <li><a href="#about" class="btn btn-flat btn-sm">About</a></li>
+                    <li><a href="#" class="active btn btn-flat" style="padding:10px;">Home</a></li>
+                    <li><a href="#groups" class="btn btn-flat" style="padding:10px;">Groups</a></li>
+                    <li><a href="/views/Events/events.php" class="btn btn-flat" style="padding:10px;">Events</a></li>
                     <!-- <li><a href="#contact">Contact</a></li> -->
                 </ul>
                 <ul class="nav navbar-nav navbar-right" >

@@ -27,7 +27,8 @@ class Login
     {
 
         // create/read session, absolutely necessary
-        session_start();
+        // session_start();
+        if (session_id() === "") { session_start(); }
 
         // check the possible login actions:
         // if user tried to log out (happen when user clicks logout button)

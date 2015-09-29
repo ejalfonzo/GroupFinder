@@ -1,5 +1,8 @@
-<!doctype html>
 <?php
+// if ($_SESSION['user_login_status'] != 1) { session_start(); }
+// include the configs / constants for the database connection
+// require_once("config/db.php");
+
 // show potential errors / feedback (from login object)
 if (isset($login)) {
     if ($login->errors) {
@@ -16,26 +19,19 @@ if (isset($login)) {
     }
 }
 ?>
-<?php
-// session_start();
-// include the configs / constants for the database connection
-require_once("config/db.php");
-
-?>
+<!doctype html>
 <html lang="en"><head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Group Finder</title>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> -->
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/>
     <link rel="stylesheet" type="text/css" href="/css/timeline-reset.css"/>
-    <!-- <link rel="stylesheet" type="text/css" href="/css/material-fullpalette.css"/> -->
     <!-- <link rel="icon" href="/images/logo.ico"> -->
 </head>
 <body>
@@ -136,47 +132,13 @@ require_once("config/db.php");
          fjs.parentNode.insertBefore(js, fjs);
        }(document, 'script', 'facebook-jssdk'));
     </script>
-    <!-- Static navbar -->
-    <nav class="navbar navbar-default navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="width:45px;">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" style='padding:8px;' href="/index.php"><img alt="Group Finder" src="/images/navLogo.png"></a>
-            </div>
-            <div id="navbar" class="navbar-collapse collapse">
-                <ul class="nav navbar-nav">
-                    <li><a href="#" class="active btn btn-flat" style="padding:10px;">Home</a></li>
-                    <li><a href="#groups" class="btn btn-flat" style="padding:10px;">Groups</a></li>
-                    <li><a href="/views/Events/events.php" class="btn btn-flat" style="padding:10px;">Events</a></li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right" >
-                    <div id="status">
-                    </div>
-                    <!-- Trigger the modal with a button -->
-                    <li class="dropdown">
-                        <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">
-                            <i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
-                        <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)">Action</a></li>
-                            <li><a href="javascript:void(0)">Another action</a></li>
-                            <li><a href="javascript:void(0)">Something else here</a></li>
-                            <li class="divider"></li>
-                            <li><a href="/index.php?logout" type="submit" name="logout" value="Log out">Logout</a></li>
-                        </ul>
-                    </li>
-                    <!-- <button type="button" class="btn" data-toggle="modal" data-target="#UserDrop" style="background:#e7e7e7;"> -->
-                    <?php //echo ($_SESSION['first_name']); ?>
-                    <!-- </button> -->
-                </ul>
-            </div><!--/.nav-collapse -->
-        </div>
-    </nav>
 
+    <!-- Static navbar -->
+    <?php
+       $path = $_SERVER['DOCUMENT_ROOT'];
+       $path .= "/views/General/navbar.php";
+       include_once($path);
+    ?>
 
     <div class="container">
 
