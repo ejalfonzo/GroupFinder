@@ -16,10 +16,10 @@ echo            '</div>';
 echo            '<div id="navbar" class="navbar-collapse collapse">';
 echo            '<ul class="nav navbar-nav" style="color:white;">';
 
-echo                '<li><a href="/Views/Groups/search.php" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>';
+echo                '<li><a href="/Views/Groups/view.php" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>';
 
 if ($_SESSION['user_login_status'] == 1) {
-    echo            '<li><a href="/Views/Events/search.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>';
+    echo            '<li><a href="/Views/Events/view.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>';
 }
 echo            '</ul>';
 echo            '<ul class="nav navbar-nav navbar-right" >';
