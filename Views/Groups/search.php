@@ -53,10 +53,10 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 					<!-- <img src="/images/contentFilter/img-1.jpg" alt="Image 1"> -->
 					<div class="panel panel-primary" style="margin-bottom:0px;">
 					    <div class="panel-heading">
-					        <h3 class="panel-title">Panel primary</h3>
+					        <h3 class="panel-title">Team A</h3>
 					    </div>
 					    <div class="panel-body">
-					        Panel content
+					        Team Description...
 					    </div>
 					</div>
 				</li>

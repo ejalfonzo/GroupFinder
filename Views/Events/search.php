@@ -16,11 +16,11 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
 	<link rel="stylesheet" href="/css/reset.css"> <!-- CSS reset -->
-	<link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/>
+	<!-- <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/> -->
 	<link rel="stylesheet" href="/css/contentFilter-style.css"> <!-- Resource style -->
 	<script src="/js/modernizr.js"></script> <!-- Modernizr -->
 
-	<title>Content Filters | CodyHouse</title>
+	<title>Group Finder</title>
 </head>
 <body>
 	<!-- Static navbar -->
@@ -31,7 +31,7 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
     ?>
 
 	<div class="container" style="margin-bottom:20px;">
-		<h1 style="font-size: 35px;">Event Search</h1>
+		<h1 style="font-size: 35px;">Team Events</h1>
 	</div>
 
 	<main class="cd-main-content">
@@ -42,14 +42,15 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 						<a data-type="all" href="#0">All</a> <!-- selected option on mobile -->
 					</li>
 					<li class="filter"><a class="selected" href="#0" data-type="all">All</a></li>
-					<li class="filter" data-filter=".panel"><a href="#0" data-type="panel">Panels</a></li>
-					<li class="filter" data-filter=".image"><a href="#0" data-type="image">Images</a></li>
+					<li class="filter" data-filter=".panel"><a href="#0" data-type="panel">Team A</a></li>
+					<li class="filter" data-filter=".image"><a href="#0" data-type="image">Team B</a></li>
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->
 		</div> <!-- cd-tab-filter-wrapper -->
 
 		<section class="cd-gallery">
 			<ul>
+
 
 
 				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-6.jpg" alt="Image 6"></li>
