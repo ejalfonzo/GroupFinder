@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="108px" height="50px" viewBox="0 0 108 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <!-- Generator: Sketch 3.0.4 (8054) - http://www.bohemiancoding.com/sketch -->
+    <title>navLogo</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <text id="Finder" sketch:type="MSTextLayer" font-family="STHeiti" font-size="10" font-weight="260" fill="#FFFEFE">
+            <tspan x="75" y="41">Finder</tspan>
+        </text>
+        <text id="roup" sketch:type="MSTextLayer" font-family="STHeiti" font-size="18" font-weight="260" fill="#FFFEFE">
+            <tspan x="44" y="28">roup</tspan>
+        </text>
+        <text id="G" sketch:type="MSTextLayer" font-family="STHeiti" font-size="48" font-weight="260" fill="#FFFEFE">
+            <tspan x="0" y="43">G</tspan>
+        </text>
+    </g>
+</svg>

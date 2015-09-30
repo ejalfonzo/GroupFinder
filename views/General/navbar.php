@@ -11,14 +11,17 @@ echo            '<button type="button" class="navbar-toggle collapsed" data-togg
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>';
-echo            '<a class="navbar-brand" style="padding:8px;" href="/index.php"><img alt="Group Finder" src="/images/navLogo.png"></a>';
+echo            '<a class="navbar-brand" style="padding:8px;" href="/index.php"><img alt="Group Finder" src="/images/navLogo.svg"></a>';
 echo            '</div>';
 echo            '<div id="navbar" class="navbar-collapse collapse">';
-echo            '<ul class="nav navbar-nav" style="color:white;">
+echo            '<ul class="nav navbar-nav" style="color:white;">';
 
-                    <li><a href="/Views/Groups/search.php" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>
-                    <li><a href="/Views/Events/search.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>
-                </ul>';
+echo                '<li><a href="/Views/Groups/search.php" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>';
+
+if ($_SESSION['user_login_status'] == 1) {
+    echo            '<li><a href="/Views/Events/search.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>';
+}
+echo            '</ul>';
 echo            '<ul class="nav navbar-nav navbar-right" >';
 
         // <li><a href="#" class="active btn btn-flat" style="padding:10px;">Home</a></li>
