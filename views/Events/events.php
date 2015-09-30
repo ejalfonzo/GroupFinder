@@ -16,6 +16,7 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
     <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/reset.css"/>
     <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/>
 
   </head>
@@ -23,7 +24,7 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 
     <?php
        $path = $_SERVER['DOCUMENT_ROOT'];
-       $path .= "/views/General/navbar.php";
+       $path .= "/Views/General/navbar.php";
        include_once($path);
     ?>
 
