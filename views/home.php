@@ -31,7 +31,7 @@ if (isset($login)) {
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/timeline-reset.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/reset.css"/>
     <!-- <link rel="icon" href="/images/logo.ico"> -->
 </head>
 <body>
@@ -136,7 +136,7 @@ if (isset($login)) {
     <!-- Static navbar -->
     <?php
        $path = $_SERVER['DOCUMENT_ROOT'];
-       $path .= "/views/General/navbar.php";
+       $path .= "/Views/General/navbar.php";
        include_once($path);
     ?>
 

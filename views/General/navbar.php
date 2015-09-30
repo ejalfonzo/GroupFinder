@@ -16,8 +16,8 @@ echo            '</div>';
 echo            '<div id="navbar" class="navbar-collapse collapse">';
 echo            '<ul class="nav navbar-nav" style="color:white;">
 
-                    <li><a href="#groups" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>
-                    <li><a href="/views/Events/events.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>
+                    <li><a href="/Views/Groups/search.php" class="btn btn-flat" style="padding:10px; color:white;">Groups</a></li>
+                    <li><a href="/Views/Events/search.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>
                 </ul>';
 echo            '<ul class="nav navbar-nav navbar-right" >';
 
@@ -34,9 +34,10 @@ echo               '<li class="dropdown">
                         <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">
                             <i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
                         <ul class="dropdown-menu">
-                            <li><a href="javascript:void(0)">Action</a></li>
-                            <li><a href="javascript:void(0)">Another action</a></li>
-                            <li><a href="javascript:void(0)">Something else here</a></li>
+                            <li><a href="javascript:void(0)">Profile</a></li>
+                            <li><a href="javascript:void(0)">My Groups</a></li>
+                            <li><a href="javascript:void(0)">My Events</a></li>
+                            <li><a href="javascript:void(0)">Buisness</a></li>
                             <li class="divider"></li>
                             <li><a href="/index.php?logout" type="submit" name="logout" value="Log out">Logout</a></li>
                         </ul>

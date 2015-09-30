@@ -152,7 +152,7 @@ require_once("config/db.php");
                 <ul class="nav navbar-nav">
                     <li><a href="#" class="active btn btn-flat" style="padding:10px;">Home</a></li>
                     <li><a href="#groups" class="btn btn-flat" style="padding:10px;">Groups</a></li>
-                    <li><a href="/views/Events/events.php" class="btn btn-flat" style="padding:10px;">Events</a></li>
+                    <li><a href="/Views/Events/events.php" class="btn btn-flat" style="padding:10px;">Events</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right" >
                     <div id="status">
