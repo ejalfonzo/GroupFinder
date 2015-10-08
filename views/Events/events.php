@@ -18,10 +18,6 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/reset.css"/>
     <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/>
-    <style type="text/css">
-      .floatbox {float:left; width:110px; height:100px; margin-right:10px;}
-      .floatbox img {display:block;}
-    </style>
 
   </head>
   <body>
@@ -39,10 +35,11 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
         <div class="col-xs-0 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
             <ul class="nav">
               <li><a href="#">Timeline</a></li>
-              <li><a href="#">Friends</a></li>   
-              <li><a href="#">Groups</a></li>              
+              <li><a href="#">Feeds</a></li>
+              <li><a href="#">Friends</a></li>
+              <li><a href="#">Groups</a></li>
               <li><a href="#">Events</a></li>
-              <li><a href="#">Business</a></li>               
+              <li><a href="#">Business</a></li>
             </ul>
         </div>
 
@@ -71,61 +68,45 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
                     <tbody>
                       <tr class="active">
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>EventA</p></a></div>
+                          <a href="#">A</a>
                         </td>
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Person1</p></a></div>
+                          <a href="#">Pedro</a>
                         </td>
                         <td>
-                          <select>
-                           <option value="pending">Pending</option>
-                           <option value="assisting">Assisting</option>
-                           <option value="declined">Declined</option>
-                          </select>
+                          Assisting
                         </td>
                       </tr>
                       <tr class="success">
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>EventB</p></a></div>
+                          <a href="#">B</a>
                         </td>
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Person2</p></a></div>
+                          <a href="#">Maria</a>
                         </td>
                         <td>
-                          <select>
-                           <option value="pending">Pending</option>
-                           <option value="assisting">Assisting</option>
-                           <option value="declined">Declined</option>
-                          </select>
+                          Declined
                         </td>
                       </tr>
                       <tr class="warning">
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>EventC</p></a></div>
+                          <a href="#">C</a>
                         </td>
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Person3</p></a></div>
+                          <a href="#">Jose</a>
                         <td>
-                          <select>
-                           <option value="pending">Pending</option>
-                           <option value="assisting">Assisting</option>
-                           <option value="declined">Declined</option>
-                          </select>
+                          Pending
                         </td>
                       </tr>
                       <tr class="danger">
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>EventD</p></a></div>
+                          <a href="#">D</a>
                         </td>
                         <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Person4</p></a></div>
+                          <a href="#">Alberto</a>
                         </td>
                         <td>
-                          <select>
-                           <option value="pending">Pending</option>
-                           <option value="assisting">Assisting</option>
-                           <option value="declined">Declined</option>
-                          </select>
+                          Declined
                         </td>
                       </tr>
                     </tbody>
