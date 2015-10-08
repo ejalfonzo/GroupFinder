@@ -3,57 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <title>GroupFinder Create Group</title>
-    
+    <meta charset="UTF-8">
     <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'>
-
-        <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <style type="text/css">
+      .floatbox {float:left; width:110px; height:100px; margin-right:10px;}
+      .floatbox img {display:block;}
+    </style>
 
   </head>
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-12">
-           <nav class="navbar navbar-default" role="navigation">
-
-            <div class="navbar-header">
-              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-             <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-              </button> <a class="navbar-brand" href="#">GroupFinder</a>
-             </div>
-
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-              <form class="navbar-form navbar-left" role="search">
-                <div class="form-group">
-                  <input class="form-control" type="text">
-                </div> 
-                <button type="submit" class="btn btn-default">Search</button>
-              </form>
-              <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Manage Account<strong class="caret"></strong></a>
-                  <ul class="dropdown-menu">
-                    <li>
-                      <a href="#">Action</a>
-                    </li>
-                    <li>
-                      <a href="#">Another action</a>
-                    </li>
-                    <li>
-                      <a href="#">Something else here</a>
-                    </li>
-                    <li class="divider"></li>
-                    <li>
-                      <a href="#">Separated link</a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-             </div>
-            </nav>
-          </div>
-        </div>
-      </div>
-
+    
     <div class="container">
 
       <div class="row row-offcanvas row-offcanvas-left">
@@ -80,45 +42,48 @@
                     <input class="form-control" id="groupName" type="text" style="width:40%" />
                   </div>
                   <div class="form-group">
+                    <label for="groupDescription">Group Description</label>
+                    <input class="form-control" id="groupDescription" type="text" style="width:40%" />
+                  </div>
+                  <div class="form-group">
                     <label for="groupCategory">Group Category</label>
                     <input class="form-control" id="groupCategory" type="text" style="width:40%" />
                   </div>
 
-                  <a id="modal-514361" href="#modal-container-514361" role="button" class="btn" data-toggle="modal">Invite Friends</a>
+                  <button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal" style="background:lightgreen;border:lightgreen">
+                    Invite Friends</button>
       
-                  <div class="modal fade" id="modal-container-514361" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                  <!-- Modal -->
+                  <div class="modal fade" id="myModal" role="dialog">
                     <div class="modal-dialog">
+                    
+                      <!-- Modal content-->
                       <div class="modal-content">
                         <div class="modal-header">
-                           
-                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                            ×
-                          </button>
-                          <h4 class="modal-title" id="myModalLabel">
-                            Friends
-                          </h4>
+                          <button type="button" class="close" data-dismiss="modal">&times;</button>
+                          <h4 class="modal-title">Invite a Friends</h4>
                         </div>
                         <div class="modal-body">
-                          ...
+                          <!-- List of Friends -->
+                          <div class="container">
+                          <div class="floatbox"><a href="#0"><img /src="profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
+                          <div class="floatbox"><a href="#0"><img /src="profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
+                          <div class="floatbox"><a href="#0"><img /src="profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
+                          <div class="floatbox"><a href="#0"><img /src="profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
+                          <div class="floatbox"><a href="#0"><img /src="profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
+                          </div>
                         </div>
                         <div class="modal-footer">
-                           
-                          <button type="button" class="btn btn-default" data-dismiss="modal">
-                            Close
-                          </button> 
-                          <button type="button" class="btn btn-primary">
-                            Save
-                          </button>
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                         </div>
-                      </div>
-                      
+                      </div> 
                     </div>
-                    
                   </div>
 
                 </form>
 
                 <!-- Create or Cancel -->
+                <h1></h1>
                 <button type="submit" class="btn btn-default">Create</button>
                 <button type="submit" class="btn btn-default">Cancel</button>
             </div>
