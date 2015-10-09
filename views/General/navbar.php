@@ -2,7 +2,7 @@
 
 // echo("<script>console.log('PHP: ".session_status()."');</script>");
 
-echo '<nav class="navbar navbar-default navbar-static-top">';
+echo '<nav class="navbar navbar-default navbar-fixed-top">';
 echo    '<div class="container">';
 echo        '<div class="navbar-header">';
 echo            '<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar" style="width:45px;">
@@ -37,8 +37,10 @@ echo               '<li class="dropdown">
                         <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">
                             <i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
                         <ul class="dropdown-menu">
+                            <li><a href="/Views/User/dashboard.php">Dashboard</a></li>
+                            <li class="divider"></li>
                             <li><a href="javascript:void(0)">Profile</a></li>
-                            <li><a href="javascript:void(0)">My Groups</a></li>
+                            <li><a href="/Views/Groups/manager.php">My Groups</a></li>
                             <li><a href="javascript:void(0)">My Events</a></li>
                             <li><a href="javascript:void(0)">Buisness</a></li>
                             <li class="divider"></li>
