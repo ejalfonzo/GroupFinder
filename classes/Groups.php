@@ -1,10 +1,10 @@
 <?php
 
 /**
- * Class login
- * handles the user's login and logout process
+ * Class Groups
+ * handles all groups functions
  */
-class Login
+class Groups
 {
     /**
      * @var object The database connection
@@ -27,16 +27,17 @@ class Login
     {
 
         // create/read session, absolutely necessary
-        // session_start();
-        if (session_id() === "") { session_start(); }
+        // if (session_id() === "") { session_start(); }
 
-        // check the possible login actions:
-        // if user tried to log out (happen when user clicks logout button)
-        if (isset($_GET["logout"])) {
-            $this->doLogout();
+        // check the possible Group actions:
+        // if user tried to create a group (happen when user clicks createGroup button)
+        if (isset($_GET["createGroup"])) {
+            $this->createGroup();
         }
-        // login via post data (if user just submitted a login form)
-        elseif (isset($_POST["login"])) {
+        // get groups via post data (if user just submitted a search form)
+        elseif (isset($_POST["searchGroup"])) {
+            $this->dologinWithPostData();
+        }elseif(isset($_POST["loadGroup"])){
             $this->dologinWithPostData();
         }
     }
@@ -91,11 +92,11 @@ class Login
                     if (password_verify($_POST['login_password'], $result_row->user_password_hash)) {
 
                         // write user data into PHP SESSION (a file on your server)
-                        $_SESSION['user_name'] = $result_row->user_name;
-                        $_SESSION['email'] = $result_row->email;
-                        $_SESSION['id'] = $result_row->id;
-                        $_SESSION['isAdmin'] = $result_row->isAdmin;
+                        $_SESSION['email'] = $result_row->login_email;
+                        // $_SESSION['email'] = $result_row->user_email;
 
+                        $_SESSION['accountType'] = $result_row->accountType;
+                        // $_SESSION['language'] = $result_row->language;
                         // $_SESSION['studentID'] = $result_row->studentID;
 
                         $_SESSION['user_login_status'] = 1;
@@ -118,7 +119,7 @@ class Login
     /**
      * perform the logout
      */
-    public function doLogout()
+    public function createGroup()
     {
         echo("<script>console.log('LOGIN: TRY Logged Out');</script>");
         // delete the session of the user
