@@ -72,7 +72,11 @@ if (isset($login)) {
           </ul> -->
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1>My Groups</h1>
+            <div class="row">
+              <div class="col-md-8"> <h1>My Groups</h1></div>
+              <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#CreateG">Create Group</a></div>
+            </div>
+
 
           <div class="row placeholders panel panel-primary" >
               <div class="panel-heading" style="margin-bottom:20px;">Groups</div>
@@ -101,6 +105,40 @@ if (isset($login)) {
           <!-- <h2 class="sub-header">Section title</h2> -->
         </div>
       </div>
+
+
+
+        <div id="CreateG" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                          <h1 class="modal-title" style="font-size:25px;">Create Group</h1>
+                      </div>
+                      <div class="modal-body">
+                          <!-- action="open.php" -->
+                          <form method="post" action="#" name="groupCreation">
+
+                              <input id="group_input_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="first_name" style="margin: 10px 0px 0px;" required />
+                              <input id="group_input_description" class="group_input form-control" placeholder="Description" type="text" pattern="[a-zA-Z0-9]{2,64}" name="last_name" style="margin: 10px 0px 0px;" required />
+                              <input id="group_input_email" class="group_input form-control" placeholder="Email" type="email" name="user_email" style="margin-bottom: 10px;" required />
+
+                              <label for="groupDescription" class="control-label">Group's Description</label>
+                              <textarea class="form-control" rows="2" id="group_description"></textarea>
+                              <span class="help-block">Describe your group, so other may know the purpose of your group.</span>
+
+                              <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createGroupe" value="createGroup" />
+
+                          </form>
+                      </div>
+                      <div class="modal-footer" style="text-align:center;">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
+
 
       <!-- <footer class="footer">
           <div class="container">

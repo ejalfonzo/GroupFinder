@@ -34,8 +34,9 @@ echo '<button type="button" class="btn" data-toggle="modal" data-target="#SignIn
 }else{
 
 echo               '<li class="dropdown">
-                        <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">
-                            <i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
+                        <a href="bootstrap-elements.html" data-target="#" class="dropdown-toggle" data-toggle="dropdown" style="padding: 10px;">';
+echo                    $_SESSION['user_name'];
+echo                       '<i class="mdi-action-account-circle" style="font-size:40px;"></i></a>
                         <ul class="dropdown-menu">
                             <li><a href="/Views/User/dashboard.php">Dashboard</a></li>
                             <li class="divider"></li>
