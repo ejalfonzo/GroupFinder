@@ -74,10 +74,10 @@ The Project will be split into protoype phases that will coincide with the Sprin
   4. ~~Home Page Search Prototype ~~
   5. ~~User Basic functionality ~~
 2. Phase 2
-  1. User page
+  1. ~~User page ~~
   2. Post functionality
   3. Friends
-  4. Groups Basic functionality
+  4. ~~Groups Basic functionality ~~
 3. Phase 3
   1. Groups finished
   2. Events
@@ -146,3 +146,17 @@ The following will be worked on ahead if time allows, otherwise they will be add
 - Posting to a group's timeline
 - Deleting a group
 
+3. Phase 3: Friends and Groups
+
+Due to some time management issues phase 3 will focus on picking up unfinished parts of phase 2, and continue with completing parts of groups, and events. While some of these features seem like adding to the work load, work on them was already begun in phase 2, they simply need to be finished.
+
+Specific functions we well achieve will include:
+- Searching for users, groups, businesses, and events by name or category respectively
+- Adding users to a friends list
+- Adding a category to a friend
+- Editing a friend's category
+- Removing a friend from the friend's list
+- Creating a group
+- Joining a group
+- Creating an Event
+- Joining and Event
