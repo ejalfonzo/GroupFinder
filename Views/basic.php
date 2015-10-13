@@ -4,7 +4,7 @@
  * Class User
  * handles the user data
  */
-class User
+class Basic
 {
     /**
      * @var object $db_connection The database connection
@@ -122,12 +122,11 @@ class User
                 </tr>
               </thead>';
               while($row = $query_get_user_info->fetch_object()) {
-                $date = date_create($row->time);
                 echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
                 echo '<tr>';
                   echo   '<td>'. $row->name . '</td>';
                   echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                  echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
+                  echo   '<td>'. $row->time . '</td>';
                   echo   '<td>'. $row->place . '</td>';
                 echo '</tr>';
              }
@@ -139,7 +138,7 @@ class User
         }
       }
 
-      function getAllEventsTable(){
+      function getAllEventsTimeline(){
         $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
         // change character set to utf8 and check it
         if (!$this->db_connection->set_charset("utf8")) {
@@ -153,39 +152,55 @@ class User
             $today = new DateTime();
             $today->format('Y-m-d H:i:s');
 
-            $sql = "SELECT myEvents.name, myEvents.time, myEvents.place, myEvents.description, first_name, last_name
-            FROM (SELECT eventsList.name, eventsList.time, eventsList.place, eventsList.description, eventsList.admin
-            FROM ebabilon.events as eventsList, ebabilon.attendees as attendList
-            WHERE eventsList.id_event = attendList.id_event AND attendList.id_attendee = '" .$userID . "') as myEvents, ebabilon.users
-            WHERE time > '" .$today->date . "' AND myEvents.admin = id;";
+            if($userID){
+              $sql = "SELECT myEvents.name, myEvents.time, myEvents.place, myEvents.description, first_name, last_name
+              FROM (SELECT eventsList.name, eventsList.time, eventsList.place, eventsList.description, eventsList.admin
+              FROM ebabilon.events as eventsList, ebabilon.attendees as attendList
+              WHERE eventsList.id_event = attendList.id_event AND attendList.id_attendee = '" .$userID . "') as myEvents, ebabilon.users
+              WHERE time > '" .$today->date . "' AND myEvents.admin = id;";
+            }else{
+              $sql = "SELECT myEvents.name, myEvents.time, myEvents.place, myEvents.description, first_name, last_name
+              FROM (SELECT eventsList.name, eventsList.time, eventsList.place, eventsList.description, eventsList.admin
+              FROM ebabilon.events as eventsList, ebabilon.attendees as attendList
+              WHERE eventsList.id_event = attendList.id_event ') as myEvents, ebabilon.users
+              WHERE time > '" .$today->date . "' AND myEvents.admin = id;";
+            }
             $query_get_user_info = $this->db_connection->query($sql);
             if ($query_get_user_info->num_rows >= 1) {
-              echo '<div class="table-responsive panel">
-                <table class="table table-striped table-hover">';
-                echo '<thead>
-                  <tr>
-                    <th>Event Name</th>
-                    <th>Coordinator</th>
-                    <th>Date</th>
-                    <th>Place</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>';
+
+              // echo '<div class="cd-timeline-block">
+              //     <div class="cd-timeline-img">
+              //         <img src="/images/icons-svg/star-white.svg" alt="Picture">
+              //     </div> <!-- cd-timeline-img -->
+              //
+              //     <div class="cd-timeline-content">
+              //         <h2>Group Finder Team</h2>
+              //         <p>Our team is going to have a Happy Hour, be there... </p>
+              //         <a href="#0" class="cd-read-more">Read more</a>
+              //         <span class="cd-date">Sep 29</span>
+              //     </div>
+              // </div> ';
+
                 while($row = $query_get_user_info->fetch_object()) {
                   $date = date_create($row->time);
-                  echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-                  echo '<tr>';
-                    echo   '<td>'. $row->name . '</td>';
-                    echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                    echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
-                    echo   '<td>'. $row->place . '</td>';
-                    echo   '<td>'. $row->description . '</td>';
-                  echo '</tr>';
+                    echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+                    echo '<div class="cd-timeline-block">
+                         <div class="cd-timeline-img">
+                             <img src="/images/icons-svg/star-white.svg" alt="Picture">
+                         </div>';
+                    echo '<div class="cd-timeline-content">';
+
+                    echo   '<h2>'. $row->name . '</h2>';
+                    // echo   '<p>'. $row->first_name . ' ' . $row->last_name . '</p>';
+                    // echo   '<p>'. $row->place . '</p>';
+                    echo   '<p>'. $row->description . '</p>';
+                    echo   '<span class="cd-date">'. date_format($date, 'M j') . '</span>';
+                    echo '</div>';
+                   echo '</div>';
                }
-             echo'</table>
-             </div>';
+
            }else{
-             echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Upcoming Events...</h3>';
+            //  echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Upcoming Events...</h3>';
            }
         }
       }

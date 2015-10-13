@@ -91,7 +91,7 @@ $user = new User();
           <div class="row placeholders panel panel-primary" >
               <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div>
                 <?php $user->getUserGroups(); ?>
-                <a href="javascript:void(0)" class="btn btn-flat btn-primary">See All</a>
+                <a href="/Views/Groups/manager.php" class="btn btn-flat btn-primary">See All</a>
           </div>
 
           <div class="row panel panel-primary" >
