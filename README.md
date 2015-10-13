@@ -1,34 +1,34 @@
-# GroupFinder v0.5
+# GroupFinder v0.75
 
-Project Phase 1
+Project Phase 2
 
 Current completed deliverables:
-- DBMS instance
-- App Mockups are on site in the /mockups directory
-- MPDP has been updated.
-- Project management tool has been updated
-- Project plan for Phase 2 is complete
+- Register User
+- Log-in
+- User Dashboard
+- Groups in user dashboard
 
-For Phase 1 we completed all 5 basic objectives from the Master Project Development Plan:
-- Base Site is up and running at ebabilon.com
-- Working DBMS instance is active and being used (see 'OnServerERD.pdf' document in /docs for a reverse engineered view)
-- Mockups are on the site at /mockups
-- Home Page Search Prototype is in the landing/index page of the site
-- User basic functionality is implemented, letting a user register and login
+For Phase 2 we completed all 2/5 basic objectives from the Master Project Development Plan and begun work on the other 3:
+- User Page
+- Groups Basic Functionality
+
+Work was begun on:
+- Post functionality
+- Friends functionality
+- Events functionality
 
 What worked well?
-Division of labor, plain and simple, one person doing all the work is too much.
+Not a lot, it was a very disfunctional phase.
 
 What didn't work well?
-Communication, tasks were completed but the work is a bit disjointed and we don't know when a person is finishing work. More micro management is needed.
+Communication, tasks were not being completed on time or at all. Everyone is working at random currently instead of following the master development plan and asking for help.
 
 What we learned?
-Programmers who aren't used to asynchronous work are confused easily by php and web design in general.
+We need to coordinate and set clearer goals, now.
 
 
 For the next phase:
-- The user panel should be completed.
-- The mockups should be in place around the site in their proper location and style.
-- Users should be able to write a Post.
-- Users should be able to find each other and add to friends.
-- Work on Groups should be started. (View and Create)
+- Post functionality should be available to the user in his own timeline.
+- Search should be working
+- Create groups and create events.
+- Adding friends to a user's list.
