@@ -50,7 +50,7 @@ if (isset($login)) {
 
     <div class="container-fluid">
       <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
+        <div class="col-sm-3 col-md-2 sidebar panel" style="margin-bottom:0px;">
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Profile</a></li>

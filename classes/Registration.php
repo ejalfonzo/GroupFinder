@@ -36,7 +36,7 @@ class Registration
      */
     private function registerNewUser()
     {
-        echo("<script>console.log('Register New User');</script>");
+        // echo("<script>console.log('Register New User');</script>");
         if (empty($_POST['user_name'])) {
             $this->errors[] = "Empty Username";
             echo("<script>console.log('Error: Empty Username');</script>");
@@ -100,7 +100,7 @@ class Registration
 
             // if no connection errors (= working database connection)
             if (!$this->db_connection->connect_errno) {
-                echo("<script>console.log('Good: DB Connection');</script>");
+                // echo("<script>console.log('Good: DB Connection');</script>");
                 // escaping, additionally removing everything that could be (html/javascript-) code
                 $first_name = $this->db_connection->real_escape_string(strip_tags($_POST['first_name'], ENT_QUOTES));
                 $last_name = $this->db_connection->real_escape_string(strip_tags($_POST['last_name'], ENT_QUOTES));
@@ -111,7 +111,7 @@ class Registration
 
                 $user_password = $_POST['user_password_new'];
                 //Test Debug
-                echo("<script>console.log('PHP: ".json_encode($user_name)."');</script>");
+                // echo("<script>console.log('PHP: ".json_encode($user_name)."');</script>");
                 // crypt the user's password with PHP 5.5's password_hash() function, results in a 60 character
                 // hash string. the PASSWORD_DEFAULT constant is defined by the PHP 5.5, or if you are using
                 // PHP 5.3/5.4, by the password hashing compatibility library
@@ -133,8 +133,10 @@ class Registration
                     // if user has been added successfully
                     if ($query_new_user_insert) {
                         $this->messages[] = "Your account has been created successfully. You can now log in.";
+                        // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
                     } else {
                         $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+                        echo("<script>console.log('PHP: ERROR Registering');</script>");
                     }
                 }
             } else {
