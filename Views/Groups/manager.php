@@ -18,7 +18,9 @@ if (isset($login)) {
         }
     }
 }
-
+require_once("../../config/db.php");
+require_once("Groups.php");
+$groups = new Groups();
 
 ?>
 <!doctype html>
@@ -33,6 +35,7 @@ if (isset($login)) {
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css"/>
+    <!-- <link rel="stylesheet" type="text/css" href="/css/selectize.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
     <!-- <link rel="icon" href="/images/logo.ico"> -->
@@ -60,16 +63,7 @@ if (isset($login)) {
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="">Buisness</a></li>
-            <!-- <li><a href="">Nav item again</a></li> -->
-            <!-- <li><a href="">One more nav</a></li> -->
-            <!-- <li><a href="">Another nav item</a></li> -->
-            <!-- <li><a href="">More navigation</a></li> -->
           </ul>
-          <!-- <ul class="nav nav-sidebar">
-            <li><a href="">Nav item again</a></li>
-            <li><a href="">One more nav</a></li>
-            <li><a href="">Another nav item</a></li>
-          </ul> -->
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="row">
@@ -78,28 +72,11 @@ if (isset($login)) {
             </div>
 
 
-          <div class="row placeholders panel panel-primary" >
-              <div class="panel-heading" style="margin-bottom:20px;">Groups</div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
+          <div class="row placeholders panel panel-primary" style="padding:20px;">
+              <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
+
+              <?php $groups->getUserGroups(); ?>
+
           </div>
 
           <!-- <h2 class="sub-header">Section title</h2> -->
@@ -117,17 +94,25 @@ if (isset($login)) {
                       </div>
                       <div class="modal-body">
                           <!-- action="open.php" -->
-                          <form method="post" action="#" name="groupCreation">
+                          <form method="post" action="" name="createGroup">
 
-                              <input id="group_input_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="first_name" style="margin: 10px 0px 0px;" required />
-                              <input id="group_input_description" class="group_input form-control" placeholder="Description" type="text" pattern="[a-zA-Z0-9]{2,64}" name="last_name" style="margin: 10px 0px 0px;" required />
-                              <input id="group_input_email" class="group_input form-control" placeholder="Email" type="email" name="user_email" style="margin-bottom: 10px;" required />
+                              <input id="group_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />
 
-                              <label for="groupDescription" class="control-label">Group's Description</label>
-                              <textarea class="form-control" rows="2" id="group_description"></textarea>
+                              <div class="dropdownjs" style="margin: 10px 0px 0px;">
+                        				<div class="control-group">
+                                  <select class="form-control" placeholder="Select a Category" id="category" name="category">
+                                     <!-- <option value="Apple fritter">Apple fritter</option> -->
+                                     <?php $groups->getGroupCategories(); ?>
+
+                                   </select>
+                        				</div>
+                        			</div>
+
+                              <!-- <label for="groupDescription" class="control-label">Group's Description</label> -->
+                              <textarea class="form-control floating-label" placeholder="Group's Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your group, so other may know the purpose of your group.</span>
 
-                              <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createGroupe" value="createGroup" />
+                              <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createGroup" value="createGroup" />
 
                           </form>
                       </div>
@@ -158,8 +143,16 @@ if (isset($login)) {
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
+    <script type="text/javascript" src="/js/dropdown.js"></script>
+    <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
-    <script>$.material.init()</script>
+    <script>
+    $.material.init();
+    $(document).ready(function() {
+      $(".select").dropdown({"optionClass": "withripple"});
+    });
+    $().dropdown({autoinit: "select"});
+    </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 </body>

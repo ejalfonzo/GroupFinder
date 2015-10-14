@@ -1,99 +1,231 @@
-<!DOCTYPE html>
-<html >
-  <head>
-    <meta charset="UTF-8">
-    <title>GroupFinder Groups</title>
-    
-    <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css'>
-    <link rel="stylesheet" href="../../css/style.css">
-    <style type="text/css">
-      .floatbox {float:left; width:110px; height:100px; margin-right:10px;}
-      .floatbox img {display:block;}
-    </style>
-  </head>
-  <body>
-    <?php 
-     $path = $_SERVER['DOCUMENT_ROOT']; 
-     $path .= "/Views/General/navbar.php"; 
-     include_once($path); 
-    ?> 
+<?php
 
-    <div class="container">
+/**
+ * Class Groups
+ * handles the user data
+ */
+class Groups
+{
+  /**
+   * @var object $db_connection The database connection
+   */
+  private $db_connection = null;
+  /**
+   * @var array $errors Collection of error messages
+   */
+  public $errors = array();
+  /**
+   * @var array $messages Collection of success / neutral messages
+   */
+  public $messages = array();
 
-      <div class="row row-offcanvas row-offcanvas-left">
-      <!-- sidebar -->
-        <div class="col-xs-0 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-            <ul class="nav">
-              <li><a href="#">Timeline</a></li>
-              <li><a href="#">Friends</a></li>   
-              <li><a href="#">Groups</a></li>              
-              <li><a href="#">Events</a></li>
-              <li><a href="#">Business</a></li>               
-            </ul>
-        </div>
+  /**
+   * the function "__construct()" automatically starts whenever an object of this class is created,
+   * you know, when you do "$groups = new Groups();"
+   */
+  public function __construct()
+  {
+    if (isset($_POST["createGroup"])) {
+        $this->createGroup();
+    }
+    // if (isset($_GET["group"])) {
+    //     $this->openGroup();
+    // }
+  }
 
-        <!-- Table -->
-          <div class="col-xs-12 col-sm-9">
-            <div class="page-header">
-                <h1 id="timeline">Groups</h1>
-            </div>
 
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-12">
-                  <table class="table">
-                    <thead>
-                      <tr>
-                        <th>
-                          Group Name
-                        </th>
-                        <th>
-                          Category
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="active">
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>GroupA</p></a></div>
-                        </td>
-                        <td>
-                          <a href="#">CategoryA</a>
-                        </td>
-                      </tr>
-                      <tr class="success">
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>GroupB</p></a></div>
-                        </td>
-                        <td>
-                          <a href="#">CategoryC</a>
-                        </td>
-                      </tr>
-                      <tr class="warning">
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>GroupC</p></a></div>
-                        </td>
-                        <td>
-                          <a href="#">CategoryB</a>
-                      </tr>
-                      <tr class="danger">
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>GroupD</p></a></div>
-                        </td>
-                        <td>
-                          <a href="#">CategoryC</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- Table end -->
 
-         </div>
-        </div>
-      </div>
-    </div>
-    <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
-  </body>
-</html>
+  function getGroup(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $groupID = $_GET["group"];
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.groups WHERE id_group = '".$groupID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+
+        echo '<img src=" '. $result_row->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+        echo '<h4>'.$result_row->name.'</h4>';
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function getUserFirstName(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();  echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
+        echo($result_row->first_name);
+    }
+  }
+
+  function getUserImage(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT user_image FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo($result_row->user_image);
+      }
+  }
+
+  function createGroup(){
+    if (empty($_POST['group_name'])) {
+        $this->errors[] = "Empty Username";
+        echo("<script>console.log('Error: Empty Group Name');</script>");
+
+    } elseif (strlen($_POST['group_name']) > 64 || strlen($_POST['group_name']) < 2) {
+        $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
+        echo("<script>console.log('Error: Username to short');</script>");
+
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])) {
+        $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+        echo("<script>console.log('Error: Username bad schema');</script>");
+
+    } elseif (!empty($_POST['group_name'])
+        && strlen($_POST['group_name']) <= 64
+        && strlen($_POST['group_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])
+    ) {
+        echo("<script>console.log('Good: All Clear');</script>");
+        // create a database connection
+        $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // change character set to utf8 and check it
+        if (!$this->db_connection->set_charset("utf8")) {
+            $this->errors[] = $this->db_connection->error;
+            echo("<script>console.log('Error: DB not utf8');</script>");
+        }
+
+        // if no connection errors (= working database connection)
+        if (!$this->db_connection->connect_errno) {
+            // echo("<script>console.log('Good: DB Connection');</script>");
+            // escaping, additionally removing everything that could be (html/javascript-) code
+            $userID = $_SESSION["id"];
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['group_name'], ENT_QUOTES));
+            $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
+            $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
+
+            $sql = "INSERT INTO `ebabilon`.`groups` (`name`, `admin`, `category`, `description`)
+            VALUES ('".$name."', '".$userID."', '".$category."', '".$description."');";
+            $query_new_user_insert = $this->db_connection->query($sql);
+
+            $group_id = mysqli_insert_id($this->db_connection);
+            // echo("<script>console.log('results_row: ".json_encode($group_id)."');</script>");
+            // if user has been added successfully
+            if ($query_new_user_insert) {
+                $this->messages[] = "Your account has been created successfully. You can now log in.";
+                echo("<script>console.log('PHP: group created');</script>");
+
+                $sql = "INSERT INTO `ebabilon`.`members` (`id_group`, `id_member`)
+                VALUES  (".$group_id.",'".$userID."');";
+                $query_new_member_insert = $this->db_connection->query($sql);
+
+                if($query_new_member_insert){
+                  echo("<script>console.log('PHP: User Added');</script>");
+                }
+                // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+            } else {
+                $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+                echo("<script>console.log('PHP: ERROR Registering');</script>");
+            }
+        } else {
+            $this->errors[] = "Sorry, no database connection.";
+        }
+    } else {
+        $this->errors[] = "An unknown error occurred.";
+    }
+  }
+
+  function getGroupCategories(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $email = $_SESSION['email'];
+
+        $sql = "SELECT * FROM ebabilon.group_categories;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        if ($query_get_user_info->num_rows >= 1) {
+
+          while($row = $query_get_user_info->fetch_object()){
+              echo   '<option value="'.$row->id_category. '">'. $row->name . '</option>';
+         }
+       }
+    }
+  }
+
+  function getUserGroups(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $email = $_SESSION['email'];
+
+        $sql = "SELECT myGroups.name, myGroups.category, myGroups.id_group, first_name, last_name
+        FROM (SELECT groupsList.name, groupsList.category, groupsList.admin, groupsList.id_group
+        FROM ebabilon.groups as groupsList, ebabilon.members as memberList
+        WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
+        WHERE myGroups.admin = id;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        if ($query_get_user_info->num_rows >= 1) {
+
+          while($row = $query_get_user_info->fetch_object()) {
+            echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+            echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+              echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+              echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+              echo '</button>';
+              echo   '<h4>'. $row->name . '</h4>';
+              echo   '<span class="text-muted">'. $row->description . '</span>';
+            echo '</div>';
+         }
+       }else{
+         echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
+       }
+    }
+  }
+}

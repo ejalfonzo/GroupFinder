@@ -205,19 +205,20 @@ class User
             // check if user or email address already exists
             // $sql = "SELECT name FROM events WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
 
-            $sql = "SELECT myGroups.name, myGroups.category, first_name, last_name
-            FROM (SELECT groupsList.name, groupsList.category, groupsList.admin
+            $sql = "SELECT myGroups.name, myGroups.category, myGroups.id_group, first_name, last_name
+            FROM (SELECT groupsList.name, groupsList.category, groupsList.admin, groupsList.id_group
             FROM ebabilon.groups as groupsList, ebabilon.members as memberList
             WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
-            WHERE myGroups.admin = id
-            LIMIT 4;";
+            WHERE myGroups.admin = id;";
             $query_get_user_info = $this->db_connection->query($sql);
             if ($query_get_user_info->num_rows >= 1) {
 
               while($row = $query_get_user_info->fetch_object()) {
                 echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-                echo '<div class="col-xs-6 col-sm-3 placeholder">';
+                echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                  echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
                   echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                  echo '</button>';
                   echo   '<h4>'. $row->name . '</h4>';
                   echo   '<span class="text-muted">'. $row->description . '</span>';
                 echo '</div>';
