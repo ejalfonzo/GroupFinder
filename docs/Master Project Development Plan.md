@@ -156,7 +156,6 @@ Specific functions we well achieve will include:
 - Adding a category to a friend
 - Editing a friend's category
 - Removing a friend from the friend's list
-- Creating a group
 - Joining a group
 - Creating an Event
 - Joining and Event
