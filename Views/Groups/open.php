@@ -72,7 +72,7 @@ $groups = new Groups();
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
                 <?php $groups->getGroup(); ?>
               </div>
-              <div class="col-xs-18 col-sm-9 placeholder" style="padding:40px;">
+              <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
                 <?php $groups->getGroupDetails(); ?>
               </div>
             </div>

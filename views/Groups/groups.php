@@ -85,7 +85,7 @@ class Groups
         echo '<h3 style="text-align:left;">Coordinator:</h3>';
         echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
         echo '<h3 style="text-align:left;">Description:</h3>';
-        if($result_row->description){
+        if(isset($result_row->description)){
           echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->description.'</h4>';
         }else{
           echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
