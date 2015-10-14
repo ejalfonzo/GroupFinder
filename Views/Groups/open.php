@@ -72,9 +72,14 @@ $groups = new Groups();
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
                 <?php $groups->getGroup(); ?>
               </div>
-              <div class="col-xs-18 col-sm-9 placeholder">
-                <h3 style="text-align:left;">Details</h3>
+              <div class="col-xs-18 col-sm-9 placeholder" style="padding:40px;">
+                <?php $groups->getGroupDetails(); ?>
               </div>
+            </div>
+
+            <div class="row panel panel-primary" >
+              <div class="panel-heading" style="text-align: left; font-size: 20px;">Members</div>
+              <?php $groups->getGroupMembersTable(); ?>
             </div>
 
           <!-- <h2 class="sub-header">Section title</h2> -->

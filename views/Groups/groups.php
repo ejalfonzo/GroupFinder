@@ -60,6 +60,41 @@ class Groups
     }
   }
 
+  function getGroupDetails(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $groupID = $_GET["group"];
+
+        // check if user or email address already exists
+        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
+        FROM ebabilon.groups as groupsList, ebabilon.users as userList
+        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo("<script>console.log('PHP: getGroupDetails ".json_encode($result_row)."');</script>");
+
+        echo '<h3 style="text-align:left;">Coordinator:</h3>';
+        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
+        echo '<h3 style="text-align:left;">Description:</h3>';
+        if($result_row->description){
+          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->description.'</h4>';
+        }else{
+          echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
+        }
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
   function getUserFirstName(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -76,8 +111,52 @@ class Groups
         $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();  echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
+        $result_row = $query_get_user_info->fetch_object();
+        echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
         echo($result_row->first_name);
+    }
+  }
+
+  function getGroupMembersTable(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $groupID = $_GET["group"];
+
+        $sql = "SELECT id, first_name, last_name, user_image, email
+        FROM ebabilon.members, ebabilon.users as userList
+        WHERE id_member = userList.id AND id_group = '".$groupID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        if ($query_get_user_info->num_rows >= 1) {
+          echo '<div class="table-responsive panel">
+            <table class="table table-striped table-hover">';
+            echo '<thead>
+              <tr>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Email</th>
+              </tr>
+            </thead>';
+            while($row = $query_get_user_info->fetch_object()) {
+              $date = date_create($row->time);
+              echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+              echo '<tr>';
+                echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
+                echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
+                echo   '<td>'. $row->email . '</td>';
+              echo '</tr>';
+           }
+         echo'</table>
+         </div>';
+       }else{
+         echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
+       }
     }
   }
 
