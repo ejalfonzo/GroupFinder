@@ -18,7 +18,7 @@ Work was begun on:
 - Events functionality
 
 What worked well?
-Not a lot, it was a very disfunctional phase.
+Programming tasks assigned by volunteers, the work went faster, but it was a very disfunctional phase.
 
 What didn't work well?
 Communication, tasks were not being completed on time or at all. Everyone is working at random currently instead of following the master development plan and asking for help.
@@ -29,6 +29,5 @@ We need to coordinate and set clearer goals, now.
 
 For the next phase:
 - Post functionality should be available to the user in his own timeline.
-- Search should be working
-- Create groups and create events.
+- Search should be working.
 - Adding friends to a user's list.
