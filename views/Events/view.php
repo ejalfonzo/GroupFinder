@@ -30,9 +30,16 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
        include_once($path);
     ?>
 
-	<div class="container" style="margin-bottom:20px;">
-		<h1 style="font-size: 35px;">Team Events</h1>
-	</div>
+	<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
+    <div>
+        <div class="input-group">
+            <input type="text" class="form-control input-lg" placeholder="Search for events" style="margin-bottom:10px; height:55px; font-size:25px;">
+            <span class="input-group-btn">
+                <button class="btn btn-default" type="button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
+            </span>
+        </div><!-- /input-group -->
+    </div>
+  </div>
 
 	<main class="cd-main-content">
 		<div class="cd-tab-filter-wrapper">
