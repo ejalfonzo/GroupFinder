@@ -75,17 +75,17 @@ The Project will be split into protoype phases that will coincide with the Sprin
   5. ~~User Basic functionality ~~
 2. Phase 2
   1. ~~User page ~~
-  2. Post functionality
-  3. Friends
-  4. ~~Groups Basic functionality ~~
+  2. ~~Groups Basic functionality ~~
 3. Phase 3
-  1. Groups finished
-  2. Events
-  3. Business Basic functionality
-  4. Automated Tests: Post, Friends
+  1. ~~ Events Basic functionality ~~
+  2. ~~ Business Basic functionality ~~
+  3. ~~ Search Results functionality ~~
 4. Phase 4
-  1. Business finished
-  2. Automated Tests: Events, Email
+  1. Post functionality
+  2. Friends basic functionality
+  3. Email functionality
+  4. Automated Tests: Post, Friends
+  5. Automated Tests: Events, Email
 5. Phase 5
   1. Automated Tests: Business
   2. Project Complete
@@ -150,7 +150,7 @@ The following will be worked on ahead if time allows, otherwise they will be add
 
 Due to some time management issues phase 3 will focus on picking up unfinished parts of phase 2, and continue with completing parts of groups, and events. While some of these features seem like adding to the work load, work on them was already begun in phase 2, they simply need to be finished.
 
-Specific functions we well achieve will include:
+Specific functions we will achieve will include:
 - Searching for users, groups, businesses, and events by name or category respectively
 - Adding users to a friends list
 - Adding a category to a friend
@@ -159,3 +159,20 @@ Specific functions we well achieve will include:
 - Joining a group
 - Creating an Event
 - Joining and Event
+
+4. Phase 4: Business, Posts and Email
+
+This phase, like phase 3 will focus on catchup work from other phases followed by funcionality of posts to the user timeline, groups and businesses. Editing and Deleting Events, Groups, and Businesses. And Email basic functionality for certain action like posting.
+
+Specific functions we well achieve will include:
+- Adding users to a friends list
+- Adding a category to a friend
+- Editing a friend's category
+- Removing a friend from the friend's list
+- Editing a group
+- Editing an Event
+- Editing a Business
+- Posting to timeline
+- Posting to Group
+- Posting to Business
+- Email sending when a post is made.
