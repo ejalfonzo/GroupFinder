@@ -4,7 +4,7 @@
  * Class Groups
  * handles the user data
  */
-class Businesss
+class Business
 {
   /**
    * @var object $db_connection The database connection

@@ -19,8 +19,8 @@ if (isset($login)) {
     }
 }
 require_once("../../config/db.php");
-require_once("Buisness.php");
-$business = new Buisness();
+require_once("Business.php");
+$business = new Business();
 
 ?>
 <!doctype html>
@@ -58,11 +58,11 @@ $business = new Buisness();
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
-            <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/Groups/manager.php">Groups</a></li>
+            <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li class="active"><a href="/Views/Business/manager.php">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
