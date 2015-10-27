@@ -15,35 +15,100 @@ $groups = new Groups();
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
-  <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
-  <link rel="stylesheet" type="text/css" href="/css/material.css"/>
-  <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/material.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
 	<link rel="stylesheet" href="/css/reset.css"> <!-- CSS reset -->
 	<link rel="stylesheet" href="/css/contentFilter-style.css"> <!-- Resource style -->
 	<script src="/js/modernizr.js"></script> <!-- Modernizr -->
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<title>Group Finder</title>
 	<script type="text/javascript">
+	function joinGroup(group){
+
+	   $.ajax({
+		   type:"post",
+		   url:"handler.php",
+		   data:"join="+group,
+		   success:function(data){
+			   console.log("Result",data);
+			   // $("#search").val("");
+			//    $("#group"+data).html("");
+			   var obj = JSON.parse(data);
+			   alert(obj);
+			   console.log("JOIN GROUP: ", obj);
+			   // createElement(obj);
+		   }
+	   });
+	}
+	</script>
+	<script type="text/javascript">
     $(document).ready(function(){
 
          function search(){
-
               var title=$("#search").val();
-
               if(title!=""){
                 // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
                  $.ajax({
                     type:"post",
-                    url:"search.php",
+                    url:"handler.php",
                     data:"search="+title,
+					// dataType:'json',
                     success:function(data){
-											console.log("Result",data);
-                        $("#contentLocation").html(data);
-                        $("#search").val("");
+						console.log("Result",data);
+						$("#search").val("");
+                        $("#contentLocation").html("");
+						var obj = JSON.parse(data);
+						createElement(obj);
                      }
                   });
               }
          }
+
+		function createElement(data){
+			console.log("Create: ", data);
+			if(data.forEach){
+				data.forEach(function(item){
+					console.log("ITEM", item);
+					var targetElement = document.getElementById('contentLocation');
+				    var li = document.createElement('li');
+					li.className = "mix panel group "+ item.category;
+				    li.innerHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+									'<div class="panel-heading">'+
+									'<h3 class="panel-title">'+ item.name +'</h3>'+
+									'</div>'+
+									'<div class="panel-body">'+
+									'<div style="float: left; margin-right: 20px;">'+
+									'<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
+									'</div>'+
+									'<div>'+
+									'<h3>Description:</h3>'+
+									(item.description ? item.description:"No Description Available")+
+									'</div>'+
+									'</div>'+
+									'<div class="panel-footer" style="text-align:center;">'+
+									'<button id="group'+item.id+'" class="btn btn-flat btn-info" onclick="joinGroup('+item.id+')" >Join Group</button>'+
+									'</div>'+
+				                    '</div>';
+				    // Append 'foo' element to target element width="32" height="32"
+									// '<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
+				    targetElement.appendChild(li)
+				});
+			}else{
+				console.log("No Results");
+			}
+			var targetElement = document.getElementById('contentLocation');
+			var li = document.createElement('li');
+			li.className = "gap";
+			targetElement.appendChild(li);
+			var li2 = document.createElement('li');
+			li2.className = "gap";
+			targetElement.appendChild(li2);
+			buttonFilter.init();
+			$('.cd-gallery ul').mixItUp('filter', 'all');
+			// <li class="gap"></li>
+			// <li class="gap"></li>
+		}
 
         $("#searchButton").click(function(){
            search();
@@ -65,18 +130,18 @@ $groups = new Groups();
        include_once($path);
     ?>
 
-		<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
-		    <div>
-					<!-- <form method="get" action="" name="searchGroup"> -->
-		        <div class="input-group">
-		            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a group" style="margin-bottom:10px; height:55px; font-size:25px;">
-		            <span class="input-group-btn">
-		                <button class="btn btn-default" id="searchButton" type="button" type="submit"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
-		            </span>
-		        </div><!-- /input-group -->
-					<!-- </form> -->
-		    </div>
-		  </div>
+	<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
+	    <div>
+				<!-- <form method="get" action="" name="searchGroup"> -->
+	        <div class="input-group">
+	            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a group" style="margin-bottom:10px; height:55px; font-size:25px;">
+	            <span class="input-group-btn">
+	                <button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
+	            </span>
+	        </div><!-- /input-group -->
+				<!-- </form> -->
+	    </div>
+	  </div>
 
 	<main class="cd-main-content">
 		<div class="cd-tab-filter-wrapper">
@@ -86,91 +151,32 @@ $groups = new Groups();
 						<a data-type="all" href="#0">All</a> <!-- selected option on mobile -->
 					</li>
 					<li class="filter"><a class="selected" href="#0" data-type="all">All</a></li>
-					<li class="filter" data-filter=".panel"><a href="#0" data-type="panel">Panels</a></li>
-					<li class="filter" data-filter=".image"><a href="#0" data-type="image">Images</a></li>
+					<li class="filter" data-filter=".group"><a href="#0" data-type="group">Groups</a></li>
+					<!-- <li class="filter" data-filter=".image"><a href="#0" data-type="image">Images</a></li> -->
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->
 		</div> <!-- cd-tab-filter-wrapper -->
 
 		<section class="cd-gallery">
 			<ul id="contentLocation">
-				<li class="mix panel check1 radio2 2">
-					<!-- <img src="/images/contentFilter/img-1.jpg" alt="Image 1"> -->
-					<div class="panel panel-primary" style="margin-bottom:0px;">
-					    <div class="panel-heading">
-					        <h3 class="panel-title">Team A</h3>
-					    </div>
-					    <div class="panel-body">
-					        Team Description...
-					    </div>
-					</div>
-				</li>
-				<li class="mix panel check2 radio2 option2">
-					<!-- <img src="/images/contentFilter/img-2.jpg" alt="Image 2"> -->
-					<div class="panel panel-warning" style="margin-bottom:0px;">
-					    <div class="panel-heading">
-					        <h3 class="panel-title">Panel warning</h3>
-					    </div>
-					    <div class="panel-body">
-					        Panel content
-					    </div>
-					</div>
-				</li>
-				<li class="mix panel check3 radio3 option1">
-					<!-- <img src="/images/contentFilter/img-3.jpg" alt="Image 3"> -->
-					<div class="panel panel-success" style="margin-bottom:0px;">
-					    <div class="panel-heading">
-					        <h3 class="panel-title">Panel success</h3>
-					    </div>
-					    <div class="panel-body">
-					        Panel content
-					    </div>
-					</div>
-				</li>
-				<li class="mix panel check1 radio1 option1">
-					<!-- <img src="/images/contentFilter/img-4.jpg" alt="Image 4"> -->
-					<div class="panel panel-success" style="margin-bottom:0px;">
-					    <div class="panel-heading">
-					        <h3 class="panel-title">Panel success</h3>
-					    </div>
-					    <div class="panel-body">
-					        Panel content
-					    </div>
-					</div>
-				</li>
-				<li class="mix panel check1 radio1 option1">
-					<!-- <img src="/images/contentFilter/img-5.jpg" alt="Image 5"> -->
-					<div class="panel panel-success" style="margin-bottom:0px;">
-					    <div class="panel-heading">
-					        <h3 class="panel-title">Panel success</h3>
-					    </div>
-					    <div class="panel-body">
-					        Panel content
-					    </div>
-					</div>
-				</li>
-				<!-- <li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-6.jpg" alt="Image 6"></li>
-				<li class="mix image check3 radio3 option1"><img src="/images/contentFilter/img-7.jpg" alt="Image 7"></li>
-				<li class="mix image check3 radio3 option4"><img src="/images/contentFilter/img-8.jpg" alt="Image 8"></li>
-				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-9.jpg" alt="Image 9"></li> -->
-				<li class="gap"></li>
-				<li class="gap"></li>
-				<li class="gap"></li>
+				<!-- Content goes here -->
 			</ul>
 			<div class="cd-fail-message">No results found</div>
 		</section> <!-- cd-gallery -->
 
 		<div class="cd-filter">
 			<form>
-				<div class="cd-filter-block">
+				<!-- <div class="cd-filter-block">
 					<h4>Search</h4>
 
 					<div class="cd-filter-content">
 						<input type="search" placeholder="Try panel...">
-					</div> <!-- cd-filter-content -->
-				</div> <!-- cd-filter-block -->
+					</div> -->
+					 <!-- cd-filter-content -->
+				<!-- </div>  -->
+				<!-- cd-filter-block -->
 
-				<div class="cd-filter-block">
+				<!-- <div class="cd-filter-block">
 					<h4>Check boxes</h4>
 
 					<ul class="cd-filter-content cd-filters list">
@@ -188,8 +194,9 @@ $groups = new Groups();
 							<input class="filter" data-filter=".check3" type="checkbox" id="checkbox3">
 							<label class="checkbox-label" for="checkbox3">Option 3</label>
 						</li>
-					</ul> <!-- cd-filter-content -->
-				</div> <!-- cd-filter-block -->
+					</ul>  -->
+				<!-- </div>  -->
+				<!-- cd-filter-block -->
 
 				<div class="cd-filter-block">
 					<h4>Select</h4>
@@ -198,25 +205,21 @@ $groups = new Groups();
 						<div class="cd-select cd-filters">
 							<select class="filter" name="selectThis" id="selectThis">
 								<option value="">Choose an option</option>
-								<!-- <option value=".option1">Option 1</option>
-								<option value=".option2">Option 2</option>
-								<option value=".option3">Option 3</option>
-								<option value=".option4">Option 4</option> -->
 								<?php
 								 $categories = $groups->getGroupCategories();
 								 echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
-								 if($categories != null){
-									 while($row = $categories->fetch_object()){
-				               echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
-				          }
-								 }
+									if($categories != null){
+										while($row = $categories->fetch_object()){
+					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+					          			}
+								 	}
 								?>
 							</select>
 						</div> <!-- cd-select -->
 					</div> <!-- cd-filter-content -->
 				</div> <!-- cd-filter-block -->
 
-				<div class="cd-filter-block">
+				<!-- <div class="cd-filter-block">
 					<h4>Radio buttons</h4>
 
 					<ul class="cd-filter-content cd-filters list">
@@ -234,8 +237,10 @@ $groups = new Groups();
 							<input class="filter" data-filter=".radio3" type="radio" name="radioButton" id="radio3">
 							<label class="radio-label" for="radio3">Choice 3</label>
 						</li>
-					</ul> <!-- cd-filter-content -->
-				</div> <!-- cd-filter-block -->
+					</ul>  -->
+					<!-- cd-filter-content -->
+				<!-- </div>  -->
+				<!-- cd-filter-block -->
 			</form>
 
 			<a href="#0" class="cd-close">Close</a>
@@ -249,5 +254,12 @@ $groups = new Groups();
 <script type="text/javascript" src="/js/ripples.js"></script>
 <script src="/js/jquery.mixitup.min.js"></script>
 <script src="/js/contentFilter.js"></script> <!-- Resource jQuery -->
+<script>
+$.material.init();
+$(document).ready(function() {
+  $(".select").dropdown({"optionClass": "withripple"});
+});
+$().dropdown({autoinit: "select"});
+</script>
 </body>
 </html>

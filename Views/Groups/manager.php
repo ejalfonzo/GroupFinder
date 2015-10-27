@@ -124,9 +124,10 @@ $groups = new Groups();
                                      <?php
                                       $categories = $groups->getGroupCategories();
                                       if($categories != null){
-                     									 while($row = $categories->fetch_object()){
-                     				               echo   '<option value="'.$categories->id_category. '">'. $categories->name . '</option>';
-                     				          }
+                     					while($row = $categories->fetch_object()){
+                     			           echo   '<option value="'.$categories->id_category. '">'. $categories->name . '</option>';
+                     				    }
+                                    }
                                      ?>
 
                                    </select>
@@ -178,7 +179,5 @@ $groups = new Groups();
     });
     $().dropdown({autoinit: "select"});
     </script>
-    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 </body>
 </html>

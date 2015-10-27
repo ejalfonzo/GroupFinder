@@ -28,12 +28,52 @@ class Events
     if (isset($_POST["createEvent"])) {
         $this->createEvent();
     }
+    if (isset($_POST["search"])) {
+        $this->searchEvent();
+    }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
   }
 
+  function searchEvent(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+        // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
+        // check if user or email address already exists
+        $sql = "SELECT *
+        FROM ebabilon.events
+        WHERE name like '%".$searchStatement."%';";
+
+        $query_get_user_info = $this->db_connection->query($sql);
+        $arrayResult = array();
+        // get result row (as an object)
+        if ($query_get_user_info->num_rows >= 1) {
+
+          while($row = $query_get_user_info->fetch_object()){
+            //   echo(json_encode($row));
+            //   return $row;
+            $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name, 'place'=>$row->place, 'time'=>$row->time,
+             'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin));
+            // echo(''.$row->id_group)
+         }
+         return json_encode($arrayResult);
+     }else{
+         return $arrayResult;
+     }
+        // $result_row = $query_get_user_info->fetch_object();
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
 
   function getEvent(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);

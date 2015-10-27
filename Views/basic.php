@@ -25,7 +25,56 @@ class Basic
      */
     public function __construct()
     {
+        if (isset($_POST["search"])) {
+            $this->search();
+        }
+    }
 
+    function search(){
+      $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+      // change character set to utf8 and check it
+      if (!$this->db_connection->set_charset("utf8")) {
+          $this->errors[] = $this->db_connection->error;
+          echo("<script>console.log('Error: DB not utf8');</script>");
+      }
+      if (!$this->db_connection->connect_errno) {
+          // escaping, additionally removing everything that could be (html/javascript-) code
+          $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+          $arrayResult = array();
+
+          $sql = "SELECT *
+          FROM ebabilon.groups
+          WHERE name like '%".$searchStatement."%';";
+
+          $query_get_user_info = $this->db_connection->query($sql);
+
+          // get result row (as an object)
+          if ($query_get_user_info->num_rows >= 1) {
+            while($row = $query_get_user_info->fetch_object()){
+              $arrayResult[] =  (array('type'=>'group','id' => $row->id_group,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->group_image));
+           }
+         }
+
+         $sql = "SELECT *
+         FROM ebabilon.events
+         WHERE name like '%".$searchStatement."%';";
+
+         $query_get_user_info = $this->db_connection->query($sql);
+         // get result row (as an object)
+         if ($query_get_user_info->num_rows >= 1) {
+
+           while($row = $query_get_user_info->fetch_object()){
+             $arrayResult[] =  (array('type'=>'event','id' => $row->id_event,'name'=> $row->name, 'place'=>$row->place, 'time'=>$row->time,
+              'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin));
+          }
+        }
+        // if(count($arrayResult) >= 1){
+            return json_encode($arrayResult);
+        // }
+      }
     }
 
     function getUserFirstName(){

@@ -85,13 +85,16 @@ function timelineCard(){
         <div class="jumbotron" style="margin-top:80px;">
             <h1 style="margin-bottom: 20px;">Group Finder</h1>
             <div class="form-group">
-
-                <div class="input-group">
-                    <input type="text" class="form-control input-lg" placeholder="Search for a group">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
-                    </span>
-                </div><!-- /input-group -->
+        		<div>
+    				<form method=GET action="/Views/viewSearch.php" name="searchItem">
+            			<div class="input-group">
+            				<input type="text" id="search" class="form-control input-lg" placeholder="Search in Group Finder" style="margin-bottom:10px; height:55px; font-size:25px;">
+            				<span class="input-group-btn">
+            					<button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
+            				</span>
+            			</div><!-- /input-group -->
+    				</form>
+        		</div>
             </div>
             <p>Hello World, this is our main home screen where you will be able to search or view featured group and/or catalog of groups</p>
             <div

@@ -1,7 +1,7 @@
 <?php
 if ($_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
-// require_once("config/db.php");
+require_once("../../config/db.php");
 
 // show potential errors / feedback (from login object)
 if (isset($login)) {

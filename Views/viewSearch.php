@@ -1,7 +1,11 @@
 <?php
 if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
-require_once("../../config/db.php");
+// require_once("config/db.php");
+require_once("../config/db.php");
+require_once("Basic.php");
+$basic = new Basic();
+
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -22,12 +26,13 @@ require_once("../../config/db.php");
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<title>Group Finder</title>
 	<script type="text/javascript">
+
     $(document).ready(function(){
+		var data = <?php echo $_GET['searchItem']; ?> +"";
+		console.log("POST: ",data);
 
          function search(){
-
               var title=$("#search").val();
-
               if(title!=""){
                 // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
                  $.ajax({
@@ -51,21 +56,40 @@ require_once("../../config/db.php");
 			if(data.forEach){
 				data.forEach(function(item){
 					console.log("ITEM", item);
-					var targetElement = document.getElementById('contentLocation');
-				    var li = document.createElement('li');
-					li.className = "mix panel event "+ item.category;
-				    li.innerHTML =
-				                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
-									'<div class="panel-heading">'+
-									'<h3 class="panel-title">'+ item.name +'</h3>'+
-									'</div>'+
-									'<div class="panel-body">'+
-									(item.description ? item.description:"No Description Available")+
-									'</div>'+
-				                    '</div>';
-				    // Append 'foo' element to target element
-									// '<img src="'+ item.image +'" alt="Image 1"> '+
-				    targetElement.appendChild(li)
+					if(item.type == "group"){
+						var targetElement = document.getElementById('contentLocation');
+					    var li = document.createElement('li');
+						li.className = "mix panel group "+ item.category;
+					    li.innerHTML =
+					                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+										'<div class="panel-heading">'+
+										'<h3 class="panel-title">Group: '+ item.name +'</h3>'+
+										'</div>'+
+										'<div class="panel-body">'+
+										(item.description ? item.description:"No Description Available")+
+										'</div>'+
+					                    '</div>';
+					    // Append 'foo' element to target element
+										// '<img src="'+ item.image +'" alt="Image 1"> '+
+					    targetElement.appendChild(li)
+					}
+					if(item.type == "event"){
+						var targetElement = document.getElementById('contentLocation');
+					    var li = document.createElement('li');
+						li.className = "mix panel event "+ item.category;
+					    li.innerHTML =
+					                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+										'<div class="panel-heading">'+
+										'<h3 class="panel-title">Event: '+ item.name +'</h3>'+
+										'</div>'+
+										'<div class="panel-body">'+
+										(item.description ? item.description:"No Description Available")+
+										'</div>'+
+					                    '</div>';
+					    // Append 'foo' element to target element
+										// '<img src="'+ item.image +'" alt="Image 1"> '+
+					    targetElement.appendChild(li)
+					}
 				});
 			}else{
 				console.log("No Results");
@@ -125,8 +149,9 @@ require_once("../../config/db.php");
 						<a data-type="all" href="#0">All</a> <!-- selected option on mobile -->
 					</li>
 					<li class="filter"><a class="selected" href="#0" data-type="all">All</a></li>
+					<li class="filter" data-filter=".group"><a href="#0" data-type="group">Groups</a></li>
 					<li class="filter" data-filter=".event"><a href="#0" data-type="event">Event</a></li>
-					<!-- <li class="filter" data-filter=".image"><a href="#0" data-type="image">Team</a></li> -->
+
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->
 		</div> <!-- cd-tab-filter-wrapper -->

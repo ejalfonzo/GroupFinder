@@ -31,16 +31,45 @@ class Groups
     if (isset($_POST["search"])) {
         $this->searchGroup();
     }
-    // if (isset($_POST["searchGroup"])) {
-    //     $this->searchGroup();
-    // }
+    if (isset($_POST["join"])) {
+        $this->joinGroup();
+    }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
   }
 
+  function joinGroup(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $groupID = $_GET["group"];
+        $toJoin = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($toJoin)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
+        FROM ebabilon.groups as groupsList, ebabilon.users as userList
+        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+
+        return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
   function searchGroup(){
-    echo("<script>console.log('searh results: ');</script>");
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
     // change character set to utf8 and check it
@@ -51,18 +80,26 @@ class Groups
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+        // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
         // check if user or email address already exists
         $sql = "SELECT *
         FROM ebabilon.groups
         WHERE name like '%".$searchStatement."%';";
 
         $query_get_user_info = $this->db_connection->query($sql);
+
         // get result row (as an object)
         if ($query_get_user_info->num_rows >= 1) {
-          while($row = $categories->fetch_object()){
-              return $row;
-              echo("<script>console.log('searh results: ".json_encode($row)."');</script>");
+            $arrayResult = array();
+          while($row = $query_get_user_info->fetch_object()){
+            //   echo(json_encode($row));
+            //   return $row;
+            $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
+             'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+            'image' => $row->group_image));
+            // echo(''.$row->id_group)
          }
+         return json_encode($arrayResult);
        }
         // $result_row = $query_get_user_info->fetch_object();
 
