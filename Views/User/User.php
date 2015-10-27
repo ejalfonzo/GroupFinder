@@ -109,33 +109,8 @@ class User
             WHERE eventsList.id_event = attendList.id_event AND attendList.id_attendee = '" .$userID . "') as myEvents, ebabilon.users
             WHERE time > '" .$today->date . "' AND myEvents.admin = id
             LIMIT 3;";
-            $query_get_user_info = $this->db_connection->query($sql);
-            if ($query_get_user_info->num_rows >= 1) {
-              echo '<div class="table-responsive panel">
-                <table class="table table-striped table-hover">';
-              echo '<thead>
-                <tr>
-                  <th>Event Name</th>
-                  <th>Coordinator</th>
-                  <th>Date</th>
-                  <th>Place</th>
-                </tr>
-              </thead>';
-              while($row = $query_get_user_info->fetch_object()) {
-                $date = date_create($row->time);
-                echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-                echo '<tr>';
-                  echo   '<td>'. $row->name . '</td>';
-                  echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                  echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
-                  echo   '<td>'. $row->place . '</td>';
-                echo '</tr>';
-             }
-             echo'</table>
-             </div>';
-           }else{
-             echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Upcoming Events...</h3>';
-           }
+            $row = $query_get_user_info = $this->db_connection->query($sql);
+            return $row;
         }
       }
 
@@ -158,35 +133,8 @@ class User
             FROM ebabilon.events as eventsList, ebabilon.attendees as attendList
             WHERE eventsList.id_event = attendList.id_event AND attendList.id_attendee = '" .$userID . "') as myEvents, ebabilon.users
             WHERE time > '" .$today->date . "' AND myEvents.admin = id;";
-            $query_get_user_info = $this->db_connection->query($sql);
-            if ($query_get_user_info->num_rows >= 1) {
-              echo '<div class="table-responsive panel">
-                <table class="table table-striped table-hover">';
-                echo '<thead>
-                  <tr>
-                    <th>Event Name</th>
-                    <th>Coordinator</th>
-                    <th>Date</th>
-                    <th>Place</th>
-                    <th>Description</th>
-                  </tr>
-                </thead>';
-                while($row = $query_get_user_info->fetch_object()) {
-                  $date = date_create($row->time);
-                  echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-                  echo '<tr>';
-                    echo   '<td>'. $row->name . '</td>';
-                    echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                    echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
-                    echo   '<td>'. $row->place . '</td>';
-                    echo   '<td>'. $row->description . '</td>';
-                  echo '</tr>';
-               }
-             echo'</table>
-             </div>';
-           }else{
-             echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Upcoming Events...</h3>';
-           }
+            $row = $query_get_user_info = $this->db_connection->query($sql);
+            return $row;
         }
       }
 
@@ -210,22 +158,8 @@ class User
             FROM ebabilon.groups as groupsList, ebabilon.members as memberList
             WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
             WHERE myGroups.admin = id;";
-            $query_get_user_info = $this->db_connection->query($sql);
-            if ($query_get_user_info->num_rows >= 1) {
-
-              while($row = $query_get_user_info->fetch_object()) {
-                echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-                echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                  echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-                  echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-                  echo '</button>';
-                  echo   '<h4>'. $row->name . '</h4>';
-                  echo   '<span class="text-muted">'. $row->description . '</span>';
-                echo '</div>';
-             }
-           }else{
-             echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
-           }
+            $row = $query_get_user_info = $this->db_connection->query($sql);
+            return $row;
         }
       }
 
