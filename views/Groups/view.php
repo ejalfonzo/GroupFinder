@@ -2,6 +2,9 @@
 if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
 // require_once("config/db.php");
+require_once("../../config/db.php");
+require_once("Groups.php");
+$groups = new Groups();
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -12,14 +15,47 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/material.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
+  <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
+  <link rel="stylesheet" type="text/css" href="/css/material.css"/>
+  <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
 	<link rel="stylesheet" href="/css/reset.css"> <!-- CSS reset -->
 	<link rel="stylesheet" href="/css/contentFilter-style.css"> <!-- Resource style -->
 	<script src="/js/modernizr.js"></script> <!-- Modernizr -->
+	<script type="text/javascript" src="/js/jquery.js"></script>
+	<title>Group Finder</title>
+	<script type="text/javascript">
+    $(document).ready(function(){
 
-	<title>Content Filters | CodyHouse</title>
+         function search(){
+
+              var title=$("#search").val();
+
+              if(title!=""){
+                // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
+                 $.ajax({
+                    type:"post",
+                    url:"search.php",
+                    data:"search="+title,
+                    success:function(data){
+											console.log("Result",data);
+                        $("#contentLocation").html(data);
+                        $("#search").val("");
+                     }
+                  });
+              }
+         }
+
+        $("#searchButton").click(function(){
+           search();
+        });
+
+        $('#search').keyup(function(e) {
+           if(e.keyCode == 13) {
+              search();
+            }
+        });
+    });
+	</script>
 </head>
 <body>
 	<!-- Static navbar -->
@@ -29,9 +65,18 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
        include_once($path);
     ?>
 
-	<div class="container" style="margin-bottom:20px;">
-		<h1 style="font-size: 35px;">Group Search</h1>
-	</div>
+		<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
+		    <div>
+					<!-- <form method="get" action="" name="searchGroup"> -->
+		        <div class="input-group">
+		            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a group" style="margin-bottom:10px; height:55px; font-size:25px;">
+		            <span class="input-group-btn">
+		                <button class="btn btn-default" id="searchButton" type="button" type="submit"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
+		            </span>
+		        </div><!-- /input-group -->
+					<!-- </form> -->
+		    </div>
+		  </div>
 
 	<main class="cd-main-content">
 		<div class="cd-tab-filter-wrapper">
@@ -48,8 +93,8 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 		</div> <!-- cd-tab-filter-wrapper -->
 
 		<section class="cd-gallery">
-			<ul>
-				<li class="mix panel check1 radio2 option3">
+			<ul id="contentLocation">
+				<li class="mix panel check1 radio2 2">
 					<!-- <img src="/images/contentFilter/img-1.jpg" alt="Image 1"> -->
 					<div class="panel panel-primary" style="margin-bottom:0px;">
 					    <div class="panel-heading">
@@ -104,13 +149,10 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 					    </div>
 					</div>
 				</li>
-				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-6.jpg" alt="Image 6"></li>
+				<!-- <li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-6.jpg" alt="Image 6"></li>
 				<li class="mix image check3 radio3 option1"><img src="/images/contentFilter/img-7.jpg" alt="Image 7"></li>
 				<li class="mix image check3 radio3 option4"><img src="/images/contentFilter/img-8.jpg" alt="Image 8"></li>
-				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-9.jpg" alt="Image 9"></li>
-				<li class="mix image check3 radio3 option4"><img src="/images/contentFilter/img-10.jpg" alt="Image 10"></li>
-				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-11.jpg" alt="Image 11"></li>
-				<li class="mix image check1 radio3 option3"><img src="/images/contentFilter/img-12.jpg" alt="Image 12"></li>
+				<li class="mix image check3 radio3 option3"><img src="/images/contentFilter/img-9.jpg" alt="Image 9"></li> -->
 				<li class="gap"></li>
 				<li class="gap"></li>
 				<li class="gap"></li>
@@ -156,10 +198,19 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 						<div class="cd-select cd-filters">
 							<select class="filter" name="selectThis" id="selectThis">
 								<option value="">Choose an option</option>
-								<option value=".option1">Option 1</option>
+								<!-- <option value=".option1">Option 1</option>
 								<option value=".option2">Option 2</option>
 								<option value=".option3">Option 3</option>
-								<option value=".option4">Option 4</option>
+								<option value=".option4">Option 4</option> -->
+								<?php
+								 $categories = $groups->getGroupCategories();
+								 echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
+								 if($categories != null){
+									 while($row = $categories->fetch_object()){
+				               echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+				          }
+								 }
+								?>
 							</select>
 						</div> <!-- cd-select -->
 					</div> <!-- cd-filter-content -->
@@ -192,7 +243,7 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 
 		<a href="#0" class="cd-filter-trigger">Filters</a>
 	</main> <!-- cd-main-content -->
-<script type="text/javascript" src="/js/jquery.js"></script>
+
 <script type="text/javascript" src="/js/bootstrap.js"></script>
 <script type="text/javascript" src="/js/material.js"></script>
 <script type="text/javascript" src="/js/ripples.js"></script>

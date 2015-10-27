@@ -59,10 +59,10 @@ $groups = new Groups();
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
             <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li><a href="/Views/Business/manager.php">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -75,7 +75,26 @@ $groups = new Groups();
           <div class="row placeholders panel panel-primary" style="padding:20px;">
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
-              <?php $groups->getUserGroups(); ?>
+              <?php
+                $myGroups = $groups->getUserGroups();
+                $hasGs = false;
+                echo("<script>console.log('results_row: ".json_encode($myGroups)."');</script>");
+                if($myGroups->num_rows >= 1){$hasGs = true;}
+                if ($hasGs) {
+                  while($row = $myGroups->fetch_object()) {
+
+                    echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                      echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                      echo '</button>';
+                      echo   '<h4>'. $row->name . '</h4>';
+                      echo   '<span class="text-muted">'. $row->description . '</span>';
+                    echo '</div>';
+                 }
+               }else if($myGroups != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
+               }
+               ?>
 
           </div>
 
@@ -102,7 +121,13 @@ $groups = new Groups();
                         				<div class="control-group">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
-                                     <?php $groups->getGroupCategories(); ?>
+                                     <?php
+                                      $categories = $groups->getGroupCategories();
+                                      if($categories != null){
+                     									 while($row = $categories->fetch_object()){
+                     				               echo   '<option value="'.$categories->id_category. '">'. $categories->name . '</option>';
+                     				          }
+                                     ?>
 
                                    </select>
                         				</div>

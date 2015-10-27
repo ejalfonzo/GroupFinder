@@ -28,12 +28,47 @@ class Groups
     if (isset($_POST["createGroup"])) {
         $this->createGroup();
     }
+    if (isset($_POST["search"])) {
+        $this->searchGroup();
+    }
+    // if (isset($_POST["searchGroup"])) {
+    //     $this->searchGroup();
+    // }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
   }
 
+  function searchGroup(){
+    echo("<script>console.log('searh results: ');</script>");
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+        // check if user or email address already exists
+        $sql = "SELECT *
+        FROM ebabilon.groups
+        WHERE name like '%".$searchStatement."%';";
+
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        if ($query_get_user_info->num_rows >= 1) {
+          while($row = $categories->fetch_object()){
+              return $row;
+              echo("<script>console.log('searh results: ".json_encode($row)."');</script>");
+         }
+       }
+        // $result_row = $query_get_user_info->fetch_object();
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
 
   function getGroup(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -133,30 +168,7 @@ class Groups
         FROM ebabilon.members, ebabilon.users as userList
         WHERE id_member = userList.id AND id_group = '".$groupID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-          echo '<div class="table-responsive panel">
-            <table class="table table-striped table-hover">';
-            echo '<thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>';
-            while($row = $query_get_user_info->fetch_object()) {
-              $date = date_create($row->time);
-              echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-              echo '<tr>';
-                echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
-                echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                echo   '<td>'. $row->email . '</td>';
-              echo '</tr>';
-           }
-         echo'</table>
-         </div>';
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
-       }
+        return $query_get_user_info;
     }
   }
 
@@ -265,9 +277,7 @@ class Groups
         $query_get_user_info = $this->db_connection->query($sql);
         if ($query_get_user_info->num_rows >= 1) {
 
-          while($row = $query_get_user_info->fetch_object()){
-              echo   '<option value="'.$row->id_category. '">'. $row->name . '</option>';
-         }
+          return $query_get_user_info;
        }
     }
   }
@@ -290,21 +300,7 @@ class Groups
         WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
         WHERE myGroups.admin = id;";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-
-          while($row = $query_get_user_info->fetch_object()) {
-            echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-            echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-              echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-              echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-              echo '</button>';
-              echo   '<h4>'. $row->name . '</h4>';
-              echo   '<span class="text-muted">'. $row->description . '</span>';
-            echo '</div>';
-         }
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
-       }
+        return $query_get_user_info;
     }
   }
 }

@@ -59,16 +59,17 @@ $groups = new Groups();
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
             <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li><a href="/Views/Business/manager.php">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
+              <div class="panel-body">
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
                 <?php $groups->getGroup(); ?>
               </div>
@@ -77,15 +78,70 @@ $groups = new Groups();
               </div>
             </div>
 
+             <div class="panel-footer">
+               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveG">Leave Group</a>
+             </div>
+            </div>
+
             <div class="row panel panel-primary" >
               <div class="panel-heading" style="text-align: left; font-size: 20px;">Members</div>
-              <?php $groups->getGroupMembersTable(); ?>
+              <?php
+                $events = $groups->getGroupMembersTable();
+                $hasE = false;
+                echo("<script>console.log('results_row: ".json_encode($events)."');</script>");
+                if($events->num_rows >= 1){
+                  $hasE = true;
+                }
+                if ($hasE) {
+                  echo '<div class="table-responsive panel">
+                    <table class="table table-striped table-hover">';
+                    echo '<thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>';
+                    while($row = $events->fetch_object()) {
+                      $date = date_create($row->time);
+
+                      echo '<tr>';
+                        echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
+                        echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
+                        echo   '<td>'. $row->email . '</td>';
+                      echo '</tr>';
+                   }
+                 echo'</table>
+                 </div>';
+               }else if($events != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
+               }
+              ?>
             </div>
 
           <!-- <h2 class="sub-header">Section title</h2> -->
         </div>
       </div>
 
+      <div id="LeaveG" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to leave:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php $groups->getGroup(); ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" >Leave</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Stay</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
