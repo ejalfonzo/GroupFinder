@@ -1,33 +1,41 @@
-# GroupFinder v0.75
+# GroupFinder v0.85
 
-Project Phase 2
+Project Phase 3
 
 Current completed deliverables:
 - Register User
 - Log-in
 - User Dashboard
 - Groups in user dashboard
+- Events and Businesses in user dashboard
+- Search funcionality
+- RESTful architecture
 
-For Phase 2 we completed all 2/5 basic objectives from the Master Project Development Plan and begun work on the other 3:
-- User Page
-- Groups Basic Functionality
+For Phase 3 we completed all basic objectives from the Master Project Development Plan:
+- Events basic functionality
+- Business basic functionality
+- Search Results functionality
 
 Work was begun on:
 - Post functionality
 - Friends functionality
-- Events functionality
+- Post functionality
+- RESTful architecture changes
+- Email functionality
 
 What worked well?
-Programming tasks assigned by volunteers, the work went faster, but it was a very disfunctional phase.
+Programming tasks assigned unilaterally by priority.
 
 What didn't work well?
-Communication, tasks were not being completed on time or at all. Everyone is working at random currently instead of following the master development plan and asking for help.
+Communication, tasks are still not being completed until the last moment. While queries are ready or done quickly, the front-end isn't and is being left until the last moment because most of the group is too aware of the 'real' deadline and sandbags.
 
 What we learned?
-We need to coordinate and set clearer goals, now.
+We need to come together, learn the requirements and deliver farther away from the deadline.
 
 
 For the next phase:
-- Post functionality should be available to the user in his own timeline.
-- Search should be working.
-- Adding friends to a user's list.
+- Post functionality
+- Friends functionality
+- Post functionality
+- RESTful architecture changes
+- Email functionality
