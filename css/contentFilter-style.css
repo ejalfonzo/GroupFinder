@@ -267,10 +267,12 @@ xgallery
   height: 0;
   display: inline-block;
 }
+/* 
 .cd-gallery img {
   display: block;
   width: 100%;
 }
+ */
 .cd-gallery .cd-fail-message {
   display: none;
   text-align: center;
@@ -289,7 +291,7 @@ xgallery
   }
   .cd-gallery li {
     width: 48%;
-    margin-bottom: 2em;
+    margin: 1em 1em;
   }
 }
 @media only screen and (min-width: 1170px) {
@@ -301,7 +303,7 @@ xgallery
     transition: width 0.3s;
   }
   .cd-gallery li {
-    width: 23%;
+    width: 35em;
   }
   .cd-gallery.filter-is-visible {
     /* reduce width when filter is visible */
