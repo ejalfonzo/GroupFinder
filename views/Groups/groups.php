@@ -49,20 +49,25 @@ class Groups
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
-        $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
-        $toJoin = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
-        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($toJoin)."');</script>");
+        $userID = $_SESSION["id"];
+        $groupID = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
 
         // check if user or email address already exists
-        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
-        FROM ebabilon.groups as groupsList, ebabilon.users as userList
-        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $sql = "INSERT INTO `ebabilon`.`members` (`id_group`, `id_member`)
+        SELECT * FROM (SELECT '".$groupID."', '".$userID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_group, id_member FROM ebabilon.members
+        WHERE id_group = '".$groupID."' AND id_member = '".$userID."') LIMIT 1;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-
-        return json_encode($result_row);
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $joinResult = "Joined Group";
+          return json_encode($joinResult);
+        }
+        // $result_row = $query_get_user_info->fetch_object();
+        //
+        // return json_encode($result_row);
 
 
         // echo '<span class="text-muted">'. $result_row->name .'</span>';

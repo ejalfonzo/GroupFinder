@@ -1,5 +1,5 @@
 <?php
-
+if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(); }
 /**
  * Group Handler
  * handles the group data
