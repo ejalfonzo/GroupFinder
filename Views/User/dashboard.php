@@ -63,10 +63,10 @@ $user = new User();
             </ul>
             <ul class="nav nav-sidebar">
                 <li><a href="/Views/Groups/manager.php">Groups</a></li>
-                <li><a href="#">Events</a></li>
+                <li><a href="/Views/Events/manager.php">Events</a></li>
             </ul>
             <ul class="nav nav-sidebar">
-                <li><a href="">Buisness</a></li>
+                <li><a href="/Views/Business/manager.php">Buisness</a></li>
             </ul>
         </div>
         <!-- Body Content -->

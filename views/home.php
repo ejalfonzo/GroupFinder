@@ -20,7 +20,7 @@ if (isset($login)) {
 }
 
 // require_once("../config/db.php");
-require_once("basic.php");
+require_once("Basic.php");
 $basic = new Basic();
 
 function timelineCard(){
