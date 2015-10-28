@@ -20,3 +20,15 @@ require_once("Groups.php");
     $result = $groups->joinGroup();
     echo $result;
  }
+
+ if (isset($_POST["leave"])) {
+    $groups = new Groups();
+    $result = $groups->leaveGroup();
+    echo $result;
+ }
+
+ if (isset($_POST["isMember"])) {
+    $groups = new Groups();
+    $result = $groups->isMember();
+    echo $result;
+ }

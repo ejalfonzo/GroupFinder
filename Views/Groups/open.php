@@ -1,7 +1,6 @@
 <?php
 if ($_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
-require_once("../../config/db.php");
 
 // show potential errors / feedback (from login object)
 if (isset($login)) {
@@ -40,6 +39,25 @@ $groups = new Groups();
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
     <!-- <link rel="icon" href="/images/logo.ico"> -->
     <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript">
+
+  	function leaveGroup(group){
+
+  	   $.ajax({
+  		   type:"post",
+  		   url:"handler.php",
+  		   data:"leave="+group,
+  		   success:function(data){
+  			   console.log("Result",data);
+  			   var obj = JSON.parse(data);
+  			   alert(obj);
+  			   console.log("LEAVE GROUP: ", obj);
+           window.location.href = "/Views/Groups/manager.php";
+  			   // createElement(obj);
+  		   }
+  	   });
+  	}
+  	</script>
 </head>
 <body>
 
@@ -136,7 +154,7 @@ $groups = new Groups();
                       </div>
                     </div>
                     <div class="modal-footer" style="text-align:center;">
-                      <button type="button" class="btn btn-warning" >Leave</button>
+                      <button type="button" class="btn btn-warning" onclick="leaveGroup(<?php echo($_GET["group"]); ?>)">Leave</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Stay</button>
                     </div>
                 </div>
@@ -163,15 +181,9 @@ $groups = new Groups();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
-    <script type="text/javascript" src="/js/dropdown.js"></script>
-    <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();
-    $(document).ready(function() {
-      $(".select").dropdown({"optionClass": "withripple"});
-    });
-    $().dropdown({autoinit: "select"});
     </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->

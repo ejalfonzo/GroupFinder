@@ -2,7 +2,7 @@
 if ($_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
 // require_once("config/db.php");
-echo("<script>console.log('PHP: ".json_encode($_SESSION)."');</script>");
+// echo("<script>console.log('PHP: ".json_encode($_SESSION)."');</script>");
 // show potential errors / feedback (from login object)
 if (isset($login)) {
     if ($login->errors) {

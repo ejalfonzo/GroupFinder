@@ -122,13 +122,14 @@ $groups = new Groups();
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
                                      <?php
-                                      $categories = $groups->getGroupCategories();
-                                      if($categories != null){
-                     					while($row = $categories->fetch_object()){
-                     			           echo   '<option value="'.$categories->id_category. '">'. $categories->name . '</option>';
-                     				    }
-                                    }
-                                     ?>
+                     								 $categories = $groups->getGroupCategories();
+                     								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
+                     									if($categories != null){
+                     										while($row = $categories->fetch_object()){
+                     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+                     					          			}
+                     								 	}
+                     								?>
 
                                    </select>
                         				</div>
@@ -169,15 +170,9 @@ $groups = new Groups();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
-    <script type="text/javascript" src="/js/dropdown.js"></script>
-    <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();
-    $(document).ready(function() {
-      $(".select").dropdown({"optionClass": "withripple"});
-    });
-    $().dropdown({autoinit: "select"});
     </script>
 </body>
 </html>

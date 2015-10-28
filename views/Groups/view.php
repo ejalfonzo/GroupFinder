@@ -1,7 +1,6 @@
 <?php
 if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
-// require_once("config/db.php");
 require_once("../../config/db.php");
 require_once("Groups.php");
 $groups = new Groups();
@@ -25,7 +24,6 @@ $groups = new Groups();
 	<title>Group Finder</title>
 	<script type="text/javascript">
 	function joinGroup(group){
-
 	   $.ajax({
 		   type:"post",
 		   url:"handler.php",
@@ -37,79 +35,99 @@ $groups = new Groups();
 			   var obj = JSON.parse(data);
 			   alert(obj);
 			   console.log("JOIN GROUP: ", obj);
+				 search();
+		   }
+	   });
+	}
+
+	function leaveGroup(group){
+	   $.ajax({
+		   type:"post",
+		   url:"handler.php",
+		   data:"leave="+group,
+		   success:function(data){
+			   console.log("Result",data);
+			   // $("#search").val("");
+			//    $("#group"+data).html("");
+			   var obj = JSON.parse(data);
+			   alert(obj);
+			   console.log("LEAVE GROUP: ", obj);
+				 search();
 			   // createElement(obj);
 		   }
 	   });
 	}
+	function search(){
+			 var title=$("#search").val();
+			 if(title!=""){
+				 // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
+					$.ajax({
+						 type:"post",
+						 url:"handler.php",
+						 data:"search="+title,
+						 success:function(data){
+		 // $("#search").val("");
+		 $("#contentLocation").html("");
+		 var obj = JSON.parse(data);
+		 createElement(obj);
+							}
+					 });
+			 }
+	}
+
+ function createElement(data){
+	//  console.log("Create: ", data);
+	 if(data.forEach){
+		 var user = '<?php echo $_SESSION["id"]; ?>';
+		 data.forEach(function(item){
+			 // console.log("ITEM", item);
+			 var targetElement = document.getElementById('contentLocation');
+			 var li = document.createElement('li');
+			 li.className = "mix panel group "+ item.category;
+			 var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+							 '<div class="panel-heading">'+
+							 '<h3 class="panel-title">'+ item.name +'</h3>'+
+							 '</div>'+
+							 '<div class="panel-body">'+
+							 '<div style="float: left; margin-right: 20px;">'+
+							 '<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
+							 '</div>'+
+							 '<div>'+
+							 '<h3>Description:</h3>'+
+							 (item.description ? item.description:"No Description Available")+
+							 '</div>'+
+							 '</div>';
+							 if(user){
+								 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
+								 if(!item.isMember){
+										 inHTML = inHTML + '<button id="group'+item.id+'" class="btn btn-flat btn-info" onclick="joinGroup('+item.id+')" >Join Group</button>';
+								 }else{
+										 inHTML = inHTML + '<button id="group'+item.id+'" class="btn btn-flat btn-warning" onclick="leaveGroup('+item.id+')" >Leave Group</button>';
+								 }
+								 inHTML = inHTML + '</div>'+
+								 '</div>';
+							 }else{
+								 inHTML = inHTML +'</div>';
+							 }
+				 li.innerHTML = inHTML;
+				 targetElement.appendChild(li)
+		 });
+	 }else{
+		 console.log("No Results");
+	 }
+	 var targetElement = document.getElementById('contentLocation');
+	 var li = document.createElement('li');
+	 li.className = "gap";
+	 targetElement.appendChild(li);
+	 var li2 = document.createElement('li');
+	 li2.className = "gap";
+	 targetElement.appendChild(li2);
+	 buttonFilter.init();
+	 $('.cd-gallery ul').mixItUp('filter', 'all');
+ }
 	</script>
 	<script type="text/javascript">
     $(document).ready(function(){
-
-         function search(){
-              var title=$("#search").val();
-              if(title!=""){
-                // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
-                 $.ajax({
-                    type:"post",
-                    url:"handler.php",
-                    data:"search="+title,
-					// dataType:'json',
-                    success:function(data){
-						console.log("Result",data);
-						$("#search").val("");
-                        $("#contentLocation").html("");
-						var obj = JSON.parse(data);
-						createElement(obj);
-                     }
-                  });
-              }
-         }
-
-		function createElement(data){
-			console.log("Create: ", data);
-			if(data.forEach){
-				data.forEach(function(item){
-					console.log("ITEM", item);
-					var targetElement = document.getElementById('contentLocation');
-				    var li = document.createElement('li');
-					li.className = "mix panel group "+ item.category;
-				    li.innerHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
-									'<div class="panel-heading">'+
-									'<h3 class="panel-title">'+ item.name +'</h3>'+
-									'</div>'+
-									'<div class="panel-body">'+
-									'<div style="float: left; margin-right: 20px;">'+
-									'<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
-									'</div>'+
-									'<div>'+
-									'<h3>Description:</h3>'+
-									(item.description ? item.description:"No Description Available")+
-									'</div>'+
-									'</div>'+
-									'<div class="panel-footer" style="text-align:center;">'+
-									'<button id="group'+item.id+'" class="btn btn-flat btn-info" onclick="joinGroup('+item.id+')" >Join Group</button>'+
-									'</div>'+
-				                    '</div>';
-				    // Append 'foo' element to target element width="32" height="32"
-									// '<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
-				    targetElement.appendChild(li)
-				});
-			}else{
-				console.log("No Results");
-			}
-			var targetElement = document.getElementById('contentLocation');
-			var li = document.createElement('li');
-			li.className = "gap";
-			targetElement.appendChild(li);
-			var li2 = document.createElement('li');
-			li2.className = "gap";
-			targetElement.appendChild(li2);
-			buttonFilter.init();
-			$('.cd-gallery ul').mixItUp('filter', 'all');
-			// <li class="gap"></li>
-			// <li class="gap"></li>
-		}
-
         $("#searchButton").click(function(){
            search();
         });
@@ -207,7 +225,7 @@ $groups = new Groups();
 								<option value="">Choose an option</option>
 								<?php
 								 $categories = $groups->getGroupCategories();
-								 echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
+								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
 									if($categories != null){
 										while($row = $categories->fetch_object()){
 					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
@@ -256,10 +274,6 @@ $groups = new Groups();
 <script src="/js/contentFilter.js"></script> <!-- Resource jQuery -->
 <script>
 $.material.init();
-$(document).ready(function() {
-  $(".select").dropdown({"optionClass": "withripple"});
-});
-$().dropdown({autoinit: "select"});
 </script>
 </body>
 </html>

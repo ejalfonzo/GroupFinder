@@ -42,8 +42,8 @@ echo                       '<i class="mdi-action-account-circle" style="font-siz
                             <li class="divider"></li>
                             <li><a href="javascript:void(0)">Profile</a></li>
                             <li><a href="/Views/Groups/manager.php">My Groups</a></li>
-                            <li><a href="javascript:void(0)">My Events</a></li>
-                            <li><a href="javascript:void(0)">Buisness</a></li>
+                            <li><a href="/Views/Events/manager.php">My Events</a></li>
+                            <li><a href="/Views/Business/manager.php">Buisness</a></li>
                             <li class="divider"></li>
                             <li><a href="/index.php?logout" type="submit" name="logout" value="Log out">Logout</a></li>
                         </ul>

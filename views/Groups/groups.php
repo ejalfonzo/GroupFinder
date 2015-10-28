@@ -34,6 +34,9 @@ class Groups
     if (isset($_POST["join"])) {
         $this->joinGroup();
     }
+    if (isset($_POST["leave"])) {
+        $this->leaveGroup();
+    }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
@@ -74,6 +77,64 @@ class Groups
     }
   }
 
+  function leaveGroup(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $groupID = $this->db_connection->real_escape_string(strip_tags($_POST['leave'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "DELETE FROM `ebabilon`.`members` WHERE `id_group`='".$groupID."' AND `id_member` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $joinResult = "Group Left";
+          return json_encode($joinResult);
+        }
+    }
+  }
+
+  function isMember(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $groupID = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.members WHERE id_group = '".$groupID."' AND id_member = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+
+        if($rows = $query_get_user_info->num_rows >= 1){
+          $result_row = $query_get_user_info->fetch_object();
+          return json_encode($rows);
+        }
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
   function searchGroup(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -84,6 +145,7 @@ class Groups
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
         $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
         // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
         // check if user or email address already exists
@@ -99,9 +161,19 @@ class Groups
           while($row = $query_get_user_info->fetch_object()){
             //   echo(json_encode($row));
             //   return $row;
-            $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
-             'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
-            'image' => $row->group_image));
+            $sql2 = "SELECT * FROM ebabilon.members WHERE id_group = '".$row->id_group."' AND id_member = '".$userID."';";
+            $query_isMember = $this->db_connection->query($sql2);
+            $result_Member = $query_isMember->fetch_object();
+            if($result_Member->id_member == $userID){
+              $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->group_image, 'isMember' => true));
+            }else{
+              $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->group_image, 'isMember' => false));
+            }
+
             // echo(''.$row->id_group)
          }
          return json_encode($arrayResult);
