@@ -19,8 +19,8 @@ if (isset($login)) {
     }
 }
 require_once("../../config/db.php");
-require_once("Business.php");
-$business = new Business();
+require_once("Buisness.php");
+$business = new Buisness();
 
 ?>
 <!doctype html>
@@ -58,16 +58,16 @@ $business = new Business();
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
-            <li><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="/Views/Events/manager.php">Events</a></li>
+            <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
+            <li><a href="#">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="/Views/Business/manager.php">Buisness</a></li>
+            <li><a href="">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
             <div class="row">
-              <div class="col-md-8"> <h1>My Business</h1></div>
+              <div class="col-md-8"> <h1>My Businesses</h1></div>
               <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#CreateB">Create Business</a></div>
             </div>
 
@@ -75,7 +75,25 @@ $business = new Business();
           <div class="row placeholders panel panel-primary" style="padding:20px;">
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
-              <?php $business->getUserBusiness(); ?>
+              <?php 
+              $results = $business->getMyBusinesses(); 
+
+              if ($results->num_rows >= 1) {
+                foreach ($results as $aBusiness) {
+                  echo("<script>console.log('results_row: ".json_encode($aBusiness)."');</script>");
+                  echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                    echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?business=".$aBusiness->id_business."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                    echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                    echo '</button>';
+                    echo   '<h4>'. $aBusiness->name . '</h4>';
+                    echo   '<span class="text-muted">'. $aBusiness->description . '</span>';
+                  echo '</div>';
+                }
+              }
+              else{
+                echo '<h3 class="text-muted" style="margin-top:75px";>You have no Businesses...</h3>';
+              }
+              ?>
 
           </div>
 
@@ -99,18 +117,29 @@ $business = new Business();
                               <input id="business_name" class="business_input form-control" placeholder="Business Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="business_name" style="margin: 10px 0px 0px;" required />
 
                               <div class="dropdownjs" style="margin: 10px 0px 0px;">
-                        				<div class="control-business">
+                                <div class="control-business">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
-                                     <?php $business->getBusinessCategories(); ?>
+                                     <?php 
+                                     $results = $business->getBusinessCategories(); 
+
+                                     if ($results->num_rows >= 1) {
+                                        foreach ($results as $category) {
+                                          echo   '<option value="'.$category->$id_category. '">'. $category->name . '</option>';
+                                        }
+                                     }
+                                     ?>
 
                                    </select>
-                        				</div>
-                        			</div>
+                                </div>
+                              </div>
 
                               <!-- <label for="groupDescription" class="control-label">Group's Description</label> -->
-                              <textarea class="form-control floating-label" placeholder="Business' Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
-                              <span class="help-block">Describe your business, so other may know the purpose of your business.</span>
+                              <textarea class="form-control floating-label" placeholder="Business' Address" rows="2" id="address" style="margin: 20px 0px 0px;"></textarea>
+                              <span class="help-block">Describe your business' address, so other may know the location of your business.</span>
+
+                              <textarea class="form-control floating-label" placeholder="Business' Operational Hours" rows="2" id="opHours" style="margin: 20px 0px 0px;"></textarea>
+                              <span class="help-block">State your business' operational hours, so other may know when and where your business operates.</span>
 
                               <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createBusiness" value="createBusiness" />
 

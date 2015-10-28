@@ -28,9 +28,15 @@ class Business
     if (isset($_POST["createBusiness"])) {
         $this->createBusiness();
     }
-    // if (isset($_GET["group"])) {
-    //     $this->openGroup();
-    // }
+    if (isset($_GET["business"])) {
+        $this->openBusiness();
+    }
+    if (isset($_POST["followBusiness"])) {
+        $this->followBusiness();
+    }
+    if (isset($_POST["leaveBusiness"])) {
+        $this->leaveBusiness();
+    }
   }
 
 
@@ -46,17 +52,15 @@ class Business
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $businessID = $_GET["business"];
 
         // check if user or email address already exists
-        $sql = "SELECT * FROM ebabilon.groups WHERE id_group = '".$groupID."';";
+        $sql = "SELECT * FROM ebabilon.businesses WHERE id_business = '".$businessID."';";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        echo '<img src=" '. $result_row->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-        echo '<h4>'.$result_row->name.'</h4>';
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+        return json_encode($result_row);
     }
   }
 
@@ -74,50 +78,19 @@ class Business
         $groupID = $_GET["group"];
 
         // check if user or email address already exists
-        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
-        FROM ebabilon.groups as groupsList, ebabilon.users as userList
-        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $sql = "SELECT businessList.name, catList.name as category, businessList.address, businessList.opHours, id, first_name, last_name
+        FROM ebabilon.businesses as businessList, ebabilon.users as userList, ebabilon.business_categories as catList
+        WHERE id_business = '".$businessID."' AND businessList.admin = userList.id AND catList.id_category = businessList.category;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: getGroupDetails ".json_encode($result_row)."');</script>");
 
-        echo '<h3 style="text-align:left;">Coordinator:</h3>';
-        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
-        echo '<h3 style="text-align:left;">Description:</h3>';
-        if(isset($result_row->description)){
-          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->description.'</h4>';
-        }else{
-          echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
-        }
 
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+        return json_encode($result_row);
     }
   }
 
-  function getUserFirstName(){
-    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-    // change character set to utf8 and check it
-    if (!$this->db_connection->set_charset("utf8")) {
-        $this->errors[] = $this->db_connection->error;
-        echo("<script>console.log('Error: DB not utf8');</script>");
-    }
-    if (!$this->db_connection->connect_errno) {
-        // escaping, additionally removing everything that could be (html/javascript-) code
-        $user_name = $_SESSION["user_name"];
-        $email = $_SESSION['email'];
-        // check if user or email address already exists
-        $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
-        $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
-        echo($result_row->first_name);
-    }
-  }
-
-  function getBusinessMembersTable(){
+  function getFollowersTable(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     // change character set to utf8 and check it
     if (!$this->db_connection->set_charset("utf8")) {
@@ -130,74 +103,31 @@ class Business
         $groupID = $_GET["group"];
 
         $sql = "SELECT id, first_name, last_name, user_image, email
-        FROM ebabilon.members, ebabilon.users as userList
-        WHERE id_member = userList.id AND id_group = '".$groupID."';";
+        FROM ebabilon.followers, ebabilon.users as userList
+        WHERE id_follower = userList.id AND id_business = '".$businessID."'";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-          echo '<div class="table-responsive panel">
-            <table class="table table-striped table-hover">';
-            echo '<thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>';
-            while($row = $query_get_user_info->fetch_object()) {
-              $date = date_create($row->time);
-              echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-              echo '<tr>';
-                echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
-                echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                echo   '<td>'. $row->email . '</td>';
-              echo '</tr>';
-           }
-         echo'</table>
-         </div>';
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
-       }
+        
+        return $query_get_user_info;
     }
-  }
-
-  function getBusinessImage(){
-    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-
-    // change character set to utf8 and check it
-    if (!$this->db_connection->set_charset("utf8")) {
-        $this->errors[] = $this->db_connection->error;
-        echo("<script>console.log('Error: DB not utf8');</script>");
-    }
-    if (!$this->db_connection->connect_errno) {
-        // escaping, additionally removing everything that could be (html/javascript-) code
-        $user_name = $_SESSION["user_name"];
-        $email = $_SESSION['email'];
-        // check if user or email address already exists
-        $sql = "SELECT user_image FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
-        $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-        echo($result_row->user_image);
-      }
   }
 
   function createBusiness(){
-    if (empty($_POST['group_name'])) {
+    if (empty($_POST['business_name'])) {
         $this->errors[] = "Empty Username";
         echo("<script>console.log('Error: Empty Group Name');</script>");
 
-    } elseif (strlen($_POST['group_name']) > 64 || strlen($_POST['group_name']) < 2) {
+    } elseif (strlen($_POST['business_name']) > 64 || strlen($_POST['business_name']) < 2) {
         $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
         echo("<script>console.log('Error: Username to short');</script>");
 
-    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])) {
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['business_name'])) {
         $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
         echo("<script>console.log('Error: Username bad schema');</script>");
 
-    } elseif (!empty($_POST['group_name'])
-        && strlen($_POST['group_name']) <= 64
-        && strlen($_POST['group_name']) >= 2
-        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])
+    } elseif (!empty($_POST['business_name'])
+        && strlen($_POST['business_name']) <= 64
+        && strlen($_POST['business_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['business_name'])
     ) {
         echo("<script>console.log('Good: All Clear');</script>");
         // create a database connection
@@ -214,27 +144,28 @@ class Business
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
             $userID = $_SESSION["id"];
-            $name = $this->db_connection->real_escape_string(strip_tags($_POST['group_name'], ENT_QUOTES));
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['business_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
-            $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
+            $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
+            $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
-            $sql = "INSERT INTO `ebabilon`.`groups` (`name`, `admin`, `category`, `description`)
-            VALUES ('".$name."', '".$userID."', '".$category."', '".$description."');";
+            $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 
+            VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');"
             $query_new_user_insert = $this->db_connection->query($sql);
 
-            $group_id = mysqli_insert_id($this->db_connection);
+            $business_id = mysqli_insert_id($this->db_connection);
             // echo("<script>console.log('results_row: ".json_encode($group_id)."');</script>");
             // if user has been added successfully
             if ($query_new_user_insert) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
-                echo("<script>console.log('PHP: group created');</script>");
+                echo("<script>console.log('PHP: business created');</script>");
 
-                $sql = "INSERT INTO `ebabilon`.`members` (`id_group`, `id_member`)
-                VALUES  (".$group_id.",'".$userID."');";
+                $sql = "INSERT INTO `ebabilon`.`followers` (`id_business`, `id_follower`)
+                VALUES ('".$business_id."', '".$userID."');";
                 $query_new_member_insert = $this->db_connection->query($sql);
 
                 if($query_new_member_insert){
-                  echo("<script>console.log('PHP: User Added');</script>");
+                  echo("<script>console.log('PHP: Business Added');</script>");
                 }
                 // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
             } else {
@@ -261,18 +192,14 @@ class Business
         $userID = $_SESSION["id"];
         $email = $_SESSION['email'];
 
-        $sql = "SELECT * FROM ebabilon.group_categories;";
+        $sql = "SELECT * FROM ebabilon.business_categories;";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
 
-          while($row = $query_get_user_info->fetch_object()){
-              echo   '<option value="'.$row->id_category. '">'. $row->name . '</option>';
-         }
-       }
+        return $query_get_user_info;
     }
   }
 
-  function getUserBusiness(){
+  function getMyBusinesses(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     // change character set to utf8 and check it
     if (!$this->db_connection->set_charset("utf8")) {
@@ -284,27 +211,48 @@ class Business
         $userID = $_SESSION["id"];
         $email = $_SESSION['email'];
 
-        $sql = "SELECT myGroups.name, myGroups.category, myGroups.id_group, first_name, last_name
-        FROM (SELECT groupsList.name, groupsList.category, groupsList.admin, groupsList.id_group
-        FROM ebabilon.groups as groupsList, ebabilon.members as memberList
-        WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
-        WHERE myGroups.admin = id;";
+        $sql = "SELECT myBusinesses.name, catList.name as category, myBusinesses.id_business, first_name, last_name
+        FROM (SELECT businessList.name, businessList.category, businessList.admin, businessList.id_business
+          FROM ebabilon.businesses as businessList, ebabilon.followers as followerList
+          WHERE businessList.id_business = followerList.id_business AND followerList.id_follower = '" .$userID."') as myBusinesses, ebabilon.users, ebabilon.business_categories as catList
+        WHERE myBusinesses.admin = id AND catList.id_category = myBusinesses.category;";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
+        
+        return $query_get_user_info;
+    }
+  }
 
-          while($row = $query_get_user_info->fetch_object()) {
-            echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-            echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-              echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-              echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-              echo '</button>';
-              echo   '<h4>'. $row->name . '</h4>';
-              echo   '<span class="text-muted">'. $row->description . '</span>';
-            echo '</div>';
-         }
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
-       }
+  function leaveBusiness(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno){
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $_GET["business"];
+
+        $sql = "DELETE FROM `ebabilon`.`followers` WHERE `id_business`='".$businessID."' AND `id_follower` = '".$userID."';";
+    }
+  }
+
+  function followBusiness(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno){
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $_GET["business"];
+
+        $sql = "INSERT INTO `ebabilon`.`followers` (`id_business`, `id_follower`)
+        SELECT * FROM (SELECT '".$businessID."', '".$userID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_business, id_follower FROM ebabilon.followers WHERE id_business = '".$businessID."' AND id_follower = '".$userID."') LIMIT 1;";
     }
   }
 }

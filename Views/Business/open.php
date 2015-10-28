@@ -70,16 +70,76 @@ $business = new Buisness();
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php $business->getBusiness(); ?>
+                <?php 
+                $results = $business->getBusiness();
+
+                echo '<h4>'.$results->name.'</h4>';
+                echo '<span class="text-muted">'. $results->name .'</span>';
+                ?>
+                <form method="post" action="" name="followBusiness">
+                  <input class="btn btn-lg btn-success btn-block" placeholder="Follow Business" type="submit"  name="followBusiness" value="followBusiness" />
+                </form>
+                <form method="post" action="" name="leaveBusiness">
+                  <input class="btn btn-lg btn-success btn-block" placeholder="Leave Business" type="submit"  name="leaveBusiness" value="leaveBusiness" />
+                </form>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php $business->getBusinessDetails(); ?>
+                <?php 
+                $results = $business->getBusinessDetails(); 
+
+                echo("<script>console.log('PHP: getGroupDetails ".json_encode($results)."');</script>");
+
+                echo '<h3 style="text-align:left;">Coordinator:</h3>';
+                echo '<h4 style="text-align:left; padding-left:35px;">'.$results->first_name ." ".$results->last_name.'</h4>';
+                echo '<h3 style="text-align:left;">Description:</h3>';
+                if(isset($results->address)){
+                  echo '<h4 style="text-align:left; padding-left:35px;">'.$results->address.'</h4>';
+                }else{
+                  echo '<h4 style="text-align:left; padding-left:35px;"> No Address </h4>';
+                }
+                if(isset($results->opHours)){
+                  echo '<h4 style="text-align:left; padding-left:35px;">'.$results->opHours.'</h4>';
+                }else{
+                  echo '<h4 style="text-align:left; padding-left:35px;"> No Operational Hours </h4>';
+                }
+
+                echo '<span class="text-muted">'. $results->name .'</span>';
+
+                ?>
               </div>
             </div>
 
             <div class="row panel panel-primary" >
-              <div class="panel-heading" style="text-align: left; font-size: 20px;">Members</div>
-              <?php $business->getBusinessMembersTable(); ?>
+              <div class="panel-heading" style="text-align: left; font-size: 20px;">Followers</div>
+              <?php 
+              $results = $business->getFollowersTable(); 
+
+               if ($results->num_rows >= 1) {
+                  echo '<div class="table-responsive panel">
+                    <table class="table table-striped table-hover">';
+                    echo '<thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>';
+                    foreach ($results as $user) {
+                      $date = date_create($user->time);
+                      echo("<script>console.log('results_row: ".json_encode($user)."');</script>");
+                      echo '<tr>';
+                        echo   '<td><img src="'.$user->user_image.'" alt="" style="width:40px; height:auto;"></td>';
+                        echo   '<td>'. $user->first_name . ' ' . $user->last_name . '</td>';
+                        echo   '<td>'. $user->email . '</td>';
+                      echo '</tr>';
+                    }
+                 echo'</table>
+                 </div>';
+               }else{
+                 echo '<h3 class="text-muted" style="margin-top:75px";>Business Has No Followers...</h3>';
+               }
+                       
+              ?>
             </div>
 
           <!-- <h2 class="sub-header">Section title</h2> -->
