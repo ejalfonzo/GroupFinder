@@ -1,7 +1,6 @@
 <?php
 if ($_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
-// require_once("config/db.php");
 
 // show potential errors / feedback (from login object)
 if (isset($login)) {
@@ -19,8 +18,8 @@ if (isset($login)) {
     }
 }
 require_once("../../config/db.php");
-require_once("Buisness.php");
-$business = new Buisness();
+require_once("Friends.php");
+$friends = new Friends();
 
 ?>
 <!doctype html>
@@ -42,23 +41,23 @@ $business = new Buisness();
     <script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript">
 
-    function unfollowBusiness(business){
+  	function removeFriend(friend){
 
-       $.ajax({
-         type:"post",
-         url:"handler.php",
-         data:"unfollow="+business,
-         success:function(data){
-           console.log("Result",data);
-           var obj = JSON.parse(data);
-           alert(obj);
-           console.log("UNFOLLOW BUSINESS: ", obj);
-           window.location.href = "/Views/Buisness/manager.php";
-           // createElement(obj);
-         }
-       });
-    }
-    </script>
+  	   $.ajax({
+  		   type:"post",
+  		   url:"handler.php",
+  		   data:"remove="+friend,
+  		   success:function(data){
+  			   console.log("Result",data);
+  			   var obj = JSON.parse(data);
+  			   alert(obj);
+  			   console.log("REMOVE FRIEND: ", obj);
+           window.location.href = "/Views/Friends/manager.php";
+  			   // createElement(obj);
+  		   }
+  	   });
+  	}
+  	</script>
 </head>
 <body>
 
@@ -78,65 +77,40 @@ $business = new Buisness();
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
             <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li><a href="/Views/Business/manager.php">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
+              <div class="panel-body">
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php 
-                $results = $business->getBusiness();
-
-                echo '<h4>'.$results->name.'</h4>';
-                ?>
-                <form method="post" action="" name="followBusiness">
-                  <input class="btn btn-lg btn-success btn-block" placeholder="Follow Business" type="submit"  name="followBusiness" value="followBusiness" />
-                </form>
-                <form method="post" action="" name="leaveBusiness">
-                  <input class="btn btn-lg btn-success btn-block" placeholder="Leave Business" type="submit"  name="leaveBusiness" value="leaveBusiness" />
-                </form>
+                <?php $friends->getFriend(); ?>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php 
-                $results = $business->getBusinessDetails(); 
-
-                echo("<script>console.log('PHP: getGroupDetails ".json_encode($results)."');</script>");
-
-                echo '<h3 style="text-align:left;">Coordinator:</h3>';
-                echo '<h4 style="text-align:left; padding-left:35px;">'.$results->first_name ." ".$results->last_name.'</h4>';
-                echo '<h3 style="text-align:left;">Description:</h3>';
-                if(isset($results->address)){
-                  echo '<h4 style="text-align:left; padding-left:35px;">'.$results->address.'</h4>';
-                }else{
-                  echo '<h4 style="text-align:left; padding-left:35px;"> No Address </h4>';
-                }
-                if(isset($results->opHours)){
-                  echo '<h4 style="text-align:left; padding-left:35px;">'.$results->opHours.'</h4>';
-                }else{
-                  echo '<h4 style="text-align:left; padding-left:35px;"> No Operational Hours </h4>';
-                }
-
-                echo '<span class="text-muted">'. $results->name .'</span>';
-
-                ?>
+                <?php $friends->getFriendDetails(); ?>
               </div>
             </div>
 
+             <div class="panel-footer">
+               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#RemoveF">Remove Friend</a>
+             </div>
+            </div>
+
             <div class="row panel panel-primary" >
-              <div class="panel-heading" style="text-align: left; font-size: 20px;">Followers</div>
-              <?php 
-              $followers = $business->getFollowersTable(); 
-              $hasFs = true;
-              echo("<script>console.log('results_row: ".json_encode($followers)."');</script>");
-                if($followers->num_rows >= 1){
-                  $hasFs = true;
+              <div class="panel-heading" style="text-align: left; font-size: 20px;">Friends</div>
+              <?php
+                $userFriends = $friends->getFriendsTable();
+                $hasF = false;
+                echo("<script>console.log('results_row: ".json_encode($userFriends)."');</script>");
+                if($userFriends->num_rows >= 1){
+                  $hasF = true;
                 }
-                if ($hasFs) {
+                if ($hasF) {
                   echo '<div class="table-responsive panel">
                     <table class="table table-striped table-hover">';
                     echo '<thead>
@@ -146,7 +120,7 @@ $business = new Buisness();
                         <th>Email</th>
                       </tr>
                     </thead>';
-                    while($row = $followers->fetch_object()) {
+                    while($row = $userFriends->fetch_object()) {
                       $date = date_create($row->time);
 
                       echo '<tr>';
@@ -157,9 +131,9 @@ $business = new Buisness();
                    }
                  echo'</table>
                  </div>';
-               }else if($followers != null){
-                 echo '<h3 class="text-muted" style="margin-top:75px";>Business Has No Followers...</h3>';
-               }                       
+               }else if($userFriends != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>User has no Friends...</h3>';
+               }
               ?>
             </div>
 
@@ -167,6 +141,25 @@ $business = new Buisness();
         </div>
       </div>
 
+      <div id="RemoveF" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to remove Friend:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php $friends->getFriend(); ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" onclick="removeFriend(<?php echo($_GET["friend"]); ?>)">Remove</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Don't Remove</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
@@ -188,15 +181,9 @@ $business = new Buisness();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
-    <script type="text/javascript" src="/js/dropdown.js"></script>
-    <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();
-    $(document).ready(function() {
-      $(".select").dropdown({"optionClass": "withripple"});
-    });
-    $().dropdown({autoinit: "select"});
     </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->

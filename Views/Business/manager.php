@@ -76,23 +76,24 @@ $business = new Buisness();
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
               <?php 
-              $results = $business->getMyBusinesses(); 
-
-              if ($results->num_rows >= 1) {
-                foreach ($results as $aBusiness) {
-                  echo("<script>console.log('results_row: ".json_encode($aBusiness)."');</script>");
-                  echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                    echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?business=".$aBusiness->id_business."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-                    echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-                    echo '</button>';
-                    echo   '<h4>'. $aBusiness->name . '</h4>';
-                    echo   '<span class="text-muted">'. $aBusiness->description . '</span>';
-                  echo '</div>';
-                }
+              $myBusinesses = $business->getMyBusinesses(); 
+              $hasBs = false;
+              echo("<script>console.log('results_row: ".json_encode($myBusinesses)."');</script>");
+              if($myBusinesses->num_rows >= 1){$hasGs = true;}
+              if ($hasBs) {
+                while($row = $myBusinesses->fetch_object()) {
+                    echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                      // echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_business."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      // echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                      // echo '</button>';
+                      echo   '<h4>'. $row->name . '</h4>';
+                      echo   '<span class="text-muted">'. $row->address . '</span>';
+                      echo   '<span class="text-muted">'. $row->opHours . '</span>';
+                    echo '</div>';
               }
-              else{
-                echo '<h3 class="text-muted" style="margin-top:75px";>You have no Businesses...</h3>';
-              }
+              }else if($myBusinesses != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Businesses...</h3>';
+               }
               ?>
 
           </div>
@@ -121,13 +122,12 @@ $business = new Buisness();
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
                                      <?php 
-                                     $results = $business->getBusinessCategories(); 
-
-                                     if ($results->num_rows >= 1) {
-                                        foreach ($results as $category) {
-                                          echo   '<option value="'.$category->$id_category. '">'. $category->name . '</option>';
-                                        }
-                                     }
+                                     $categories = $business->getBusinessCategories(); 
+                                     if($categories != null){
+                                        while($row = $categories->fetch_object()){
+                                                  echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+                                              }
+                                      }
                                      ?>
 
                                    </select>

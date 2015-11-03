@@ -2,8 +2,8 @@
 if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(); }
 // include the configs / constants for the database connection
 require_once("../../config/db.php");
-require_once("Business.php");
-$business = new Business();
+require_once("Friends.php");
+$friends = new Friends();
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -14,44 +14,44 @@ $business = new Business();
 	<link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 
 	<link rel="stylesheet" type="text/css" href="/css/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/material.css"/>
-    <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/roboto.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/material.css"/>
+  	<link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
 	<link rel="stylesheet" href="/css/reset.css"> <!-- CSS reset -->
 	<link rel="stylesheet" href="/css/contentFilter-style.css"> <!-- Resource style -->
 	<script src="/js/modernizr.js"></script> <!-- Modernizr -->
-
+	<script type="text/javascript" src="/js/jquery.js"></script>
 	<title>Group Finder</title>
 	<script type="text/javascript">
-	function followBusiness(business){
+	function addFriend(friend){
 	   $.ajax({
 		   type:"post",
 		   url:"handler.php",
-		   data:"follow="+business,
+		   data:"add="+friend,
 		   success:function(data){
 			   console.log("Result",data);
 			   // $("#search").val("");
-			//    $("#business"+data).html("");
+			//    $("#group"+data).html("");
 			   var obj = JSON.parse(data);
 			   alert(obj);
-			   console.log("FOLLOW BUSINESS: ", obj);
+			   console.log("ADD FRIEND: ", obj);
 				 search();
 		   }
 	   });
 	}
 
-	function unfollowBusiness(business){
+	function removeFriend(friend){
 	   $.ajax({
 		   type:"post",
 		   url:"handler.php",
-		   data:"unfollow="+business,
+		   data:"remove="+friend,
 		   success:function(data){
 			   console.log("Result",data);
 			   // $("#search").val("");
-			//    $("#business"+data).html("");
+			//    $("#group"+data).html("");
 			   var obj = JSON.parse(data);
 			   alert(obj);
-			   console.log("UNFOLLOW BUSINESS: ", obj);
+			   console.log("REMOVE FRIEND: ", obj);
 				 search();
 			   // createElement(obj);
 		   }
@@ -83,28 +83,26 @@ $business = new Business();
 			 // console.log("ITEM", item);
 			 var targetElement = document.getElementById('contentLocation');
 			 var li = document.createElement('li');
-			 li.className = "mix panel business "+ item.category;
+			 li.className = "mix panel friend "+ item.category;
 			 var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
 							 '<div class="panel-heading">'+
-							 '<h3 class="panel-title">'+ item.name +'</h3>'+
+							 '<h3 class="panel-title">'+ item.first_sname + item.last_name +'</h3>'+
 							 '</div>'+
 							 '<div class="panel-body">'+
 							 '<div style="float: left; margin-right: 20px;">'+
-							 // '<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
+							 '<img src="'+ item.image +'" alt="Friend Image" width="40" height="40"> '+
 							 '</div>'+
 							 '<div>'+
-							 '<h3>Address:</h3>'+
-							 (item.address ? item.address:"No Address Available")+
-							 '<h3>Operational Hours:</h3>'+
-							 (item.opHours ? item.opHours:"No Operational Hours Available")+
+							 '<h3>Email:</h3>'+
+							 (item.description ? item.email:"No Email Available")+
 							 '</div>'+
 							 '</div>';
 							 if(user){
 								 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
-								 if(!item.isMember){
-										 inHTML = inHTML + '<button id="business'+item.id+'" class="btn btn-flat btn-info" onclick="followBusiness('+item.id+')" >Follow Business</button>';
+								 if(!item.isFriend){
+										 inHTML = inHTML + '<button id="friend'+item.id+'" class="btn btn-flat btn-info" onclick="addFriend('+item.id+')" >Add Friend</button>';
 								 }else{
-										 inHTML = inHTML + '<button id="business'+item.id+'" class="btn btn-flat btn-warning" onclick="unfollowBusiness('+item.id+')" >Unfollow Business</button>';
+										 inHTML = inHTML + '<button id="friend'+item.id+'" class="btn btn-flat btn-warning" onclick="removeFriend('+item.id+')" >Remove Friend</button>';
 								 }
 								 inHTML = inHTML + '</div>'+
 								 '</div>';
@@ -226,7 +224,7 @@ $business = new Business();
 							<select class="filter" name="selectThis" id="selectThis">
 								<option value="">Choose an option</option>
 								<?php
-								 $categories = $business->getBusinessCategories();
+								 $categories = $friends->getFriendCategories();
 								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
 									if($categories != null){
 										while($row = $categories->fetch_object()){

@@ -1,191 +1,361 @@
-<!DOCTYPE html>
-<html >
-  <head>
-    <meta charset="UTF-8">
-    <title>GroupFinder Friends</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel='stylesheet prefetch' href='http://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css'>
-    <link rel="stylesheet" href="../../css/style.css">
-    <style type="text/css">
-      .floatbox {float:left; width:110px; height:100px; margin-right:10px;}
-      .floatbox img {display:block;}
-    </style>
+<?php
 
-  </head>
-  <body>
-    <?php 
-     $path = $_SERVER['DOCUMENT_ROOT']; 
-     $path .= "/Views/General/navbar.php"; 
-     include_once($path); 
-    ?> 
+/**
+ * Class Friends
+ * handles the user data
+ */
+class Friends
+{
+  /**
+   * @var object $db_connection The database connection
+   */
+  private $db_connection = null;
+  /**
+   * @var array $errors Collection of error messages
+   */
+  public $errors = array();
+  /**
+   * @var array $messages Collection of success / neutral messages
+   */
+  public $messages = array();
 
-    <div class="container">
+  /**
+   * the function "__construct()" automatically starts whenever an object of this class is created,
+   * you know, when you do "$friends = new Friends();"
+   */
+  public function __construct()
+  {
+    if (isset($_POST["addFriend"])) {
+        $this->addFriend();
+    }
+    if (isset($_POST["search"])) {
+        $this->searchFriend();
+    }
+    if (isset($_POST["removeFriend"])) {
+        $this->removeFriend();
+    }
+    // if (isset($_GET["friend"])) {
+    //     $this->openFriend();
+    // }
+  }
 
-      <div class="row row-offcanvas row-offcanvas-left">
-      <!-- sidebar -->
-        <div class="col-xs-0 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
-            <ul class="nav">
-              <li><a href="#">Timeline</a></li>
-              <li><a href="#">Friends</a></li>   
-              <li><a href="#">Groups</a></li>              
-              <li><a href="#">Events</a></li> 
-              <li><a href="#">Business</a></li>              
-            </ul>
-        </div>
+  function addFriend(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-        <!-- Table -->
-          <div class="col-xs-12 col-sm-9">
-            <div class="page-header">
-                <h1 id="timeline">Friends</h1>
-            </div>
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $friendID = $this->db_connection->real_escape_string(strip_tags($_POST['addFriend'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
 
-            <div class="container-fluid">
-              <div class="row">
-                <div class="col-md-12">
+        // check if user or email address already exists
+        $sql = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
+        SELECT * FROM (SELECT '".$friendID."', '".$userID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
+        WHERE id_friend = '".$friendID."' AND id_user = '".$userID."') LIMIT 1;";
+        $query_get_user_info_2 = $this->db_connection->query($sql);
+        $sql2 = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
+        SELECT * FROM (SELECT '".$userID."', '".$friendID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
+        WHERE id_friend = '".$userID."' AND id_user = '".$friendID."') LIMIT 1;";
+        $query_get_user_info = $this->db_connection->query($sql2);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info && $query_get_user_info_2){
+          $addResult = "Added Friend";
+          return json_encode($addResult);
+        }
+        // $result_row = $query_get_user_info->fetch_object();
+        //
+        // return json_encode($result_row);
 
-                  <!-- Select Friends View -->
-                  <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Select View
-                    <span class="caret"></span></button>
-                    <ul class="dropdown-menu">
-                      <li><a href="#">All Friends</a></li>
-                      <li><a href="#">List of Categories</a></li>
-                      <li><a href="#">Friends in Category</a></li>
-                    </ul>
-                  </div>
 
-                  <!-- List of Categories -->
-                  <h2>Friend Categories</h2> 
-                  <table class="table table-bordered">
-                    <thead>
-                      <tr>
-                        <th>
-                          Category
-                        </th>
-                        <th>
-                          Members
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr class="active">
-                        <td>
-                          <h1></h1>
-                          <a href="#">Category A</a>
-                        </td>
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-                          <h1></h1>
-                          <a href="#0">See all</a>
-                        </td>
-                      </tr>
-                      <tr class="success">
-                        <td>
-                          <h1></h1>
-                          <a href="#">Category B</a>
-                        </td>
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-                          <h1></h1>
-                          <a href="#0">See all</a>
-                        </td>
-                      </tr>
-                      <tr class="warning">
-                        <td>
-                          <h1></h1>
-                          <a href="#">Category C</a>
-                        </td>
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-                          <h1></h1>
-                          <a href="#0">See all</a>
-                      </tr>
-                      <tr class="danger">
-                        <td>
-                          <h1></h1>
-                          <a href="#">Category D</a>
-                        </td>
-                        <td>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                          <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-                          <h1></h1>
-                          <a href="#0">See all</a>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div><!-- Table end -->
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
 
-            <!-- See all friends -->
-            <div class="container">
-              <h2>All Friends</h2> 
-              <div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend6</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend7</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend8</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend9</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend10</p></a></div>
-              </div>
-            </div>
+  function removeFriend(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
-            <!-- Friends in Category -->
-            <div class="continer">
-              <h2>Friends by Category</h2>
-              <div class="container">
-                <h3>Category A</h3>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-              </div>
-              <div class="container">
-                <h3>Category B</h3>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-              </div>
-              <div class="container">
-                <h3>Category C</h3>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend1</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend2</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend3</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend4</p></a></div>
-                <div class="floatbox"><a href="#0"><img src="../../images/profilepic.jpg" alt="Profile Pic" style="width:70px;height:60px"><p>Friend5</p></a></div>
-              </div>
-            </div><!-- End Friends in Category -->
-    
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $friendID = $this->db_connection->real_escape_string(strip_tags($_POST['removeFriend'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
 
-         </div>
-        </div>
-      </div>
-    </div>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-  </body>
-</html>
+        // check if user or email address already exists
+        $sql = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$friendID."' AND `id_user` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        $sql2 = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$userID."' AND `id_user` = '".$friendID."';";
+        $query_get_user_info_2 = $this->db_connection->query($sql2);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info && $query_get_user_info_2){
+          $removeResult = "Removed Friend";
+          return json_encode($removeResult);
+        }
+    }
+  }
+
+  function isFriend(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $friendID = $this->db_connection->real_escape_string(strip_tags($_POST['isFriend'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.friends WHERE id_friend = '".$friendID."' AND id_user = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+
+        if($rows = $query_get_user_info->num_rows >= 1){
+          $result_row = $query_get_user_info->fetch_object();
+          return json_encode($rows);
+        }
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function searchFriend(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+        // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
+        // check if user or email address already exists
+        $sql = "SELECT *
+        FROM ebabilon.friends
+        WHERE name like '%".$searchStatement."%';";
+
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        // get result row (as an object)
+        if ($query_get_user_info->num_rows >= 1) {
+            $arrayResult = array();
+          while($row = $query_get_user_info->fetch_object()){
+            //   echo(json_encode($row));
+            //   return $row;
+            $sql2 = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
+            WHERE friendsList.id_user = userList.id 
+            AND friendsList.id_friend = '".$row->id_friend."' 
+            AND userList.id = '".$userID."';";
+            $query_isFriend = $this->db_connection->query($sql2);
+            $result_Friend = $query_isFriend->fetch_object();
+            if($result_Friend->id_friend == $userID){
+              $arrayResult[] =  (array('id' => $row->id_friend,'name'=> $row->name,
+               'email' => $row->email, 'image' => $row->friend_image, 'isFriend' => true));
+            }else{
+              $arrayResult[] =  (array('id' => $row->id_friend,'name'=> $row->name,
+               'email' => $row->email, 'image' => $row->friend_image, 'isFriend' => false));
+            }
+
+            // echo(''.$row->id_group)
+         }
+         return json_encode($arrayResult);
+       }
+        // $result_row = $query_get_user_info->fetch_object();
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function getFriend(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $friendID = $_GET["friend"];
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
+        WHERE friendsList.id_user = userList.id AND friendsList.id_friend = '".$friendID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+
+        echo '<img src=" '. $result_row->user_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+        echo '<h4>'.$result_row->name.'</h4>';
+        echo '<h4>'.$result_row->email.'</h4>';
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function getFriendDetails(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $friendID = $_GET["friend"];
+
+        // check if user or email address already exists
+        $sql = "SELECT friendsList.id_friend, friendsList.name, friendsList.category, friendsList.friend_email, friendsList.friend_image, id, first_name, last_name
+        FROM ebabilon.friends as friendsList, ebabilon.users as userList
+        WHERE firendsList.id_friend = '".$friendID."' AND firendsList.id_user = userList.id;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo("<script>console.log('PHP: getFriendDetails ".json_encode($result_row)."');</script>");
+
+        echo '<h3 style="text-align:left;">Friend:</h3>';
+        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
+        echo '<h3 style="text-align:left;">Email:</h3>';
+        if(isset($result_row->email)){
+          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->email.'</h4>';
+        }else{
+          echo '<h4 style="text-align:left; padding-left:35px;"> No Email </h4>';
+        }
+        echo '<h3 style="text-align:left;">Category:</h3>';
+        if(isset($result_row->category)){
+          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->category.'</h4>';
+        }else{
+          echo '<h4 style="text-align:left; padding-left:35px;"> No Category </h4>';
+        }
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function getUserFirstName(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
+        echo($result_row->first_name);
+    }
+  }
+
+  function getFriendsTable(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userId = $_SESSION["id"];
+        $friendID = $_GET["friend"];
+
+        $sql = "SELECT *
+        FROM ebabilon.friends as friendsList, ebabilon.users as userList
+        WHERE friendsList.id_user = userList.id AND id_friend = '".$friendID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        return $query_get_user_info;
+    }
+  }
+
+  function getUserImage(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT user_image FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo($result_row->user_image);
+      }
+  }
+
+  function getFriendCategories(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $email = $_SESSION['email'];
+
+        $sql = "SELECT * FROM ebabilon.friend_categories;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        if ($query_get_user_info->num_rows >= 1) {
+
+          return $query_get_user_info;
+       }
+    }
+  }
+
+  function getUserFriends(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $email = $_SESSION['email'];
+
+        $sql = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
+        WHERE friendsList.id_user = userList.id;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        return $query_get_user_info;
+    }
+  }
+}

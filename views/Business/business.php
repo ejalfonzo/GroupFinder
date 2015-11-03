@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Groups
+ * Class Business
  * handles the user data
  */
 class Business
@@ -21,25 +21,168 @@ class Business
 
   /**
    * the function "__construct()" automatically starts whenever an object of this class is created,
-   * you know, when you do "$groups = new Groups();"
+   * you know, when you do "$business = new Business();"
    */
   public function __construct()
   {
     if (isset($_POST["createBusiness"])) {
         $this->createBusiness();
     }
-    if (isset($_GET["business"])) {
-        $this->openBusiness();
+    if (isset($_POST["search"])) {
+        $this->searchBusinesses();
     }
-    if (isset($_POST["followBusiness"])) {
+    if (isset($_POST["follow"])) {
         $this->followBusiness();
     }
-    if (isset($_POST["leaveBusiness"])) {
-        $this->leaveBusiness();
+    if (isset($_POST["unfollow"])) {
+        $this->unfollowBusiness();
+    }
+    // if (isset($_GET["gbusiness"])) {
+    //     $this->openBusiness();
+    // }
+  }
+
+  function followBusiness(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $this->db_connection->real_escape_string(strip_tags($_POST['follow'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "INSERT INTO `ebabilon`.`followers` (`id_business`, `id_follower`)
+        SELECT * FROM (SELECT '".$businessID."', '".$userID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_business, id_follower FROM ebabilon.followers
+        WHERE id_business = '".$businessID."' AND id_follower = '".$userID."') LIMIT 1;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $followResult = "Followed Business";
+          return json_encode($followResult);
+        }
+        // $result_row = $query_get_user_info->fetch_object();
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
 
+  function unfollowBusiness(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $this->db_connection->real_escape_string(strip_tags($_POST['unfollow'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "DELETE FROM `ebabilon`.`followers` WHERE `id_business`='".$businessID."' AND `id_follower` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $joinResult = "Business Unfollowed";
+          return json_encode($joinResult);
+        }
+    }
+  }
+
+  function isFollower(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $business = $this->db_connection->real_escape_string(strip_tags($_POST['follow'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.followers WHERE id_business = '".$business."' AND id_follower = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+
+        if($rows = $query_get_user_info->num_rows >= 1){
+          $result_row = $query_get_user_info->fetch_object();
+          return json_encode($rows);
+        }
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function searchBusinesses(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
+        // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
+        // check if user or email address already exists
+        $sql = "SELECT *
+        FROM ebabilon.businesses
+        WHERE name like '%".$searchStatement."%';";
+
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        // get result row (as an object)
+        if ($query_get_user_info->num_rows >= 1) {
+            $arrayResult = array();
+          while($row = $query_get_user_info->fetch_object()){
+            //   echo(json_encode($row));
+            //   return $row;
+            $sql2 = "SELECT * FROM ebabilon.followers WHERE id_business = '".$row->id_business."' AND id_follower = '".$userID."';";
+            $query_isFollower = $this->db_connection->query($sql2);
+            $result_Follower = $query_isFollower->fetch_object();
+            if($result_Follower->id_follower == $userID){
+              $arrayResult[] =  (array('id' => $row->id_business,'name'=> $row->name,
+               'category' => $row->category, 'address' => $row->address, 'opHours' => $row->opHours, 'admin' => $row->admin,
+              'isFollower' => true));
+            }else{
+              $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
+               'category' => $row->category, 'address' => $row->address, 'opHours' => $row->opHours, 'admin' => $row->admin,
+              'isFollower' => false));
+            }
+
+            // echo(''.$row->id_group)
+         }
+         return json_encode($arrayResult);
+       }
+        // $result_row = $query_get_user_info->fetch_object();
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
 
   function getBusiness(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -90,6 +233,28 @@ class Business
     }
   }
 
+  function getUserFirstName(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
+        echo($result_row->first_name);
+    }
+  }
+
   function getFollowersTable(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
     // change character set to utf8 and check it
@@ -109,6 +274,27 @@ class Business
         
         return $query_get_user_info;
     }
+  }
+
+  function getUserImage(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $user_name = $_SESSION["user_name"];
+        $email = $_SESSION['email'];
+        // check if user or email address already exists
+        $sql = "SELECT user_image FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        $result_row = $query_get_user_info->fetch_object();
+        echo($result_row->user_image);
+      }
   }
 
   function createBusiness(){
@@ -219,40 +405,6 @@ class Business
         $query_get_user_info = $this->db_connection->query($sql);
         
         return $query_get_user_info;
-    }
-  }
-
-  function leaveBusiness(){
-    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    // change character set to utf8 and check it
-    if (!$this->db_connection->set_charset("utf8")) {
-        $this->errors[] = $this->db_connection->error;
-        echo("<script>console.log('Error: DB not utf8');</script>");
-    }
-    if (!$this->db_connection->connect_errno){
-        // escaping, additionally removing everything that could be (html/javascript-) code
-        $userID = $_SESSION["id"];
-        $businessID = $_GET["business"];
-
-        $sql = "DELETE FROM `ebabilon`.`followers` WHERE `id_business`='".$businessID."' AND `id_follower` = '".$userID."';";
-    }
-  }
-
-  function followBusiness(){
-    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    // change character set to utf8 and check it
-    if (!$this->db_connection->set_charset("utf8")) {
-        $this->errors[] = $this->db_connection->error;
-        echo("<script>console.log('Error: DB not utf8');</script>");
-    }
-    if (!$this->db_connection->connect_errno){
-        // escaping, additionally removing everything that could be (html/javascript-) code
-        $userID = $_SESSION["id"];
-        $businessID = $_GET["business"];
-
-        $sql = "INSERT INTO `ebabilon`.`followers` (`id_business`, `id_follower`)
-        SELECT * FROM (SELECT '".$businessID."', '".$userID."') AS tmp
-        WHERE NOT EXISTS (SELECT id_business, id_follower FROM ebabilon.followers WHERE id_business = '".$businessID."' AND id_follower = '".$userID."') LIMIT 1;";
     }
   }
 }
