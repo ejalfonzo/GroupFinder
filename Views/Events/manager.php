@@ -35,6 +35,7 @@ $events = new Events();
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-datetimepicker.css"/>
     <!-- <link rel="stylesheet" type="text/css" href="/css/selectize.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
@@ -72,7 +73,7 @@ $events = new Events();
             </div>
 
 
-          <div class="row placeholders panel panel-primary" style="padding:20px;">
+          <div class="row placeholders panel panel-primary" style="padding:20px; text-align:left;">
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
               <?php
@@ -81,16 +82,34 @@ $events = new Events();
                 echo("<script>console.log('results_row: ".json_encode($myEvents)."');</script>");
                 if($myEvents->num_rows >= 1){$hasGs = true;}
                 if ($hasGs) {
+                    echo '<div class="table-responsive panel">
+                      <table class="table table-striped table-hover">';
+                    echo '<thead>
+                      <tr>
+                        <th></th>
+                        <th>Event Name</th>
+                        <th>Coordinator</th>
+                        <th>Date</th>
+                        <th>Place</th>
+                      </tr>
+                    </thead>';
                   while($row = $myEvents->fetch_object()) {
-
-                    echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                      echo '<button onclick="location.href = '."'"."/Views/Events/open.php?event=".$row->id_event."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-                      echo   '<img src="/images/stock/runner.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-                      echo '</button>';
-                      echo   '<h4>'. $row->name . '</h4>';
-                      echo   '<span class="text-muted">'. $row->description . '</span>';
-                    echo '</div>';
+                    $date = date_create($row->time);
+                    // echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+                    echo '<tr>';
+                        echo   '<td>';
+                        echo   '<button onclick="location.href = '."'"."/Views/Events/open.php?event=".$row->id_event."'".';" class="btn btn-flat btn-primary" style="padding: 3px;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                        echo   '<img src="/images/stock/runner.png" width="60" height="60" class="img-responsive" alt="Generic placeholder thumbnail">';
+                        echo   '</button>';
+                        echo   '</td>';
+                        echo   '<td>'. $row->name . '</td>';
+                        echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
+                        echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
+                        echo   '<td>'. $row->place . '</td>';
+                    echo '</tr>';
                  }
+                 echo'</table>
+                 </div>';
              }else if($myEvents != null){
                  echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Events...</h3>';
                }
@@ -117,6 +136,13 @@ $events = new Events();
 
                               <input id="event_name" class="event_input form-control" placeholder="Event Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="event_name" style="margin: 10px 0px 0px;" required />
 
+                              <input type='text' class="form-control" id='datetimepicker' name="event_time" style="margin: 10px 0px 0px;"/>
+                              <script type="text/javascript">
+                                  $(function () {
+                                      $('#datetimepicker').datetimepicker();
+                                  });
+                              </script>
+
                               <div class="dropdownjs" style="margin: 10px 0px 0px;">
                         				<div class="control-event">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
@@ -134,11 +160,12 @@ $events = new Events();
                         				</div>
                         			</div>
 
+                                <input id="event_location" class="event_input form-control" placeholder="Event Location" type="text"  name="event_place" style="margin: 10px 0px 0px;" required />
                               <!-- <label for="eventDescription" class="control-label">Group's Description</label> -->
                               <textarea class="form-control floating-label" placeholder="Event's Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your event, so other may know the purpose of your event.</span>
 
-                              <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createEvent" value="createEvent" />
+                              <input class="btn btn-lg btn-success btn-block" type="submit"  name="createEvent" value="Create Event" />
 
                           </form>
                       </div>
@@ -169,6 +196,8 @@ $events = new Events();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
+    <script type="text/javascript" src="/js/moment.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();

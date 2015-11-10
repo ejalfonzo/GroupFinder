@@ -35,6 +35,7 @@ $groups = new Groups();
     <link rel="stylesheet" type="text/css" href="/css/material.css"/>
     <link rel="stylesheet" type="text/css" href="/css/ripples.css"/>
     <link rel="stylesheet" type="text/css" href="/css/dashboard.css"/>
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap-datetimepicker.css"/>
     <!-- <link rel="stylesheet" type="text/css" href="/css/selectize.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/timeline-style.css"/> -->
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
@@ -115,21 +116,27 @@ $groups = new Groups();
                           <!-- action="open.php" -->
                           <form method="post" action="" name="createGroup">
 
-                              <input id="group_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />
+                            <input id="group_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />
 
+                            <input type='text' class="form-control" id='datetimepicker' />
+                            <script type="text/javascript">
+                                $(function () {
+                                    $('#datetimepicker').datetimepicker();
+                                });
+                            </script>
                               <div class="dropdownjs" style="margin: 10px 0px 0px;">
                         				<div class="control-group">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
                                      <?php
-                     								 $categories = $groups->getGroupCategories();
-                     								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
-                     									if($categories != null){
-                     										while($row = $categories->fetch_object()){
-                     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
-                     					          			}
-                     								 	}
-                     								?>
+         								 $categories = $groups->getGroupCategories();
+     								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
+     									if($categories != null){
+     										while($row = $categories->fetch_object()){
+     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+     					          			}
+     								 	}
+     								?>
 
                                    </select>
                         				</div>
@@ -168,6 +175,8 @@ $groups = new Groups();
     <!-- <script src="//code.jquery.com/jquery-1.11.3.min.js"></script> -->
     <!-- <script type="text/javascript" src="/js/jquery.js"></script> -->
     <script type="text/javascript" src="/js/bootstrap.js"></script>
+    <script type="text/javascript" src="/js/moment.min.js"></script>
+    <script type="text/javascript" src="/js/bootstrap-datetimepicker.min.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
     <script type="text/javascript" src="/js/modernizr.js"></script>

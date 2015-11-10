@@ -316,14 +316,9 @@ class Events
         $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
         echo("<script>console.log('Error: Username to short');</script>");
 
-    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])) {
-        $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
-        echo("<script>console.log('Error: Username bad schema');</script>");
-
     } elseif (!empty($_POST['event_name'])
         && strlen($_POST['event_name']) <= 64
         && strlen($_POST['event_name']) >= 2
-        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])
     ) {
         echo("<script>console.log('Good: All Clear');</script>");
         // create a database connection
@@ -343,9 +338,11 @@ class Events
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['event_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
             $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
+            $time = $this->db_connection->real_escape_string(strip_tags($_POST['event_time'], ENT_QUOTES));
+            $place = $this->db_connection->real_escape_string(strip_tags($_POST['event_place'], ENT_QUOTES));
 
-            $sql = "INSERT INTO `ebabilon`.`events` (`name`, `admin`, `category`, `description`)
-            VALUES ('".$name."', '".$userID."', '".$category."', '".$description."');";
+            $sql = "INSERT INTO `ebabilon`.`events` (`name`, `admin`, `category`, `description`, `time`, `place`)
+            VALUES ('".$name."', '".$userID."', '".$category."', '".$description."', '".$time."', '".$place."');";
             $query_new_user_insert = $this->db_connection->query($sql);
 
             $event_id = mysqli_insert_id($this->db_connection);
@@ -355,7 +352,7 @@ class Events
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: event created');</script>");
 
-                $sql = "INSERT INTO `ebabilon`.`members` (`id_event`, `id_member`)
+                $sql = "INSERT INTO `ebabilon`.`attendees` (`id_event`, `id_attendee`)
                 VALUES  (".$event_id.",'".$userID."');";
                 $query_new_member_insert = $this->db_connection->query($sql);
 
@@ -408,8 +405,8 @@ class Events
 
         $sql = "SELECT myEvents.name, myEvents.category, myEvents.id_event, first_name, last_name
         FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event
-        FROM ebabilon.events as eventsList, ebabilon.members as memberList
-        WHERE eventsList.id_event = memberList.id_event AND memberList.id_member = '" .$userID."') as myEvents, ebabilon.users
+        FROM ebabilon.events as eventsList, ebabilon.attendees as memberList
+        WHERE eventsList.id_event = memberList.id_event AND memberList.id_attendee = '" .$userID."') as myEvents, ebabilon.users
         WHERE myEvents.admin = id;";
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;

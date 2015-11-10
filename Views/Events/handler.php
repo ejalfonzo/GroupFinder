@@ -10,25 +10,25 @@ require_once("Events.php");
 
 
  if (isset($_POST["search"])) {
-    $groups = new Events();
-    $result = $groups->searchEvent();
+    $events = new Events();
+    $result = $events->searchEvent();
     echo $result;
  }
 
  if (isset($_POST["join"])) {
-    $groups = new Events();
-    $result = $groups->joinEvent();
+    $events = new Events();
+    $result = $events->joinEvent();
     echo $result;
  }
 
  if (isset($_POST["leave"])) {
-    $groups = new Events();
-    $result = $groups->leaveEvent();
+    $events = new Events();
+    $result = $events->leaveEvent();
     echo $result;
  }
 
  if (isset($_POST["isMember"])) {
-    $groups = new Events();
-    $result = $groups->isMember();
+    $events = new Events();
+    $result = $events->isMember();
     echo $result;
  }
