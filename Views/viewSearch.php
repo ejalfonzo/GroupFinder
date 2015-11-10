@@ -5,8 +5,8 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 require_once("../config/db.php");
 require_once("Basic.php");
 $basic = new Basic();
-require_once("Groups/Groups.php");
-$basic = new Groups();
+// require_once("Groups/Groups.php");
+// $basic = new Groups();
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -99,7 +99,7 @@ $basic = new Groups();
 		   				li.className = "mix panel group "+ item.category;
 		   				var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
 		   							 '<div class="panel-heading">'+
-		   							 '<h3 class="panel-title">'+ item.name +'</h3>'+
+		   							 '<h3 class="panel-title">Group: '+ item.name +'</h3>'+
 		   							 '</div>'+
 		   							 '<div class="panel-body">'+
 		   							 '<div style="float: left; margin-right: 20px;">'+
@@ -110,7 +110,7 @@ $basic = new Groups();
 		   							 (item.description ? item.description:"No Description Available")+
 		   							 '</div>'+
 		   							 '</div>';
-		   							 if(user){
+		   							 if(user=="uhh"){
 		   								 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
 		   								 if(!item.isMember){
 		   										 inHTML = inHTML + '<button id="group'+item.id+'" class="btn btn-flat btn-info" onclick="joinGroup('+item.id+')" >Join Group</button>';
@@ -136,6 +136,25 @@ $basic = new Groups();
 										'</div>'+
 										'<div class="panel-body">'+
 										(item.description ? item.description:"No Description Available")+
+										'</div>'+
+					                    '</div>';
+					    // Append 'foo' element to target element
+										// '<img src="'+ item.image +'" alt="Image 1"> '+
+					    targetElement.appendChild(li)
+					}
+					if(item.type == "business"){
+						var targetElement = document.getElementById('contentLocation');
+					    var li = document.createElement('li');
+						li.className = "mix panel business "+ item.category;
+					    li.innerHTML =
+					                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+										'<div class="panel-heading">'+
+										'<h3 class="panel-title">Business: '+ item.name +'</h3>'+
+										'</div>'+
+										'<div class="panel-body">'+
+										'<p>Address: ' +(item.address ? item.address:"No address Available")+ '</p>'+
+										'<br>'+
+										'<p>Operatin Hours: '+(item.opHours ? item.opHours:"No Operatin Hours Available")+'</p>'+
 										'</div>'+
 					                    '</div>';
 					    // Append 'foo' element to target element
@@ -203,6 +222,7 @@ $basic = new Groups();
 					<li class="filter"><a class="selected" href="#0" data-type="all">All</a></li>
 					<li class="filter" data-filter=".group"><a href="#0" data-type="group">Groups</a></li>
 					<li class="filter" data-filter=".event"><a href="#0" data-type="event">Event</a></li>
+					<li class="filter" data-filter=".business"><a href="#0" data-type="business">Business</a></li>
 
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->
