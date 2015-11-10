@@ -56,8 +56,8 @@ $events = new Events();
         <div class="col-sm-3 col-md-2 sidebar panel" style="margin-bottom:0px;">
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Friends</a></li>
+            <li><a href="/Views/User/profile.php">Profile</a></li>
+            <li><a href="/Views/Friends/manager.php">Friends</a></li>
             <li><a href="/Views/Groups/manager.php">Groups</a></li>
             <li class="active"><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
@@ -75,7 +75,26 @@ $events = new Events();
           <div class="row placeholders panel panel-primary" style="padding:20px;">
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
-              <?php $events->getUserEvents(); ?>
+              <?php
+                $myEvents = $events->getUserEvents();
+                $hasGs = false;
+                echo("<script>console.log('results_row: ".json_encode($myEvents)."');</script>");
+                if($myEvents->num_rows >= 1){$hasGs = true;}
+                if ($hasGs) {
+                  while($row = $myEvents->fetch_object()) {
+
+                    echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                      echo '<button onclick="location.href = '."'"."/Views/Events/open.php?event=".$row->id_event."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo   '<img src="/images/stock/runner.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                      echo '</button>';
+                      echo   '<h4>'. $row->name . '</h4>';
+                      echo   '<span class="text-muted">'. $row->description . '</span>';
+                    echo '</div>';
+                 }
+             }else if($myEvents != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Events...</h3>';
+               }
+               ?>
 
           </div>
 
@@ -102,13 +121,20 @@ $events = new Events();
                         				<div class="control-event">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
-                                     <?php $events->getEventCategories(); ?>
+                                     <?php
+         								 $categories = $events->getEventCategories();
+     									if($categories != null){
+     										while($row = $categories->fetch_object()){
+     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+     					          			}
+     								 	}
+     								?>
 
                                    </select>
                         				</div>
                         			</div>
 
-                              <!-- <label for="groupDescription" class="control-label">Group's Description</label> -->
+                              <!-- <label for="eventDescription" class="control-label">Group's Description</label> -->
                               <textarea class="form-control floating-label" placeholder="Event's Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your event, so other may know the purpose of your event.</span>
 

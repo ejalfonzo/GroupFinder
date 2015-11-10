@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Groups
+ * Class Events
  * handles the user data
  */
 class Events
@@ -21,7 +21,7 @@ class Events
 
   /**
    * the function "__construct()" automatically starts whenever an object of this class is created,
-   * you know, when you do "$groups = new Groups();"
+   * you know, when you do "$events = new Events();"
    */
   public function __construct()
   {
@@ -31,9 +31,108 @@ class Events
     if (isset($_POST["search"])) {
         $this->searchEvent();
     }
-    // if (isset($_GET["group"])) {
-    //     $this->openGroup();
+    if (isset($_POST["join"])) {
+        $this->joinEvent();
+    }
+    if (isset($_POST["leave"])) {
+        $this->leaveEvent();
+    }
+    // if (isset($_GET["event"])) {
+    //     $this->openEvent();
     // }
+  }
+
+  function joinEvent(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "INSERT INTO `ebabilon`.`members` (`id_event`, `id_member`)
+        SELECT * FROM (SELECT '".$eventID."', '".$userID."') AS tmp
+        WHERE NOT EXISTS (SELECT id_event, id_member FROM ebabilon.members
+        WHERE id_event = '".$eventID."' AND id_member = '".$userID."') LIMIT 1;";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $joinResult = "Joined Event";
+          return json_encode($joinResult);
+        }
+        // $result_row = $query_get_user_info->fetch_object();
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
+  }
+
+  function leaveEvent(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['leave'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "DELETE FROM `ebabilon`.`members` WHERE `id_event`='".$eventID."' AND `id_member` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
+        if($query_get_user_info){
+          $joinResult = "Event Left";
+          return json_encode($joinResult);
+        }
+    }
+  }
+
+  function isMember(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.members WHERE id_event = '".$eventID."' AND id_member = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
+
+        if($rows = $query_get_user_info->num_rows >= 1){
+          $result_row = $query_get_user_info->fetch_object();
+          return json_encode($rows);
+        }
+        //
+        // return json_encode($result_row);
+
+
+        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+    }
   }
 
   function searchEvent(){
@@ -46,6 +145,7 @@ class Events
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
         $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
         // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
         // check if user or email address already exists
@@ -54,21 +154,30 @@ class Events
         WHERE name like '%".$searchStatement."%';";
 
         $query_get_user_info = $this->db_connection->query($sql);
-        $arrayResult = array();
+
         // get result row (as an object)
         if ($query_get_user_info->num_rows >= 1) {
-
+            $arrayResult = array();
           while($row = $query_get_user_info->fetch_object()){
             //   echo(json_encode($row));
             //   return $row;
-            $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name, 'place'=>$row->place, 'time'=>$row->time,
-             'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin));
-            // echo(''.$row->id_group)
+            $sql2 = "SELECT * FROM ebabilon.members WHERE id_event = '".$row->id_event."' AND id_member = '".$userID."';";
+            $query_isMember = $this->db_connection->query($sql2);
+            $result_Member = $query_isMember->fetch_object();
+            if($result_Member->id_member == $userID){
+              $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->event_image, 'isMember' => true));
+            }else{
+              $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->event_image, 'isMember' => false));
+            }
+
+            // echo(''.$row->id_event)
          }
          return json_encode($arrayResult);
-     }else{
-         return $arrayResult;
-     }
+       }
         // $result_row = $query_get_user_info->fetch_object();
 
         // echo '<span class="text-muted">'. $result_row->name .'</span>';
@@ -86,15 +195,15 @@ class Events
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $eventID = $_GET["event"];
 
         // check if user or email address already exists
-        $sql = "SELECT * FROM ebabilon.groups WHERE id_group = '".$groupID."';";
+        $sql = "SELECT * FROM ebabilon.events WHERE id_event = '".$eventID."';";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        echo '<img src=" '. $result_row->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+        echo '<img src=" '. $result_row->event_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
         echo '<h4>'.$result_row->name.'</h4>';
         // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
@@ -111,16 +220,16 @@ class Events
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $eventID = $_GET["event"];
 
         // check if user or email address already exists
-        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
-        FROM ebabilon.groups as groupsList, ebabilon.users as userList
-        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $sql = "SELECT eventsList.id_event, eventsList.name, eventsList.category, eventsList.description, eventsList.event_image, id, first_name, last_name
+        FROM ebabilon.events as eventsList, ebabilon.users as userList
+        WHERE id_event = '".$eventID."' AND eventsList.admin = userList.id;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: getGroupDetails ".json_encode($result_row)."');</script>");
+        echo("<script>console.log('PHP: getEventDetails ".json_encode($result_row)."');</script>");
 
         echo '<h3 style="text-align:left;">Coordinator:</h3>';
         echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
@@ -167,40 +276,17 @@ class Events
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $eventID = $_GET["event"];
 
         $sql = "SELECT id, first_name, last_name, user_image, email
         FROM ebabilon.members, ebabilon.users as userList
-        WHERE id_member = userList.id AND id_group = '".$groupID."';";
+        WHERE id_member = userList.id AND id_event = '".$eventID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-          echo '<div class="table-responsive panel">
-            <table class="table table-striped table-hover">';
-            echo '<thead>
-              <tr>
-                <th>Image</th>
-                <th>Name</th>
-                <th>Email</th>
-              </tr>
-            </thead>';
-            while($row = $query_get_user_info->fetch_object()) {
-              $date = date_create($row->time);
-              echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-              echo '<tr>';
-                echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
-                echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                echo   '<td>'. $row->email . '</td>';
-              echo '</tr>';
-           }
-         echo'</table>
-         </div>';
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
-       }
+        return $query_get_user_info;
     }
   }
 
-  function getEventImage(){
+  function getUserImage(){
     $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
     // change character set to utf8 and check it
@@ -222,22 +308,22 @@ class Events
   }
 
   function createEvent(){
-    if (empty($_POST['group_name'])) {
+    if (empty($_POST['event_name'])) {
         $this->errors[] = "Empty Username";
-        echo("<script>console.log('Error: Empty Group Name');</script>");
+        echo("<script>console.log('Error: Empty Event Name');</script>");
 
-    } elseif (strlen($_POST['group_name']) > 64 || strlen($_POST['group_name']) < 2) {
+    } elseif (strlen($_POST['event_name']) > 64 || strlen($_POST['event_name']) < 2) {
         $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
         echo("<script>console.log('Error: Username to short');</script>");
 
-    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])) {
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])) {
         $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
         echo("<script>console.log('Error: Username bad schema');</script>");
 
-    } elseif (!empty($_POST['group_name'])
-        && strlen($_POST['group_name']) <= 64
-        && strlen($_POST['group_name']) >= 2
-        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])
+    } elseif (!empty($_POST['event_name'])
+        && strlen($_POST['event_name']) <= 64
+        && strlen($_POST['event_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])
     ) {
         echo("<script>console.log('Good: All Clear');</script>");
         // create a database connection
@@ -254,23 +340,23 @@ class Events
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
             $userID = $_SESSION["id"];
-            $name = $this->db_connection->real_escape_string(strip_tags($_POST['group_name'], ENT_QUOTES));
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['event_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
             $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
 
-            $sql = "INSERT INTO `ebabilon`.`groups` (`name`, `admin`, `category`, `description`)
+            $sql = "INSERT INTO `ebabilon`.`events` (`name`, `admin`, `category`, `description`)
             VALUES ('".$name."', '".$userID."', '".$category."', '".$description."');";
             $query_new_user_insert = $this->db_connection->query($sql);
 
-            $group_id = mysqli_insert_id($this->db_connection);
-            // echo("<script>console.log('results_row: ".json_encode($group_id)."');</script>");
+            $event_id = mysqli_insert_id($this->db_connection);
+            // echo("<script>console.log('results_row: ".json_encode($event_id)."');</script>");
             // if user has been added successfully
             if ($query_new_user_insert) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
-                echo("<script>console.log('PHP: group created');</script>");
+                echo("<script>console.log('PHP: event created');</script>");
 
-                $sql = "INSERT INTO `ebabilon`.`members` (`id_group`, `id_member`)
-                VALUES  (".$group_id.",'".$userID."');";
+                $sql = "INSERT INTO `ebabilon`.`members` (`id_event`, `id_member`)
+                VALUES  (".$event_id.",'".$userID."');";
                 $query_new_member_insert = $this->db_connection->query($sql);
 
                 if($query_new_member_insert){
@@ -301,13 +387,10 @@ class Events
         $userID = $_SESSION["id"];
         $email = $_SESSION['email'];
 
-        $sql = "SELECT * FROM ebabilon.group_categories;";
+        $sql = "SELECT * FROM ebabilon.event_categories;";
         $query_get_user_info = $this->db_connection->query($sql);
         if ($query_get_user_info->num_rows >= 1) {
-
-          while($row = $query_get_user_info->fetch_object()){
-              echo   '<option value="'.$row->id_category. '">'. $row->name . '</option>';
-         }
+          return $query_get_user_info;
        }
     }
   }
@@ -322,29 +405,14 @@ class Events
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
-        $email = $_SESSION['email'];
 
-        $sql = "SELECT myGroups.name, myGroups.category, myGroups.id_group, first_name, last_name
-        FROM (SELECT groupsList.name, groupsList.category, groupsList.admin, groupsList.id_group
-        FROM ebabilon.groups as groupsList, ebabilon.members as memberList
-        WHERE groupsList.id_group = memberList.id_group AND memberList.id_member = '" .$userID."') as myGroups, ebabilon.users
-        WHERE myGroups.admin = id;";
+        $sql = "SELECT myEvents.name, myEvents.category, myEvents.id_event, first_name, last_name
+        FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event
+        FROM ebabilon.events as eventsList, ebabilon.members as memberList
+        WHERE eventsList.id_event = memberList.id_event AND memberList.id_member = '" .$userID."') as myEvents, ebabilon.users
+        WHERE myEvents.admin = id;";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-
-          while($row = $query_get_user_info->fetch_object()) {
-            echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
-            echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-              echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-              echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-              echo '</button>';
-              echo   '<h4>'. $row->name . '</h4>';
-              echo   '<span class="text-muted">'. $row->description . '</span>';
-            echo '</div>';
-         }
-       }else{
-         echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
-       }
+        return $query_get_user_info;
     }
   }
 }
