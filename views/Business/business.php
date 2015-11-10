@@ -336,7 +336,7 @@ class Business
             $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
             $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 
-            VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');"
+            VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');";
             $query_new_user_insert = $this->db_connection->query($sql);
 
             $business_id = mysqli_insert_id($this->db_connection);

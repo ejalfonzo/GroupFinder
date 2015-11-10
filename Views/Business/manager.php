@@ -20,7 +20,7 @@ if (isset($login)) {
 }
 require_once("../../config/db.php");
 require_once("Business.php");
-$business = new Buisness();
+$business = new Business();
 
 ?>
 <!doctype html>
@@ -62,7 +62,7 @@ $business = new Buisness();
             <li><a href="#">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li><a href="">Business</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
