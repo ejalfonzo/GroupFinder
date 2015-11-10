@@ -270,9 +270,9 @@ class Business
         $sql = "SELECT id, first_name, last_name, user_image, email
         FROM ebabilon.followers, ebabilon.users as userList
         WHERE id_follower = userList.id AND id_business = '".$businessID."'";
-        $query_get_user_info = $this->db_connection->query($sql);
+        $query_get_business_followers = $this->db_connection->query($sql);
         
-        return $query_get_user_info;
+        return $query_get_business_followers;
     }
   }
 
@@ -329,34 +329,37 @@ class Business
         if (!$this->db_connection->connect_errno) {
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
+            // 
             $userID = $_SESSION["id"];
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['business_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
             $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
             $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
+            echo("<script>console.log('PHP Insert: ".json_encode($_POST)."');</script>");
+
             $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 
             VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');";
-            $query_new_user_insert = $this->db_connection->query($sql);
+            $query_new_business_insert = $this->db_connection->query($sql);
 
             $business_id = mysqli_insert_id($this->db_connection);
             // echo("<script>console.log('results_row: ".json_encode($group_id)."');</script>");
             // if user has been added successfully
-            if ($query_new_user_insert) {
+            if ($query_new_business_insert) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: business created');</script>");
 
                 $sql = "INSERT INTO `ebabilon`.`followers` (`id_business`, `id_follower`)
                 VALUES ('".$business_id."', '".$userID."');";
-                $query_new_member_insert = $this->db_connection->query($sql);
+                $query_new_follower_insert = $this->db_connection->query($sql);
 
-                if($query_new_member_insert){
+                if($query_new_follower_insert){
                   echo("<script>console.log('PHP: Business Added');</script>");
                 }
-                // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+                echo("<script>console.log('PHP Insert: ".json_encode($query_new_business_insert)."');</script>");
             } else {
                 $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
-                echo("<script>console.log('PHP: ERROR Registering');</script>");
+                echo("<script>console.log('PHP: ERROR Creating Business');</script>");
             }
         } else {
             $this->errors[] = "Sorry, no database connection.";
@@ -402,9 +405,9 @@ class Business
           FROM ebabilon.businesses as businessList, ebabilon.followers as followerList
           WHERE businessList.id_business = followerList.id_business AND followerList.id_follower = '" .$userID."') as myBusinesses, ebabilon.users, ebabilon.business_categories as catList
         WHERE myBusinesses.admin = id AND catList.id_category = myBusinesses.category;";
-        $query_get_user_info = $this->db_connection->query($sql);
+        $query_get_my_businesses = $this->db_connection->query($sql);
         
-        return $query_get_user_info;
+        return $query_get_my_businesses;
     }
   }
 }
