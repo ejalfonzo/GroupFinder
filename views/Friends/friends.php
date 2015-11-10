@@ -166,8 +166,8 @@ class Friends
             //   echo(json_encode($row));
             //   return $row;
             $sql2 = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
-            WHERE friendsList.id_user = userList.id 
-            AND friendsList.id_friend = '".$row->id_friend."' 
+            WHERE friendsList.id_user = userList.id
+            AND friendsList.id_friend = '".$row->id_friend."'
             AND userList.id = '".$userID."';";
             $query_isFriend = $this->db_connection->query($sql2);
             $result_Friend = $query_isFriend->fetch_object();
@@ -350,7 +350,6 @@ class Friends
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
-        $email = $_SESSION['email'];
 
         $sql = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
         WHERE friendsList.id_user = userList.id;";

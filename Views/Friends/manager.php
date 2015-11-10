@@ -56,9 +56,9 @@ $friends = new Friends();
         <div class="col-sm-3 col-md-2 sidebar panel" style="margin-bottom:0px;">
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Friends</a></li>
-            <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
+            <li><a href="/Views/User/profile.php">Profile</a></li>
+            <li class="active"><a href="/Views/Friends/manager.php">Friends</a></li>
+            <li><a href="/Views/Groups/manager.php">Groups</a></li>
             <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
@@ -84,17 +84,17 @@ $friends = new Friends();
                   while($row = $myFriends->fetch_object()) {
 
                     echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                      echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_friend."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo '<button onclick="location.href = '."'"."/Views/Friends/open.php?group=".$row->id_friend."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
                       //photo of Friend here
                       echo '<img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;">';
                      // echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
                       echo '</button>';
-                      echo   '<h4>'. $row->name . '</h4>';
+                      echo   '<h4>'. $row->first_name . '</h4>';
                       echo   '<h4>'. $row->email .'</h4>';
                     echo '</div>';
                  }
                }else if($myFriends != null){
-                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
+                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Friends...</h3>';
                }
                ?>
 
