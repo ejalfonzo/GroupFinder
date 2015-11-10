@@ -81,14 +81,18 @@ The Project will be split into protoype phases that will coincide with the Sprin
   2. ~~ Business Basic functionality ~~
   3. ~~ Search Results functionality ~~
 4. Phase 4
-  1. Post functionality
-  2. Friends basic functionality
-  3. Email functionality
-  4. Automated Tests: Post, Friends
-  5. Automated Tests: Events, Email
+  1. ~~ Friends functionality ~~
+  2. ~~ Business functionality ~~
+  3. ~~ Events functionality ~~
+  4. ~~ Groups functionality ~~
 5. Phase 5
   1. Automated Tests: Business
   2. Project Complete
+  3. Email functionality
+  4. Post functionality
+  5. Automated Tests: Post, Friends
+  6. Automated Tests: Events, Email
+  7. Chat
 
 
 Detailed Plans
@@ -172,6 +176,11 @@ Specific functions we well achieve will include:
 - Editing a group
 - Editing an Event
 - Editing a Business
+
+5. Phase 5: Clean-up and Finishing
+
+This phase will focus on cleaning up any leftover requirements from previous phases and finishing up the project. Particularly the functionality of Emails and Posts will be priority.
+
 - Posting to timeline
 - Posting to Group
 - Posting to Business
