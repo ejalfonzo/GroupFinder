@@ -58,8 +58,8 @@ $user = new User();
                 <li class="active"><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             </ul>
             <ul class="nav nav-sidebar">
-                <li><a href="#">Profile</a></li>
-                <li><a href="#">Friends</a></li>
+                <li><a href="/Views/User/profile.php">Profile</a></li>
+                <li><a href="/Views/Friends/manager.php">Friends</a></li>
             </ul>
             <ul class="nav nav-sidebar">
                 <li><a href="/Views/Groups/manager.php">Groups</a></li>

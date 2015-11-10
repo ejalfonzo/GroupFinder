@@ -5,7 +5,8 @@ if (session_id() === "" && $_SESSION['user_login_status'] != 1) { session_start(
 require_once("../config/db.php");
 require_once("Basic.php");
 $basic = new Basic();
-
+require_once("Groups/Groups.php");
+$basic = new Groups();
 ?>
 <!doctype html>
 <html lang="en" class="no-js">
@@ -28,8 +29,43 @@ $basic = new Basic();
 	<script type="text/javascript">
 
     $(document).ready(function(){
-		var data = <?php echo $_GET['searchItem']; ?> +"";
+		var data = "<?php Print($_GET['searchItem']); ?>";
 		console.log("POST: ",data);
+		if(data){
+			$("#search").val(data);
+			search();
+		}
+
+		function joinGroup(group){
+		   $.ajax({
+			   type:"post",
+			   url:"/Views/Groups/handler.php",
+			   data:"join="+group,
+			   success:function(data){
+				   console.log("Result",data);
+				   var obj = JSON.parse(data);
+				   alert(obj);
+				   console.log("JOIN GROUP: ", obj);
+					 search();
+			   }
+		   });
+		}
+
+		function leaveGroup(group){
+		   $.ajax({
+			   type:"post",
+			   url:"/Views/Groups/handler.php",
+			   data:"leave="+group,
+			   success:function(data){
+				   console.log("Result",data);
+				   var obj = JSON.parse(data);
+				   alert(obj);
+				   console.log("LEAVE GROUP: ", obj);
+					 search();
+				   // createElement(obj);
+			   }
+		   });
+		}
 
          function search(){
               var title=$("#search").val();
@@ -42,7 +78,7 @@ $basic = new Basic();
 					// dataType:'json',
                     success:function(data){
 						console.log("Result",data);
-						$("#search").val("");
+						// $("#search").val("");
                         $("#contentLocation").html("");
 						var obj = JSON.parse(data);
 						createElement(obj);
@@ -54,24 +90,40 @@ $basic = new Basic();
 		function createElement(data){
 			console.log("Create: ", data);
 			if(data.forEach){
+				var user = '<?php echo $_SESSION["id"]; ?>';
 				data.forEach(function(item){
 					console.log("ITEM", item);
 					if(item.type == "group"){
 						var targetElement = document.getElementById('contentLocation');
-					    var li = document.createElement('li');
-						li.className = "mix panel group "+ item.category;
-					    li.innerHTML =
-					                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
-										'<div class="panel-heading">'+
-										'<h3 class="panel-title">Group: '+ item.name +'</h3>'+
-										'</div>'+
-										'<div class="panel-body">'+
-										(item.description ? item.description:"No Description Available")+
-										'</div>'+
-					                    '</div>';
-					    // Append 'foo' element to target element
-										// '<img src="'+ item.image +'" alt="Image 1"> '+
-					    targetElement.appendChild(li)
+		   				var li = document.createElement('li');
+		   				li.className = "mix panel group "+ item.category;
+		   				var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+		   							 '<div class="panel-heading">'+
+		   							 '<h3 class="panel-title">'+ item.name +'</h3>'+
+		   							 '</div>'+
+		   							 '<div class="panel-body">'+
+		   							 '<div style="float: left; margin-right: 20px;">'+
+		   							 '<img src="'+ item.image +'" alt="Group Image" width="40" height="40"> '+
+		   							 '</div>'+
+		   							 '<div>'+
+		   							 '<h3>Description:</h3>'+
+		   							 (item.description ? item.description:"No Description Available")+
+		   							 '</div>'+
+		   							 '</div>';
+		   							 if(user){
+		   								 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
+		   								 if(!item.isMember){
+		   										 inHTML = inHTML + '<button id="group'+item.id+'" class="btn btn-flat btn-info" onclick="joinGroup('+item.id+')" >Join Group</button>';
+		   								 }else{
+		   										 inHTML = inHTML + '<button id="group'+item.id+'" class="btn btn-flat btn-warning" onclick="leaveGroup('+item.id+')" >Leave Group</button>';
+		   								 }
+		   								 inHTML = inHTML + '</div>'+
+		   								 '</div>';
+		   							 }else{
+		   								 inHTML = inHTML +'</div>';
+		   							 }
+		   				 li.innerHTML = inHTML;
+		   				 targetElement.appendChild(li)
 					}
 					if(item.type == "event"){
 						var targetElement = document.getElementById('contentLocation');

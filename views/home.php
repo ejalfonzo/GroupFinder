@@ -86,11 +86,11 @@ function timelineCard(){
             <h1 style="margin-bottom: 20px;">Group Finder</h1>
             <div class="form-group">
         		<div>
-    				<form method=GET action="/Views/viewSearch.php" name="searchItem">
+    				<form method="GET" action="/Views/viewSearch.php">
             			<div class="input-group">
-            				<input type="text" id="search" class="form-control input-lg" placeholder="Search in Group Finder" style="margin-bottom:10px; height:55px; font-size:25px;">
+            				<input type="text" id="search" name="searchItem" class="form-control input-lg" placeholder="Search in Group Finder" style="margin-bottom:10px; height:55px; font-size:25px;">
             				<span class="input-group-btn">
-            					<button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
+            					<button class="btn btn-default" id="searchButton" type="submit" value="searchItem" class="searchButton"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
             				</span>
             			</div><!-- /input-group -->
     				</form>
@@ -106,17 +106,17 @@ function timelineCard(){
         </div>
 
         <!-- Vertical Timeline -->
-        <h1 style="font-size:40px; padding: 15px 25px 0px;">Event Timeline</h1>
-        <section id="cd-timeline">
-              <?php $basic->getAllEventsTimeline(); ?>
-        </section>
+        <!-- <h1 style="font-size:40px; padding: 15px 25px 0px;">Event Timeline</h1> -->
+        <!-- <section id="cd-timeline"> -->
+              <!-- <?php $basic->getAllEventsTimeline(); ?> -->
+        <!-- </section> -->
 
 
-        <footer class="footer">
+        <!-- <footer class="footer">
             <div class="container">
                 <p class="text-muted">Place footer content here.</p>
             </div>
-        </footer>
+        </footer> -->
     </div> <!-- /container -->
 
     <!-- <script src="//code.jquery.com/jquery-1.11.3.min.js"></script> -->

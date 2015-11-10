@@ -40,6 +40,7 @@ class Basic
       }
       if (!$this->db_connection->connect_errno) {
           // escaping, additionally removing everything that could be (html/javascript-) code
+          $userID = $_SESSION["id"];
           $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
           $arrayResult = array();
 
@@ -52,9 +53,18 @@ class Basic
           // get result row (as an object)
           if ($query_get_user_info->num_rows >= 1) {
             while($row = $query_get_user_info->fetch_object()){
+            //   $arrayResult[] =  (array('type'=>'group','id' => $row->id_group,'name'=> $row->name,
+            //    'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+            //   'image' => $row->group_image));
+            if($row->id_member == $userID){
               $arrayResult[] =  (array('type'=>'group','id' => $row->id_group,'name'=> $row->name,
                'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
-              'image' => $row->group_image));
+              'image' => $row->group_image, 'isMember' => true));
+            }else{
+              $arrayResult[] =  (array('type'=>'group','id' => $row->id_group,'name'=> $row->name,
+               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
+              'image' => $row->group_image, 'isMember' => false));
+            }
            }
          }
 
@@ -71,6 +81,33 @@ class Basic
               'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin));
           }
         }
+
+        $sql = "SELECT *
+        FROM ebabilon.businesses
+        WHERE name like '%".$searchStatement."%';";
+
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        if ($query_get_user_info->num_rows >= 1) {
+
+          while($row = $query_get_user_info->fetch_object()){
+            $arrayResult[] =  (array('type'=>'business','id' => $row->id_business,'name'=> $row->name, 'address'=>$row->address, 'opHours'=>$row->opHours,
+             'category' => $row->category, 'image' => $row->business_image, 'admin' => $row->admin));
+         }
+       }
+       $sql = "SELECT *
+       FROM ebabilon.users
+       WHERE name like '%".$searchStatement."%' OR user_name like '%".$searchStatement."%';";
+
+       $query_get_user_info = $this->db_connection->query($sql);
+       // get result row (as an object)
+       if ($query_get_user_info->num_rows >= 1) {
+
+         while($row = $query_get_user_info->fetch_object()){
+           $arrayResult[] =  (array('type'=>'business','id' => $row->id_business,'name'=> $row->name, 'address'=>$row->address, 'opHours'=>$row->opHours,
+            'category' => $row->category, 'image' => $row->business_image, 'admin' => $row->admin));
+        }
+      }
         // if(count($arrayResult) >= 1){
             return json_encode($arrayResult);
         // }
