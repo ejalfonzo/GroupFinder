@@ -300,7 +300,7 @@ class Business
   function createBusiness(){
     if (empty($_POST['business_name'])) {
         $this->errors[] = "Empty Username";
-        echo("<script>console.log('Error: Empty Group Name');</script>");
+        echo("<script>console.log('Error: Empty Business Name');</script>");
 
     } elseif (strlen($_POST['business_name']) > 64 || strlen($_POST['business_name']) < 2) {
         $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
