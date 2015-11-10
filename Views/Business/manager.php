@@ -19,7 +19,7 @@ if (isset($login)) {
     }
 }
 require_once("../../config/db.php");
-require_once("Buisness.php");
+require_once("Business.php");
 $business = new Buisness();
 
 ?>
@@ -75,8 +75,8 @@ $business = new Buisness();
           <div class="row placeholders panel panel-primary" style="padding:20px;">
               <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
 
-              <?php 
-              $myBusinesses = $business->getMyBusinesses(); 
+              <?php
+              $myBusinesses = $business->getMyBusinesses();
               $hasBs = false;
               echo("<script>console.log('results_row: ".json_encode($myBusinesses)."');</script>");
               if($myBusinesses->num_rows >= 1){$hasGs = true;}
@@ -121,8 +121,8 @@ $business = new Buisness();
                                 <div class="control-business">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
-                                     <?php 
-                                     $categories = $business->getBusinessCategories(); 
+                                     <?php
+                                     $categories = $business->getBusinessCategories();
                                      if($categories != null){
                                         while($row = $categories->fetch_object()){
                                                   echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
