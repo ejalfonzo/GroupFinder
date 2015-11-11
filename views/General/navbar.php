@@ -20,6 +20,7 @@ echo                '<li><a href="/Views/Groups/view.php" class="btn btn-flat" s
 
 if ($_SESSION['user_login_status'] == 1) {
     echo            '<li><a href="/Views/Events/view.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>';
+    echo            '<li><a href="/Views/Friends/view.php" class="btn btn-flat" style="padding:10px; color:white;">Friends</a></li>';
 }
 echo            '</ul>';
 echo            '<ul class="nav navbar-nav navbar-right" >';

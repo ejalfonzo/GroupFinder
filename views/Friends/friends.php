@@ -59,11 +59,11 @@ class Friends
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
         WHERE id_friend = '".$friendID."' AND id_user = '".$userID."') LIMIT 1;";
         $query_get_user_info_2 = $this->db_connection->query($sql);
-        $sql2 = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
+        $sql = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
         SELECT * FROM (SELECT '".$userID."', '".$friendID."') AS tmp
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
         WHERE id_friend = '".$userID."' AND id_user = '".$friendID."') LIMIT 1;";
-        $query_get_user_info = $this->db_connection->query($sql2);
+        $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
         if($query_get_user_info && $query_get_user_info_2){
@@ -96,8 +96,8 @@ class Friends
         // check if user or email address already exists
         $sql = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$friendID."' AND `id_user` = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        $sql2 = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$userID."' AND `id_user` = '".$friendID."';";
-        $query_get_user_info_2 = $this->db_connection->query($sql2);
+        $sql = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$userID."' AND `id_user` = '".$friendID."';";
+        $query_get_user_info_2 = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
         if($query_get_user_info && $query_get_user_info_2){
@@ -154,8 +154,8 @@ class Friends
         // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
         // check if user or email address already exists
         $sql = "SELECT *
-        FROM ebabilon.friends
-        WHERE name like '%".$searchStatement."%';";
+        FROM ebabilon.users
+        WHERE first_name like '%".$searchStatement."%' OR last_name like '%".$searchStatement."%' OR user_name like '%".$searchStatement."%';";
 
         $query_get_user_info = $this->db_connection->query($sql);
 
@@ -165,18 +165,17 @@ class Friends
           while($row = $query_get_user_info->fetch_object()){
             //   echo(json_encode($row));
             //   return $row;
-            $sql2 = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
-            WHERE friendsList.id_user = userList.id
-            AND friendsList.id_friend = '".$row->id_friend."'
-            AND userList.id = '".$userID."';";
-            $query_isFriend = $this->db_connection->query($sql2);
+            $sql = "SELECT *
+            FROM ebabilon.friends
+            WHERE id_user = '".$userID."' AND id_friend = '".$row->id."';";
+            $query_isFriend = $this->db_connection->query($sql);
             $result_Friend = $query_isFriend->fetch_object();
-            if($result_Friend->id_friend == $userID){
-              $arrayResult[] =  (array('id' => $row->id_friend,'name'=> $row->name,
-               'email' => $row->email, 'image' => $row->friend_image, 'isFriend' => true));
+            if($result_Friend->id == $userID){
+              $arrayResult[] =  (array('id' => $row->id,'user_name'=> $row->user_name,
+               'email' => $row->email, 'image' => $row->user_image, 'isFriend' => true));
             }else{
-              $arrayResult[] =  (array('id' => $row->id_friend,'name'=> $row->name,
-               'email' => $row->email, 'image' => $row->friend_image, 'isFriend' => false));
+              $arrayResult[] =  (array('id' => $row->id,'user_name'=> $row->user_name,
+               'email' => $row->email, 'image' => $row->user_image, 'isFriend' => false));
             }
 
             // echo(''.$row->id_group)
@@ -203,15 +202,14 @@ class Friends
         $friendID = $_GET["friend"];
 
         // check if user or email address already exists
-        $sql = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
-        WHERE friendsList.id_user = userList.id AND friendsList.id_friend = '".$friendID."';";
+        $sql = "SELECT id, user_name, first_name, last_name, email, user_image
+        FROM ebabilon.users as userList
+        WHERE id = '".$friendID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
 
-        echo '<img src=" '. $result_row->user_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-        echo '<h4>'.$result_row->name.'</h4>';
-        echo '<h4>'.$result_row->email.'</h4>';
+        return $query_get_user_info;
+        // get result row (as an object)
+
         // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
@@ -230,28 +228,12 @@ class Friends
         $friendID = $_GET["friend"];
 
         // check if user or email address already exists
-        $sql = "SELECT friendsList.id_friend, friendsList.name, friendsList.category, friendsList.friend_email, friendsList.friend_image, id, first_name, last_name
-        FROM ebabilon.friends as friendsList, ebabilon.users as userList
-        WHERE firendsList.id_friend = '".$friendID."' AND firendsList.id_user = userList.id;";
+        $sql = "SELECT id, user_name, first_name, last_name, email, user_image
+        FROM ebabilon.users as userList
+        WHERE id = '".$friendID."';";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: getFriendDetails ".json_encode($result_row)."');</script>");
-
-        echo '<h3 style="text-align:left;">Friend:</h3>';
-        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
-        echo '<h3 style="text-align:left;">Email:</h3>';
-        if(isset($result_row->email)){
-          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->email.'</h4>';
-        }else{
-          echo '<h4 style="text-align:left; padding-left:35px;"> No Email </h4>';
-        }
-        echo '<h3 style="text-align:left;">Category:</h3>';
-        if(isset($result_row->category)){
-          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->category.'</h4>';
-        }else{
-          echo '<h4 style="text-align:left; padding-left:35px;"> No Category </h4>';
-        }
+        return $query_get_user_info;
         // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
@@ -288,11 +270,19 @@ class Friends
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $friendID = $_GET["friend"];
+        $adminID = $_GET["friend"];
 
-        $sql = "SELECT *
-        FROM ebabilon.friends as friendsList, ebabilon.users as userList
-        WHERE friendsList.id_user = userList.id AND id_friend = '".$friendID."';";
+        $sql = "SELECT id_business as id, businessList.name, categoriesList.name as category, business_image as image, 'Business' as type
+        FROM ebabilon.businesses as businessList, ebabilon.business_categories as categoriesList
+        WHERE admin = '".$adminID."' AND categoriesList.id_category = businessList.category
+        UNION
+        SELECT id_group as id, groupsList.name, categoriesList.name as category, group_image as image, 'Group'
+        FROM ebabilon.groups as groupsList, ebabilon.group_categories as categoriesList
+        WHERE admin = '".$adminID."' AND categoriesList.id_category = groupsList.category
+        UNION
+        SELECT id_event as id, eventsList.name, categoriesList.name as category, event_image as image, 'Event'
+        FROM ebabilon.events as eventsList, ebabilon.event_categories as categoriesList
+        WHERE admin = '".$adminID."' AND categoriesList.id_category = eventsList.category;";
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;
     }

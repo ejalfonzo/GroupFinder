@@ -80,13 +80,13 @@ $friends = new Friends();
 	 if(data.forEach){
 		 var user = '<?php echo $_SESSION["id"]; ?>';
 		 data.forEach(function(item){
-			 // console.log("ITEM", item);
+			 console.log("ITEM", item);
 			 var targetElement = document.getElementById('contentLocation');
 			 var li = document.createElement('li');
-			 li.className = "mix panel friend "+ item.category;
+			 li.className = "mix panel friend ";
 			 var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
 							 '<div class="panel-heading">'+
-							 '<h3 class="panel-title">'+ item.first_sname + item.last_name +'</h3>'+
+							 '<h3 class="panel-title">'+ item.user_name +'</h3>'+
 							 '</div>'+
 							 '<div class="panel-body">'+
 							 '<div style="float: left; margin-right: 20px;">'+
@@ -94,7 +94,7 @@ $friends = new Friends();
 							 '</div>'+
 							 '<div>'+
 							 '<h3>Email:</h3>'+
-							 (item.description ? item.email:"No Email Available")+
+							 (item.email ? item.email:"No Email Available")+
 							 '</div>'+
 							 '</div>';
 							 if(user){
@@ -110,7 +110,9 @@ $friends = new Friends();
 								 inHTML = inHTML +'</div>';
 							 }
 				 li.innerHTML = inHTML;
-				 targetElement.appendChild(li)
+				 if(user != item.id){
+					targetElement.appendChild(li)
+				 }
 		 });
 	 }else{
 		 console.log("No Results");

@@ -84,7 +84,7 @@ $friends = new Friends();
                   while($row = $myFriends->fetch_object()) {
 
                     echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                      echo '<button onclick="location.href = '."'"."/Views/Friends/open.php?group=".$row->id_friend."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo '<button onclick="location.href = '."'"."/Views/Friends/open.php?friend=".$row->id."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
                       //photo of Friend here
                       echo '<img src="'.$row->user_image.'" alt="" style="width:100px; height:auto;">';
                      // echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';

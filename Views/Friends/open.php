@@ -89,10 +89,56 @@ $friends = new Friends();
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="panel-body">
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php $friends->getFriend(); ?>
+                  <?php
+                  $userFriends = $friends->getFriend();
+                  $hasF = false;
+                  echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
+                  if($userFriends->num_rows >= 1){
+                    $hasF = true;
+                  }
+                  if ($hasF) {
+                      while($row = $userFriends->fetch_object()) {
+                          echo '<img src=" '. $row->user_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                          echo '<h4>'.$row->name.'</h4>';
+                          echo '<h4>'.$row->email.'</h4>';
+                     }
+                 }else if($userFriends != null){
+                   echo '<h3 class="text-muted" style="margin-top:75px";>User has no Friends...</h3>';
+                 }
+
+                   ?>
+
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php $friends->getFriendDetails(); ?>
+                  <?php
+                  $userFriends = $friends->getFriend();
+                  $hasF = false;
+                  echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
+                  if($userFriends->num_rows >= 1){
+                    $hasF = true;
+                  }
+                  if ($hasF) {
+                      while($row = $userFriends->fetch_object()) {
+                          echo '<h3 style="text-align:left;">Friend:</h3>';
+                          echo '<h4 style="text-align:left; padding-left:35px;">'.$row->first_name ." ".$row->last_name.'</h4>';
+                          echo '<h3 style="text-align:left;">Email:</h3>';
+                          if(isset($row->email)){
+                            echo '<h4 style="text-align:left; padding-left:35px;">'.$row->email.'</h4>';
+                          }else{
+                            echo '<h4 style="text-align:left; padding-left:35px;"> No Email </h4>';
+                          }
+                          echo '<h3 style="text-align:left;">Category:</h3>';
+                          if(isset($row->category)){
+                            echo '<h4 style="text-align:left; padding-left:35px;">'.$row->category.'</h4>';
+                          }else{
+                            echo '<h4 style="text-align:left; padding-left:35px;"> No Category </h4>';
+                          }
+                     }
+                 }else if($userFriends != null){
+                   echo '<h3 class="text-muted" style="margin-top:75px";>User has no Friends...</h3>';
+                 }
+
+                  ?>
               </div>
             </div>
 
@@ -116,17 +162,18 @@ $friends = new Friends();
                     echo '<thead>
                       <tr>
                         <th>Image</th>
+                        <th>Type</th>
                         <th>Name</th>
-                        <th>Email</th>
+                        <th>Category</th>
                       </tr>
                     </thead>';
                     while($row = $userFriends->fetch_object()) {
-                      $date = date_create($row->time);
-
+                        echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
                       echo '<tr>';
-                        echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
-                        echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                        echo   '<td>'. $row->email . '</td>';
+                        echo   '<td><img src="'.$row->image.'" alt="" style="width:40px; height:auto;"></td>';
+                        echo   '<td>'. $row->type . '</td>';
+                        echo   '<td>'. $row->name . '</td>';
+                        echo   '<td>'. $row->category . '</td>';
                       echo '</tr>';
                    }
                  echo'</table>
