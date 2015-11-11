@@ -203,7 +203,7 @@ class Business
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        return json_encode($result_row);
+        echo '<h4>'.$result_row->name.'</h4>';
     }
   }
 
@@ -218,18 +218,16 @@ class Business
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $businessID = $_GET["business"];
 
         // check if user or email address already exists
         $sql = "SELECT businessList.name, catList.name as category, businessList.address, businessList.opHours, id, first_name, last_name
         FROM ebabilon.businesses as businessList, ebabilon.users as userList, ebabilon.business_categories as catList
         WHERE id_business = '".$businessID."' AND businessList.admin = userList.id AND catList.id_category = businessList.category;";
         $query_get_user_info = $this->db_connection->query($sql);
+
         // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-
-
-        return json_encode($result_row);
+        return $query_get_user_info;
     }
   }
 
@@ -265,13 +263,12 @@ class Business
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userId = $_SESSION["id"];
-        $groupID = $_GET["group"];
+        $businessID = $_GET["business"];
 
         $sql = "SELECT id, first_name, last_name, user_image, email
         FROM ebabilon.followers, ebabilon.users as userList
         WHERE id_follower = userList.id AND id_business = '".$businessID."'";
-        $query_get_business_followers = $this->db_connection->query($sql);
-        
+        $query_get_business_followers = $this->db_connection->query($sql);        
         return $query_get_business_followers;
     }
   }
@@ -336,13 +333,20 @@ class Business
             $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
             $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
+            echo("<script>console.log('userID: ".$userID."');</script>");
+            echo("<script>console.log('business_name: ".$business_name."');</script>");
+            echo("<script>console.log('category: ".$category."');</script>");
+            echo("<script>console.log('Address: ".$address."');</script>");
+            echo("<script>console.log('opHours: ".$opHours."');</script>");
             echo("<script>console.log('PHP Insert: ".json_encode($_POST)."');</script>");
 
             $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 
             VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');";
             $query_new_business_insert = $this->db_connection->query($sql);
+            echo("<script>console.log('query: ".json_encode($query_new_business_insert)."');</script>");
 
             $business_id = mysqli_insert_id($this->db_connection);
+            echo("<script>console.log('business_id: ".$business_id."');</script>");
             // echo("<script>console.log('results_row: ".json_encode($group_id)."');</script>");
             // if user has been added successfully
             if ($query_new_business_insert) {
@@ -400,12 +404,16 @@ class Business
         $userID = $_SESSION["id"];
         $email = $_SESSION['email'];
 
+        echo("<script>console.log('userID: ".$userID."');</script>");
+
         $sql = "SELECT myBusinesses.name, catList.name as category, myBusinesses.id_business, first_name, last_name
         FROM (SELECT businessList.name, businessList.category, businessList.admin, businessList.id_business
           FROM ebabilon.businesses as businessList, ebabilon.followers as followerList
           WHERE businessList.id_business = followerList.id_business AND followerList.id_follower = '" .$userID."') as myBusinesses, ebabilon.users, ebabilon.business_categories as catList
         WHERE myBusinesses.admin = id AND catList.id_category = myBusinesses.category;";
         $query_get_my_businesses = $this->db_connection->query($sql);
+
+        //echo("<script>console.log('results_row: ".json_encode($query_get_my_businesses)."');</script>");
         
         return $query_get_my_businesses;
     }

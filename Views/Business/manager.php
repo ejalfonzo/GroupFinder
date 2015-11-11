@@ -58,11 +58,11 @@ $business = new Business();
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Profile</a></li>
             <li><a href="#">Friends</a></li>
-            <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/Groups/manager.php">Groups</a></li>
+            <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Business</a></li>
+            <li class="active"><a href="/Views/Business/manager.php">Business</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -73,22 +73,23 @@ $business = new Business();
 
 
           <div class="row placeholders panel panel-primary" style="padding:20px;">
-              <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
+              <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Businessses</div> -->
 
               <?php
               $myBusinesses = $business->getMyBusinesses();
               $hasBs = false;
               echo("<script>console.log('results_row: ".json_encode($myBusinesses)."');</script>");
-              if($myBusinesses->num_rows >= 1){$hasGs = true;}
+              //echo("<script>console.log('$myBusinesses->fetch_object(): ".json_encode($myBusinesses->fetch_object())."');</script>");
+
+              if($myBusinesses->num_rows >= 1){$hasBs = true;}
               if ($hasBs) {
                 while($row = $myBusinesses->fetch_object()) {
                     echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
-                      // echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_business."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
-                      // echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-                      // echo '</button>';
+                      echo '<button onclick="location.href = '."'"."/Views/Business/open.php?business=".$row->id_business."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                      echo '</button>';
                       echo   '<h4>'. $row->name . '</h4>';
-                      echo   '<span class="text-muted">'. $row->address . '</span>';
-                      echo   '<span class="text-muted">'. $row->opHours . '</span>';
+                      echo   '<span class="text-muted">'. $row->category . '</span>';
                     echo '</div>';
               }
               }else if($myBusinesses != null){
@@ -125,7 +126,7 @@ $business = new Business();
                                      $categories = $business->getBusinessCategories();
                                      if($categories != null){
                                         while($row = $categories->fetch_object()){
-                                                  echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
+                                                  echo('<option value="' .$row->id_category. '">'. $row->name . '</option>');
                                               }
                                       }
                                      ?>
@@ -134,11 +135,11 @@ $business = new Business();
                                 </div>
                               </div>
 
-                              <!-- <label for="groupDescription" class="control-label">Group's Description</label> -->
-                              <textarea class="form-control floating-label" placeholder="Business' Address" rows="2" id="address" style="margin: 20px 0px 0px;"></textarea>
+                              <!-- <label for="groupDescription" class="control-label">Business' Description</label> -->
+                              <textarea class="form-control floating-label" placeholder="Business' Address" rows="2" id="address" name="address" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your business' address, so other may know the location of your business.</span>
 
-                              <textarea class="form-control floating-label" placeholder="Business' Operational Hours" rows="2" id="opHours" style="margin: 20px 0px 0px;"></textarea>
+                              <textarea class="form-control floating-label" placeholder="Business' Operational Hours" rows="2" id="opHours" name="opHours" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">State your business' operational hours, so other may know when and where your business operates.</span>
 
                               <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createBusiness" value="createBusiness" />
