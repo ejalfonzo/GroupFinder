@@ -351,8 +351,9 @@ class Friends
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
 
-        $sql = "SELECT * FROM ebabilon.friends as friendsList, ebabilon.users as userList
-        WHERE friendsList.id_user = userList.id;";
+        $sql = "SELECT id, user_name, email, first_name, last_name, user_image, categoriesList.name as category
+        FROM ebabilon.friends as friendsList, ebabilon.users as userList, ebabilon.friends_categories as categoriesList
+        WHERE friendsList.id_friend = userList.id AND categoriesList.id_category = friendsList.category AND id_user = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;
     }

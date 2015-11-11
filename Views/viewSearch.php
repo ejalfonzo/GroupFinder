@@ -142,6 +142,27 @@ $basic = new Basic();
 										// '<img src="'+ item.image +'" alt="Image 1"> '+
 					    targetElement.appendChild(li)
 					}
+					if(item.type == "user"){
+						var targetElement = document.getElementById('contentLocation');
+		   				var li = document.createElement('li');
+		   				li.className = "mix panel user "+ item.category;
+		   				var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+		   							 '<div class="panel-heading">'+
+		   							 '<h3 class="panel-title">User: '+ item.user_name +'</h3>'+
+		   							 '</div>'+
+		   							 '<div class="panel-body">'+
+		   							 '<div style="float: left; margin-right: 20px;">'+
+		   							 '<img src="'+ item.image +'" alt="User Image" width="40" height="40"> '+
+		   							 '</div>'+
+		   							 '<div>'+
+		   							 '<h3>Full Name:</h3>'+
+		   							 (item.first_name ? item.first_name+" "+(item.last_name ? item.last_name:"")+" "+(item.maiden_name ? item.maiden_name:""):"No Name Available")+
+		   							 '</div>'+
+		   							 '</div>';
+		   							inHTML = inHTML +'</div>';
+		   				 li.innerHTML = inHTML;
+		   				 targetElement.appendChild(li)
+					}
 					if(item.type == "business"){
 						var targetElement = document.getElementById('contentLocation');
 					    var li = document.createElement('li');
@@ -223,6 +244,7 @@ $basic = new Basic();
 					<li class="filter" data-filter=".group"><a href="#0" data-type="group">Groups</a></li>
 					<li class="filter" data-filter=".event"><a href="#0" data-type="event">Event</a></li>
 					<li class="filter" data-filter=".business"><a href="#0" data-type="business">Business</a></li>
+					<li class="filter" data-filter=".user"><a href="#0" data-type="user">user</a></li>
 
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->

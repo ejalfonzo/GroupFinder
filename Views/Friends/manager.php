@@ -78,15 +78,15 @@ $friends = new Friends();
               <?php
                 $myFriends = $friends->getUserFriends();
                 $hasFs = false;
-                echo("<script>console.log('results_row: ".json_encode($myFriends)."');</script>");
-                if($myFriends->num_rows >= 1){$hasGs = true;}
+                echo("<script>console.log('results_row userFriends: ".json_encode($myFriends)."');</script>");
+                if($myFriends->num_rows >= 1){$hasFs = true;}
                 if ($hasFs) {
                   while($row = $myFriends->fetch_object()) {
 
                     echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
                       echo '<button onclick="location.href = '."'"."/Views/Friends/open.php?group=".$row->id_friend."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
                       //photo of Friend here
-                      echo '<img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;">';
+                      echo '<img src="'.$row->user_image.'" alt="" style="width:100px; height:auto;">';
                      // echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
                       echo '</button>';
                       echo   '<h4>'. $row->first_name . '</h4>';

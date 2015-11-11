@@ -97,15 +97,15 @@ class Basic
        }
        $sql = "SELECT *
        FROM ebabilon.users
-       WHERE name like '%".$searchStatement."%' OR user_name like '%".$searchStatement."%';";
+       WHERE first_name like '%".$searchStatement."%' OR last_name like '%".$searchStatement."%' OR user_name like '%".$searchStatement."%';";
 
        $query_get_user_info = $this->db_connection->query($sql);
        // get result row (as an object)
        if ($query_get_user_info->num_rows >= 1) {
 
          while($row = $query_get_user_info->fetch_object()){
-           $arrayResult[] =  (array('type'=>'business','id' => $row->id_business,'name'=> $row->name, 'address'=>$row->address, 'opHours'=>$row->opHours,
-            'category' => $row->category, 'image' => $row->business_image, 'admin' => $row->admin));
+           $arrayResult[] =  (array('type'=>'user','id' => $row->id,'user_name'=> $row->user_name, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name,
+            'maiden_name' => $row->maiden_name, 'image' => $row->user_image, 'admin' => $row->admin, 'email' => $row->email));
         }
       }
         // if(count($arrayResult) >= 1){
