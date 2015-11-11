@@ -223,22 +223,12 @@ class Events
         $eventID = $_GET["event"];
 
         // check if user or email address already exists
-        $sql = "SELECT eventsList.id_event, eventsList.name, eventsList.category, eventsList.description, eventsList.event_image, id, first_name, last_name
-        FROM ebabilon.events as eventsList, ebabilon.users as userList
-        WHERE id_event = '".$eventID."' AND eventsList.admin = userList.id;";
+        $sql = "SELECT eventsList.id_event, eventsList.name, categoryList.name as category, eventsList.description, eventsList.event_image, id, first_name, last_name
+        FROM ebabilon.events as eventsList, ebabilon.users as userList, ebabilon.event_categories as categoryList
+        WHERE id_event = '".$eventID."' AND eventsList.admin = userList.id AND eventsList.category = categoryList.id_category;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: getEventDetails ".json_encode($result_row)."');</script>");
-
-        echo '<h3 style="text-align:left;">Coordinator:</h3>';
-        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
-        echo '<h3 style="text-align:left;">Description:</h3>';
-        if(isset($result_row->description)){
-          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->description.'</h4>';
-        }else{
-          echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
-        }
+        return $query_get_user_info;
 
         // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
@@ -279,8 +269,8 @@ class Events
         $eventID = $_GET["event"];
 
         $sql = "SELECT id, first_name, last_name, user_image, email
-        FROM ebabilon.members, ebabilon.users as userList
-        WHERE id_member = userList.id AND id_event = '".$eventID."';";
+        FROM ebabilon.attendees, ebabilon.users as userList
+        WHERE id_attendee = userList.id AND id_event = '".$eventID."';";
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;
     }

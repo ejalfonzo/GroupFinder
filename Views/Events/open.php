@@ -56,13 +56,13 @@ $events = new Events();
         <div class="col-sm-3 col-md-2 sidebar panel" style="margin-bottom:0px;">
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Friends</a></li>
-            <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
-            <li><a href="#">Events</a></li>
+            <li><a href="/Views/User/profile.php">Profile</a></li>
+            <li><a href="/Views/Friends/manager.php">Friends</a></li>
+            <li><a href="/Views/Groups/manager.php">Groups</a></li>
+            <li class="active"><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
           <ul class="nav nav-sidebar">
-            <li><a href="">Buisness</a></li>
+            <li><a href="/Views/Business/manager.php">Buisness</a></li>
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
@@ -73,13 +73,67 @@ $events = new Events();
                 <?php $events->getEvent(); ?>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php $events->getEventDetails(); ?>
+                <?php
+                  $eventDetails = $events->getEventDetails();
+                  $hasE = false;
+                  echo("<script>console.log('results_row: ".json_encode($eventDetails)."');</script>");
+                  if($eventDetails->num_rows >= 1){
+                    $hasE = true;
+                  }
+                  if ($hasE) {
+                      while($row = $eventDetails->fetch_object()) {
+                        echo("<script>console.log('PHP: getEventDetails ".json_encode($row)."');</script>");
+
+                        echo '<h3 style="text-align:left;">Coordinator:</h3>';
+                        echo '<h4 style="text-align:left; padding-left:35px;">'.$row->first_name ." ".$row->last_name.'</h4>';
+                        echo '<h3 style="text-align:left;">Description:</h3>';
+                        if(isset($row->description)){
+                          echo '<h4 style="text-align:left; padding-left:35px;">'.$row->description.'</h4>';
+                        }else{
+                          echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
+                        }
+                     }
+                 }
+                ?>
               </div>
             </div>
 
             <div class="row panel panel-primary" >
               <div class="panel-heading" style="text-align: left; font-size: 20px;">Members</div>
-              <?php $events->getEventMembersTable(); ?>
+
+              <?php
+                $eventMembers = $events->getEventMembersTable();
+                $hasE = false;
+                echo("<script>console.log('results_row: ".json_encode($eventMembers)."');</script>");
+                if($eventMembers->num_rows >= 1){
+                  $hasE = true;
+                }
+                if ($hasE) {
+                  echo '<div class="table-responsive panel">
+                    <table class="table table-striped table-hover">';
+                    echo '<thead>
+                      <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                      </tr>
+                    </thead>';
+                    while($row = $eventMembers->fetch_object()) {
+                      $date = date_create($row->time);
+
+                      echo '<tr>';
+                        echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
+                        echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
+                        echo   '<td>'. $row->email . '</td>';
+                      echo '</tr>';
+                   }
+                 echo'</table>
+                 </div>';
+               }else if($eventMembers != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>Group Has No Members...</h3>';
+               }
+              ?>
+
             </div>
 
           <!-- <h2 class="sub-header">Section title</h2> -->
