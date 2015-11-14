@@ -117,33 +117,27 @@ $groups = new Groups();
                           <form method="post" action="" name="createGroup">
 
                             <input id="group_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />
-
-                            <input type='text' class="form-control" id='datetimepicker' />
-                            <script type="text/javascript">
-                                $(function () {
-                                    $('#datetimepicker').datetimepicker();
-                                });
-                            </script>
+                            
                               <div class="dropdownjs" style="margin: 10px 0px 0px;">
                         				<div class="control-group">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
                                      <?php
-         								 $categories = $groups->getGroupCategories();
-     								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
-     									if($categories != null){
-     										while($row = $categories->fetch_object()){
-     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
-     					          			}
-     								 	}
-     								?>
+                     								 $categories = $groups->getGroupCategories();
+                     								//  echo("<script>console.log('results_row: ".json_encode($categories->id_category)."');</script>");
+                     								if($categories != null){
+                     									while($row = $categories->fetch_object()){
+                     					      		echo('<option value="'.$row->id_category. '">'. $row->name . '</option>');
+                     					      	}
+                     								}
+                     								?>
 
                                    </select>
                         				</div>
                         			</div>
 
                               <!-- <label for="groupDescription" class="control-label">Group's Description</label> -->
-                              <textarea class="form-control floating-label" placeholder="Group's Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
+                              <textarea class="form-control floating-label" placeholder="Group's Description" rows="2" id="description" name="description" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your group, so other may know the purpose of your group.</span>
 
                               <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="createGroup" value="createGroup" />
