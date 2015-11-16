@@ -37,9 +37,80 @@ class Business
     if (isset($_POST["unfollow"])) {
         $this->unfollowBusiness();
     }
+    if (isset($_POST["editBusiness"])) {
+        $this->editBusiness();
+    }
     // if (isset($_GET["gbusiness"])) {
     //     $this->openBusiness();
     // }
+  }
+
+  function editBusiness(){
+    if (empty($_POST['business_name'])) {
+        $this->errors[] = "Empty Username";
+        echo("<script>console.log('Error: Empty Group Name');</script>");
+
+    } elseif (strlen($_POST['business_name']) > 64 || strlen($_POST['business_name']) < 2) {
+        $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
+        echo("<script>console.log('Error: Username to short');</script>");
+
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['business_name'])) {
+        $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+        echo("<script>console.log('Error: Username bad schema');</script>");
+
+    } elseif (!empty($_POST['business_name'])
+        && strlen($_POST['business_name']) <= 64
+        && strlen($_POST['business_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['business_name'])
+    ) {
+        echo("<script>console.log('Good: All Clear');</script>");
+        // create a database connection
+        $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // change character set to utf8 and check it
+        if (!$this->db_connection->set_charset("utf8")) {
+            $this->errors[] = $this->db_connection->error;
+            echo("<script>console.log('Error: DB not utf8');</script>");
+        }
+
+        // if no connection errors (= working database connection)
+        if (!$this->db_connection->connect_errno) {
+            // echo("<script>console.log('Good: DB Connection');</script>");
+            // escaping, additionally removing everything that could be (html/javascript-) code
+            // 
+            $userID = $_SESSION["id"];
+            $businessID = $_GET["business"];
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['business_name'], ENT_QUOTES));
+            $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
+            $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
+            $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
+
+            $sql = "UPDATE `ebabilon`.`businesses` 
+            SET name='".$name."', address='".$address."', opHours='".$opHours."', category='".$category."'
+            WHERE id_business = '".$businessID."';";
+            $query_edit_business = $this->db_connection->query($sql);
+            echo("<script>console.log('query: ".json_encode($query_new_business_insert)."');</script>");
+
+            if ($query_edit_business) {
+                $this->messages[] = "Your account has been created successfully. You can now log in.";
+                echo("<script>console.log('PHP: business edited');</script>");
+                
+                echo("<script>console.log('PHP Insert: ".json_encode($query_edit_business)."');</script>");
+                $editResult = "Followed Business";
+                return json_encode($editResult);
+            } else {
+                $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+                echo("<script>console.log('PHP: ERROR Creating Business');</script>");
+            }
+        } else {
+            $this->errors[] = "Sorry, no database connection.";
+        }
+    } else {
+        $this->errors[] = "An unknown error occurred.";
+    }
+
+
+
   }
 
   function followBusiness(){
@@ -203,7 +274,7 @@ class Business
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        echo '<h4>'.$result_row->name.'</h4>';
+        return $result_row->name;
     }
   }
 
@@ -221,7 +292,7 @@ class Business
         $businessID = $_GET["business"];
 
         // check if user or email address already exists
-        $sql = "SELECT businessList.name, catList.name as category, businessList.address, businessList.opHours, id, first_name, last_name
+        $sql = "SELECT businessList.name, catList.name as category, businessList.address, businessList.opHours, id, first_name, last_name, category as catId
         FROM ebabilon.businesses as businessList, ebabilon.users as userList, ebabilon.business_categories as catList
         WHERE id_business = '".$businessID."' AND businessList.admin = userList.id AND catList.id_category = businessList.category;";
         $query_get_user_info = $this->db_connection->query($sql);
@@ -333,11 +404,6 @@ class Business
             $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
             $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
-            echo("<script>console.log('userID: ".$userID."');</script>");
-            echo("<script>console.log('business_name: ".$business_name."');</script>");
-            echo("<script>console.log('category: ".$category."');</script>");
-            echo("<script>console.log('Address: ".$address."');</script>");
-            echo("<script>console.log('opHours: ".$opHours."');</script>");
             echo("<script>console.log('PHP Insert: ".json_encode($_POST)."');</script>");
 
             $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 

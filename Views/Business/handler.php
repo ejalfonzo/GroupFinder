@@ -32,3 +32,8 @@ require_once("Business.php");
     $result = $businesses->isFollower();
     echo $result;
  }
+ if (isset($_POST["editBusiness"])) {
+    $businesses = new Business();
+    $result = $businesses->editBusiness();
+    echo $result;
+ }

@@ -153,12 +153,12 @@ $business = new Business();
 	<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
 	    <div>
 				<!-- <form method="get" action="" name="searchGroup"> -->
-	        <div class="input-group">
-	            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a group" style="margin-bottom:10px; height:55px; font-size:25px;">
-	            <span class="input-group-btn">
+	        <div class="input-business">
+	            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a business" style="margin-bottom:10px; height:55px; font-size:25px;">
+	            <span class="input-business-btn">
 	                <button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
 	            </span>
-	        </div><!-- /input-group -->
+	        </div><!-- /input-business -->
 				<!-- </form> -->
 	    </div>
 	  </div>
@@ -171,7 +171,7 @@ $business = new Business();
 						<a data-type="all" href="#0">All</a> <!-- selected option on mobile -->
 					</li>
 					<li class="filter"><a class="selected" href="#0" data-type="all">All</a></li>
-					<li class="filter" data-filter=".group"><a href="#0" data-type="group">Groups</a></li>
+					<li class="filter" data-filter=".business"><a href="#0" data-type="business">Businesses</a></li>
 					<!-- <li class="filter" data-filter=".image"><a href="#0" data-type="image">Images</a></li> -->
 				</ul> <!-- cd-filters -->
 			</div> <!-- cd-tab-filter -->
