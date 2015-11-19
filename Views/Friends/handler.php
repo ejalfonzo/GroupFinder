@@ -32,3 +32,8 @@ require_once("Friends.php");
     $result = $friends->isFriend();
     echo $result;
  }
+ if (isset($_POST["editFriend"])) {
+    $friends = new Business();
+    $result = $friends->editFriend();
+    echo $result;
+ }

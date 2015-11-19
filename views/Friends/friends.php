@@ -34,9 +34,53 @@ class Friends
     if (isset($_POST["removeFriend"])) {
         $this->removeFriend();
     }
+    if (isset($_POST["editFriend"])) {
+        $this->editFriend();
+    }
     // if (isset($_GET["friend"])) {
     //     $this->openFriend();
     // }
+  }
+
+  function editFriend(){
+   // create a database connection
+   $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+   // change character set to utf8 and check it
+   if (!$this->db_connection->set_charset("utf8")) {
+       $this->errors[] = $this->db_connection->error;
+       echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+
+   // if no connection errors (= working database connection)
+   if (!$this->db_connection->connect_errno) {
+   // echo("<script>console.log('Good: DB Connection');</script>");
+   // escaping, additionally removing everything that could be (html/javascript-) code
+   // 
+      $userID = $_SESSION["id"];
+      $friendID = $_GET["friend"];
+      $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
+
+      $sql = "UPDATE `ebabilon`.`friends` 
+      SET  category='".$category."'
+      WHERE id_friend = '".$friendID."';";
+      $query_edit_friend = $this->db_connection->query($sql);
+      echo("<script>console.log('query: ".json_encode($query_edit_friend)."');</script>");
+
+      if ($query_edit_friend) {
+          $this->messages[] = "Your account has been created successfully. You can now log in.";
+          echo("<script>console.log('PHP: business edited');</script>");
+           
+          echo("<script>console.log('PHP Insert: ".json_encode($query_edit_friend)."');</script>");
+          $editResult = "Edited Friend";
+          return json_encode($editResult);
+      } else {
+          $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+          echo("<script>console.log('PHP: ERROR Editing Friend');</script>");
+      }
+    } else {
+            $this->errors[] = "Sorry, no database connection.";
+    }
   }
 
   function addFriend(){
@@ -59,23 +103,17 @@ class Friends
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
         WHERE id_friend = '".$friendID."' AND id_user = '".$userID."') LIMIT 1;";
         $query_get_user_info_2 = $this->db_connection->query($sql);
+        
         $sql = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
         SELECT * FROM (SELECT '".$userID."', '".$friendID."') AS tmp
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
         WHERE id_friend = '".$userID."' AND id_user = '".$friendID."') LIMIT 1;";
         $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+
         if($query_get_user_info && $query_get_user_info_2){
           $addResult = "Added Friend";
           return json_encode($addResult);
         }
-        // $result_row = $query_get_user_info->fetch_object();
-        //
-        // return json_encode($result_row);
-
-
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
 
@@ -94,9 +132,9 @@ class Friends
         // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
 
         // check if user or email address already exists
-        $sql = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$friendID."' AND `id_user` = '".$userID."';";
+        $sql = "DELETE FROM ebabilon.friends WHERE `id_friend`='".$friendID."' AND `id_user` = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        $sql = "DELETE FROM `ebabilon`.`friends` WHERE `id_friend`='".$userID."' AND `id_user` = '".$friendID."';";
+        $sql = "DELETE FROM ebabilon.friends WHERE `id_friend`='".$userID."' AND `id_user` = '".$friendID."';";
         $query_get_user_info_2 = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
@@ -228,9 +266,9 @@ class Friends
         $friendID = $_GET["friend"];
 
         // check if user or email address already exists
-        $sql = "SELECT id, user_name, first_name, last_name, email, user_image
-        FROM ebabilon.users as userList
-        WHERE id = '".$friendID."';";
+        $sql = "SELECT DISTINCT userList.id, user_name, first_name, last_name, email, user_image, friend.category AS catId, catList.name AS category
+        FROM ebabilon.users AS userList, ebabilon.friends_categories AS catList, (SELECT id_friend, category FROM ebabilon.friends) AS friend
+        WHERE userList.id ='".$friendID."' AND catList.id_category = friend.category AND friend.id_friend = userList.id;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         return $query_get_user_info;
@@ -321,7 +359,7 @@ class Friends
         $userID = $_SESSION["id"];
         $email = $_SESSION['email'];
 
-        $sql = "SELECT * FROM ebabilon.friend_categories;";
+        $sql = "SELECT * FROM ebabilon.friends_categories;";
         $query_get_user_info = $this->db_connection->query($sql);
         if ($query_get_user_info->num_rows >= 1) {
 

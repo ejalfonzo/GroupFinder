@@ -46,7 +46,7 @@ $friends = new Friends();
   	   $.ajax({
   		   type:"post",
   		   url:"handler.php",
-  		   data:"remove="+friend,
+  		   data:"removeFriend="+friend,
   		   success:function(data){
   			   console.log("Result",data);
   			   var obj = JSON.parse(data);
@@ -85,6 +85,10 @@ $friends = new Friends();
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
+          <div class="row">
+              <div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditF">Edit Friend</a></div>
+            </div>
+
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="panel-body">
@@ -99,7 +103,7 @@ $friends = new Friends();
                   if ($hasF) {
                       while($row = $userFriends->fetch_object()) {
                           echo '<img src=" '. $row->user_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-                          echo '<h4>'.$row->name.'</h4>';
+                          echo '<h4>'.$row->user_name.'</h4>';
                           echo '<h4>'.$row->email.'</h4>';
                      }
                  }else if($userFriends != null){
@@ -111,7 +115,7 @@ $friends = new Friends();
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
                   <?php
-                  $userFriends = $friends->getFriend();
+                  $userFriends = $friends->getFriendDetails();
                   $hasF = false;
                   echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
                   if($userFriends->num_rows >= 1){
@@ -148,7 +152,7 @@ $friends = new Friends();
             </div>
 
             <div class="row panel panel-primary" >
-              <div class="panel-heading" style="text-align: left; font-size: 20px;">Friends</div>
+              <div class="panel-heading" style="text-align: left; font-size: 20px;">Friends Businesses, Groups and Events </div>
               <?php
                 $userFriends = $friends->getFriendsTable();
                 $hasF = false;
@@ -188,6 +192,7 @@ $friends = new Friends();
         </div>
       </div>
 
+      <!-- Remove Friend Modal -->
       <div id="RemoveF" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -197,7 +202,12 @@ $friends = new Friends();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php $friends->getFriend(); ?>
+                        <?php 
+                        $userFriends = $friends->getFriend();
+                        $name = $userFriends->fetch_object();
+                        echo("<script>console.log('results_row Get Friend ID: ".$_GET["friend"]."')</script>");
+                        echo '<h3>'.$name->user_name.'</h3>';
+                        ?>
                       </div>
                     </div>
                     <div class="modal-footer" style="text-align:center;">
@@ -207,6 +217,62 @@ $friends = new Friends();
                 </div>
             </div>
         </div>
+
+        <!-- Edit Friend Modal -->
+        <div id="EditF" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                          <h1 class="modal-title" style="font-size:25px;">Edit Business</h1>
+                      </div>
+                      <div class="modal-body">
+                          <!-- action="open.php" -->
+                          <h3> Select Friend Category</h3>
+                          <form method="post" action="" name="editFriend">
+                            <?php
+                            $friendDetails = $friends->getFriendDetails();
+
+                            $hasF = false;
+                            echo("<script>console.log('results_row editFriend: ".json_encode($friendDetails)."');</script>");
+                            if($friendDetails->num_rows >= 1){
+                              echo("<script>console.log('has row');</script>");
+                              $hasF = true;
+                            }
+                            if ($hasF) {
+                                  $row = $friendDetails->fetch_object();
+                                  $categories = $friends->getFriendCategories();
+
+                                  //Category
+                                  echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
+                                   <div class="control-business">
+                                      <select class="form-control" placeholder="Select a Category" id="category" name="category">';
+                                  
+                                  if($categories != null){
+                                   while($rowCat = $categories->fetch_object()){
+                                    if($row->catId == $rowCat->id_category){
+                                      echo('<option selected="selected" value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      }
+                                      else{
+                                        echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      } 
+                                    }
+                                  }
+                                  echo '</select>
+                                       </div>
+                                     </div>';
+                            }
+                            ?>
+                            <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editFriend" value="Edit Friend" />
+
+                          </form>
+                      </div>
+                      <div class="modal-footer" style="text-align:center;">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
 
 
