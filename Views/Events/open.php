@@ -40,6 +40,24 @@ $events = new Events();
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
     <!-- <link rel="icon" href="/images/logo.ico"> -->
     <script type="text/javascript" src="/js/jquery.js"></script>
+    <script type="text/javascript">
+
+    function leaveEvent(events){
+
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"leaveEvent="+events,
+         success:function(data){
+           console.log("Result",data);
+           var obj = JSON.parse(data);
+           alert(obj);
+           console.log("LEAVE EVENT: ", obj);
+           window.location.href = "/Views/Events/manager.php";
+         }
+       });
+    }
+    </script>
 </head>
 <body>
 
@@ -67,10 +85,20 @@ $events = new Events();
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
 
+          <div class="row">
+              <div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditE">Edit Event</a></div>
+            </div>
+
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
+              <div class="panel-body">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php $events->getEvent(); ?>
+                <?php 
+                $results = $events->getEvent(); 
+
+                echo '<img src=" '. $results->event_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                echo '<div class="col-md-8"> <h1>'.$results->name.'</h1></div>';
+                ?>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
                 <?php
@@ -86,17 +114,39 @@ $events = new Events();
 
                         echo '<h3 style="text-align:left;">Coordinator:</h3>';
                         echo '<h4 style="text-align:left; padding-left:35px;">'.$row->first_name ." ".$row->last_name.'</h4>';
+                        echo '<h3 style="text-align:left;">Place:</h3>';
+                        if(isset($row->place)){
+                          echo '<h4 style="text-align:left; padding-left:35px;">'.$row->place.'</h4>';
+                        }else{
+                          echo '<h4 style="text-align:left; padding-left:35px;"> No Place </h4>';
+                        }
                         echo '<h3 style="text-align:left;">Description:</h3>';
                         if(isset($row->description)){
                           echo '<h4 style="text-align:left; padding-left:35px;">'.$row->description.'</h4>';
                         }else{
                           echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
                         }
+                        echo '<h3 style="text-align:left;">Category:</h3>';
+                        if(isset($row->category)){
+                          echo '<h4 style="text-align:left; padding-left:35px;">'.$row->category.'</h4>';
+                        }else{
+                          echo '<h4 style="text-align:left; padding-left:35px;"> No Category </h4>';
+                        }
+                        echo '<h3 style="text-align:left;">Time:</h3>';
+                         if(isset($row->time)){
+                          echo '<h4 style="text-align:left; padding-left:35px;">'.$row->time.'</h4>';
+                        }else{
+                          echo '<h4 style="text-align:left; padding-left:35px;"> No Time </h4>';
+                        }
                      }
                  }
                 ?>
-              </div>
+              </div><!-- Details End div-->
             </div>
+            <div class="panel-footer">
+               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveE">Leave Event</a>
+             </div> 
+             </div>
 
             <div class="row panel panel-primary" >
               <div class="panel-heading" style="text-align: left; font-size: 20px;">Members</div>
@@ -121,6 +171,7 @@ $events = new Events();
                     while($row = $eventMembers->fetch_object()) {
                       $date = date_create($row->time);
 
+
                       echo '<tr>';
                         echo   '<td><img src="'.$row->user_image.'" alt="" style="width:40px; height:auto;"></td>';
                         echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
@@ -141,7 +192,105 @@ $events = new Events();
       </div>
 
 
+      <!-- Leave Event Modal -->
+      <div id="LeaveE" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to leave:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php 
+                        $results = $events->getEvent(); 
+                        echo '<div class="col-md-8"> <h3>'.$results->name.'</h3></div>';
+                        ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" onclick="leaveEvent(<?php echo($_GET["event"]); ?>)">Leave</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+
+        <!-- Edit Event Modal -->
+        <div id="EditE" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                          <h1 class="modal-title" style="font-size:25px;">Edit Event</h1>
+                      </div>
+                      <div class="modal-body">
+                          <form method="post" action="" name="editEvent">
+                            <?php
+                            $eventName = $events->getEvent()->name;
+                            $eventDetailsEdit = $events->getEventDetails();
+
+                            $hasB = false;
+                            //echo("<script>console.log('results_row editEvent: ".json_encode($eventDetailsEdit)."');</script>");
+                            if($eventDetailsEdit->num_rows >= 1){
+                              echo("<script>console.log('has row');</script>");
+                              $hasB = true;
+                            }
+                            if(hasB) {
+                                  $row = $eventDetailsEdit->fetch_object();
+                                  echo("<script>console.log('results_row editEvent: ".$eventName."');</script>");
+                                  $categories = $events->getEventCategories();
+                                  //echo("<script>console.log('results_row editEvent: ".json_encode($categories->fetch_object())."');</script>");
+                                  echo '<input id="event_name" class="event_input form-control" value="'.$eventName.'" placeholder="Event Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="event_name" style="margin: 10px 0px 0px;" required />';
+
+                                  //Category
+                                  echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
+                                   <div class="control-event">
+                                      <select class="form-control" placeholder="Select a Category" id="category" name="category">';
+                                  if($categories != null){
+                                   while($rowCat = $categories->fetch_object()){
+                                    if($row->catId == $rowCat->id_category){
+                                      echo('<option selected="selected" value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      }
+                                      else{
+                                        echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      } 
+                                    }
+                                  }
+                                  echo '</select>
+                                       </div>
+                                     </div>';
+
+                                  //Place
+                                  if(isset($row->place)){
+                                    echo '<textarea class="form-control floating-label" placeholder="Event Place" rows="2" id="place" name="place" style="margin: 20px 0px 0px;">'.$row->place.'</textarea>';
+                                  }else{
+                                    echo '<textarea class="form-control floating-label" placeholder="Event Place" rows="2" id="place" name="place" style="margin: 20px 0px 0px;"></textarea>';
+                                  }
+                                  echo '<span class="help-block">Describe the event place, so other may know the location of your event.</span>';
+
+                                  //Description
+                                  if(isset($row->description)){
+                                    echo '<textarea class="form-control floating-label" placeholder="Event Description" rows="2" id="description" name="description" style="margin: 20px 0px 0px;">'.$row->description.'</textarea>';
+                                   }else{
+                                    echo '<textarea class="form-control floating-label" placeholder="Event Description" rows="2" id="description" name="description" style="margin: 20px 0px 0px;"></textarea>';
+                                  }    
+                                  echo '<span class="help-block">State the event description, so other may know about your event.</span>';
+                  
+                            }
+                            ?>
+                            <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editEvent" value="Edit Event" />
+
+                          </form>
+                      </div>
+                      <div class="modal-footer" style="text-align:center;">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+        
 
       <!-- <footer class="footer">
           <div class="container">
@@ -150,11 +299,6 @@ $events = new Events();
       </footer> -->
 
     </div>
-
-
-
-
-
 
     <!-- <script src="//code.jquery.com/jquery-1.11.3.min.js"></script> -->
     <!-- <script type="text/javascript" src="/js/jquery.js"></script> -->

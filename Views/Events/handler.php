@@ -21,7 +21,7 @@ require_once("Events.php");
     echo $result;
  }
 
- if (isset($_POST["leave"])) {
+ if (isset($_POST["leaveEvent"])) {
     $events = new Events();
     $result = $events->leaveEvent();
     echo $result;
@@ -30,5 +30,10 @@ require_once("Events.php");
  if (isset($_POST["isMember"])) {
     $events = new Events();
     $result = $events->isMember();
+    echo $result;
+ }
+ if (isset($_POST["editEvent"])) {
+    $events = new Events();
+    $result = $events->editEvent();
     echo $result;
  }

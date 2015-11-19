@@ -78,10 +78,10 @@ $events = new Events();
 
               <?php
                 $myEvents = $events->getUserEvents();
-                $hasGs = false;
+                $hasEs = false;
                 echo("<script>console.log('results_row: ".json_encode($myEvents)."');</script>");
-                if($myEvents->num_rows >= 1){$hasGs = true;}
-                if ($hasGs) {
+                if($myEvents->num_rows >= 1){$hasEs = true;}
+                if ($hasEs) {
                     echo '<div class="table-responsive panel">
                       <table class="table table-striped table-hover">';
                     echo '<thead>
@@ -104,7 +104,7 @@ $events = new Events();
                         echo   '</td>';
                         echo   '<td>'. $row->name . '</td>';
                         echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
-                        echo   '<td>'. date_format($date, 'F j, Y, g:i a') . '</td>';
+                        echo   '<td>'. $row->date . '</td>';
                         echo   '<td>'. $row->place . '</td>';
                     echo '</tr>';
                  }
@@ -136,7 +136,7 @@ $events = new Events();
 
                               <input id="event_name" class="event_input form-control" placeholder="Event Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="event_name" style="margin: 10px 0px 0px;" required />
 
-                              <input type='text' class="form-control" id='datetimepicker' name="event_time" style="margin: 10px 0px 0px;"/>
+                              <input type='text' class="form-control" id='datetimepicker' name="time" style="margin: 10px 0px 0px;"/>
                               <script type="text/javascript">
                                   $(function () {
                                       $('#datetimepicker').datetimepicker();
@@ -148,21 +148,22 @@ $events = new Events();
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
                                      <!-- <option value="Apple fritter">Apple fritter</option> -->
                                      <?php
-         								 $categories = $events->getEventCategories();
-     									if($categories != null){
-     										while($row = $categories->fetch_object()){
-     					               			echo('<option value=".'.$row->id_category. '">'. $row->name . '</option>');
-     					          			}
-     								 	}
-     								?>
+                     								 $categories = $events->getEventCategories();
+                     									if($categories != null){
+                     										while($row = $categories->fetch_object()){
+                     					               			echo('<option value="'.$row->id_category. '">'. $row->name . '</option>');
+                     					          			}
+                     								 	}
+                     								?>
 
                                    </select>
                         				</div>
                         			</div>
 
-                                <input id="event_location" class="event_input form-control" placeholder="Event Location" type="text"  name="event_place" style="margin: 10px 0px 0px;" required />
-                              <!-- <label for="eventDescription" class="control-label">Group's Description</label> -->
-                              <textarea class="form-control floating-label" placeholder="Event's Description" rows="2" id="description" style="margin: 20px 0px 0px;"></textarea>
+                              <input id="place" class="event_input form-control" placeholder="Event Location" type="text"  name="place" style="margin: 10px 0px 0px;" required />
+                              <span class="help-block">Describe your event's location, so other may know where is your event.</span>
+
+                              <textarea class="form-control floating-label" placeholder="Event's Description" rows="2" name="description" id="description" style="margin: 20px 0px 0px;"></textarea>
                               <span class="help-block">Describe your event, so other may know the purpose of your event.</span>
 
                               <input class="btn btn-lg btn-success btn-block" type="submit"  name="createEvent" value="Create Event" />

@@ -34,12 +34,81 @@ class Events
     if (isset($_POST["join"])) {
         $this->joinEvent();
     }
-    if (isset($_POST["leave"])) {
+    if (isset($_POST["leaveEvent"])) {
         $this->leaveEvent();
+    }
+    if (isset($_POST["editEvent"])) {
+        $this->editEvent();
     }
     // if (isset($_GET["event"])) {
     //     $this->openEvent();
     // }
+  }
+
+  function editEvent(){
+    if (empty($_POST['event_name'])) {
+        $this->errors[] = "Empty Username";
+        echo("<script>console.log('Error: Empty Group Name');</script>");
+
+    } elseif (strlen($_POST['event_name']) > 64 || strlen($_POST['event_name']) < 2) {
+        $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
+        echo("<script>console.log('Error: Username to short');</script>");
+
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])) {
+        $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+        echo("<script>console.log('Error: Username bad schema');</script>");
+
+    } elseif (!empty($_POST['event_name'])
+        && strlen($_POST['event_name']) <= 64
+        && strlen($_POST['event_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['event_name'])
+    ) {
+        echo("<script>console.log('Good: All Clear');</script>");
+        // create a database connection
+        $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // change character set to utf8 and check it
+        if (!$this->db_connection->set_charset("utf8")) {
+            $this->errors[] = $this->db_connection->error;
+            echo("<script>console.log('Error: DB not utf8');</script>");
+        }
+
+        // if no connection errors (= working database connection)
+        if (!$this->db_connection->connect_errno) {
+            // echo("<script>console.log('Good: DB Connection');</script>");
+            // escaping, additionally removing everything that could be (html/javascript-) code
+            // 
+            $userID = $_SESSION["id"];
+            $eventID = $_GET["event"];
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['event_name'], ENT_QUOTES));
+            $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
+            $time = $this->db_connection->real_escape_string(strip_tags($_POST['time'], ENT_QUOTES));
+            $place = $this->db_connection->real_escape_string(strip_tags($_POST['place'], ENT_QUOTES));
+            $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
+
+            $sql = "UPDATE `ebabilon`.`events` 
+            SET name='".$name."', time='".$time."', place='".$place."', category='".$category."', description='".$description."'
+            WHERE id_event = '".$eventID."';";
+            $query_edit_event = $this->db_connection->query($sql);
+            echo("<script>console.log('query: ".json_encode($query_edit_event)."');</script>");
+
+            if ($query_edit_event) {
+                $this->messages[] = "Your account has been created successfully. You can now log in.";
+                echo("<script>console.log('PHP: business edited');</script>");
+                
+                echo("<script>console.log('PHP Insert: ".json_encode($query_edit_event)."');</script>");
+                $editResult = "Edited Event";
+                return json_encode($editResult);
+            } else {
+                $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+                echo("<script>console.log('PHP: ERROR Creating Business');</script>");
+            }
+        } else {
+            $this->errors[] = "Sorry, no database connection.";
+        }
+    } else {
+        $this->errors[] = "An unknown error occurred.";
+    }
   }
 
   function joinEvent(){
@@ -88,11 +157,11 @@ class Events
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
-        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['leave'], ENT_QUOTES));
+        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['leaveEvent'], ENT_QUOTES));
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
 
         // check if user or email address already exists
-        $sql = "DELETE FROM `ebabilon`.`members` WHERE `id_event`='".$eventID."' AND `id_member` = '".$userID."';";
+        $sql = "DELETE FROM ebabilon.attendees WHERE `id_event`='".$eventID."' AND `id_attendee` = '".$userID."' LIMIT 1;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
@@ -203,9 +272,7 @@ class Events
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        echo '<img src=" '. $result_row->event_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-        echo '<h4>'.$result_row->name.'</h4>';
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+        return $result_row;
     }
   }
 
@@ -223,7 +290,7 @@ class Events
         $eventID = $_GET["event"];
 
         // check if user or email address already exists
-        $sql = "SELECT eventsList.id_event, eventsList.name, categoryList.name as category, eventsList.description, eventsList.event_image, id, first_name, last_name
+        $sql = "SELECT eventsList.id_event, eventsList.name, categoryList.name as category, eventsList.description, eventsList.event_image, id, first_name, last_name, time, category as catId, place
         FROM ebabilon.events as eventsList, ebabilon.users as userList, ebabilon.event_categories as categoryList
         WHERE id_event = '".$eventID."' AND eventsList.admin = userList.id AND eventsList.category = categoryList.id_category;";
         $query_get_user_info = $this->db_connection->query($sql);
@@ -328,8 +395,8 @@ class Events
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['event_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
             $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
-            $time = $this->db_connection->real_escape_string(strip_tags($_POST['event_time'], ENT_QUOTES));
-            $place = $this->db_connection->real_escape_string(strip_tags($_POST['event_place'], ENT_QUOTES));
+            $time = $this->db_connection->real_escape_string(strip_tags($_POST['time'], ENT_QUOTES));
+            $place = $this->db_connection->real_escape_string(strip_tags($_POST['place'], ENT_QUOTES));
 
             $sql = "INSERT INTO `ebabilon`.`events` (`name`, `admin`, `category`, `description`, `time`, `place`)
             VALUES ('".$name."', '".$userID."', '".$category."', '".$description."', '".$time."', '".$place."');";
@@ -376,9 +443,8 @@ class Events
 
         $sql = "SELECT * FROM ebabilon.event_categories;";
         $query_get_user_info = $this->db_connection->query($sql);
-        if ($query_get_user_info->num_rows >= 1) {
-          return $query_get_user_info;
-       }
+    
+        return $query_get_user_info;
     }
   }
 
@@ -393,11 +459,12 @@ class Events
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
 
-        $sql = "SELECT myEvents.name, myEvents.category, myEvents.id_event, first_name, last_name
-        FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event
-        FROM ebabilon.events as eventsList, ebabilon.attendees as memberList
-        WHERE eventsList.id_event = memberList.id_event AND memberList.id_attendee = '" .$userID."') as myEvents, ebabilon.users
-        WHERE myEvents.admin = id;";
+        $sql = "SELECT myEvents.name, myEvents.category, myEvents.id_event, myEvents.place, myEvents.time, first_name, last_name
+        FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event, eventsList.place, eventsList.time 
+        FROM ebabilon.events as eventsList, ebabilon.attendees as memberList 
+        WHERE eventsList.id_event = memberList.id_event AND memberList.id_attendee = '".$userID."') as myEvents, ebabilon.users 
+        WHERE myEvents.admin = id;"; 
+
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;
     }
