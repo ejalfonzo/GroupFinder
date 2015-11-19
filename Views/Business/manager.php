@@ -57,7 +57,7 @@ $business = new Business();
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
             <li><a href="#">Profile</a></li>
-            <li><a href="#">Friends</a></li>
+            <li><a href="/Views/Friends/manager.php">Friends</a></li>
             <li><a href="/Views/Groups/manager.php">Groups</a></li>
             <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
@@ -73,13 +73,10 @@ $business = new Business();
 
 
           <div class="row placeholders panel panel-primary" style="padding:20px;">
-              <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Businessses</div> -->
-
               <?php
               $myBusinesses = $business->getMyBusinesses();
               $hasBs = false;
               echo("<script>console.log('results_row: ".json_encode($myBusinesses)."');</script>");
-              //echo("<script>console.log('$myBusinesses->fetch_object(): ".json_encode($myBusinesses->fetch_object())."');</script>");
 
               if($myBusinesses->num_rows >= 1){$hasBs = true;}
               if ($hasBs) {

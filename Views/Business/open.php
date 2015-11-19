@@ -52,7 +52,7 @@ $business = new Business();
            console.log("Result",data);
            var obj = JSON.parse(data);
            alert(obj);
-           console.log("LEAVE GROUP: ", obj);
+           console.log("UNFOLLOW BUSINESS: ", obj);
            window.location.href = "/Views/Business/manager.php";
         }
        });
@@ -106,7 +106,7 @@ $business = new Business();
                   }
                   if ($hasB) {
                       while($row = $businessDetails->fetch_object()) {
-                        echo("<script>console.log('PHP: getEventDetails ".json_encode($row)."');</script>");
+                        echo("<script>console.log('PHP: getBusinessDetails ".json_encode($row)."');</script>");
 
                         echo '<h3 style="text-align:left;margin-left: 1em;"> Coordinator:</h3>';
                         echo '<h4 style="text-align:left; padding-left:35px;margin-left: 1em;"> '.$row->first_name ." ".$row->last_name.'</h4>';
@@ -185,11 +185,14 @@ $business = new Business();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php $business->getBusiness(); ?>
+                        <?php 
+                        $results = $business->getBusiness(); 
+                        echo '<div class="col-md-8"> <h3>'.$results.'</h3></div>';
+                        ?>
                       </div>
                     </div>
                     <div class="modal-footer" style="text-align:center;">
-                      <button type="button" class="btn btn-warning" onclick="unfollowBusiness(<?php echo($_GET["business"]); ?>)">Leave</button>
+                      <button type="button" class="btn btn-warning" onclick="unfollowBusiness(<?php echo($_GET["business"]); ?>)">Unfollow</button>
                         <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     </div>
                 </div>
@@ -249,7 +252,7 @@ $business = new Business();
                                   }else{
                                     echo '<textarea class="form-control floating-label" placeholder="Business Address" rows="2" id="address" name="address" style="margin: 20px 0px 0px;"></textarea>';
                                   }
-                                  echo '<span class="help-block">Describe the business address, so other may know the location of your business.</span>';
+                                  echo '<span class="help-block">Describe the business address, so others may know the location of your business.</span>';
 
                                   //OpHours
                                   if(isset($row->opHours)){
@@ -257,11 +260,11 @@ $business = new Business();
                                    }else{
                                     echo '<textarea class="form-control floating-label" placeholder="Business Operational Hours" rows="2" id="opHours" name="opHours" style="margin: 20px 0px 0px;"></textarea>';
                                   }    
-                                  echo '<span class="help-block">State the business operational hours, so other may know when and where your business operates.</span>';
+                                  echo '<span class="help-block">State the business operational hours, so others may know when and where your business operates.</span>';
                   
                             }
                             ?>
-                            <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editBusiness" value="editBusiness" />
+                            <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editBusiness" value="Edit Business" />
 
                           </form>
                       </div>

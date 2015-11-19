@@ -47,16 +47,16 @@ class Business
 
   function editBusiness(){
     if (empty($_POST['business_name'])) {
-        $this->errors[] = "Empty Username";
-        echo("<script>console.log('Error: Empty Group Name');</script>");
+        $this->errors[] = "Empty Name";
+        echo("<script>console.log('Error: Empty Business Name');</script>");
 
     } elseif (strlen($_POST['business_name']) > 64 || strlen($_POST['business_name']) < 2) {
-        $this->errors[] = "Username cannot be shorter than 2 or longer than 64 characters";
-        echo("<script>console.log('Error: Username to short');</script>");
+        $this->errors[] = "Name cannot be shorter than 2 or longer than 64 characters";
+        echo("<script>console.log('Error: Name to short');</script>");
 
     } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['business_name'])) {
-        $this->errors[] = "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
-        echo("<script>console.log('Error: Username bad schema');</script>");
+        $this->errors[] = "Name does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+        echo("<script>console.log('Error: Name bad schema');</script>");
 
     } elseif (!empty($_POST['business_name'])
         && strlen($_POST['business_name']) <= 64
@@ -89,18 +89,18 @@ class Business
             SET name='".$name."', address='".$address."', opHours='".$opHours."', category='".$category."'
             WHERE id_business = '".$businessID."';";
             $query_edit_business = $this->db_connection->query($sql);
-            echo("<script>console.log('query: ".json_encode($query_new_business_insert)."');</script>");
+            echo("<script>console.log('query: ".json_encode($query_edit_business)."');</script>");
 
             if ($query_edit_business) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: business edited');</script>");
                 
                 echo("<script>console.log('PHP Insert: ".json_encode($query_edit_business)."');</script>");
-                $editResult = "Followed Business";
+                $editResult = "Edited Business";
                 return json_encode($editResult);
             } else {
                 $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
-                echo("<script>console.log('PHP: ERROR Creating Business');</script>");
+                echo("<script>console.log('PHP: ERROR Editing Business');</script>");
             }
         } else {
             $this->errors[] = "Sorry, no database connection.";
@@ -108,9 +108,6 @@ class Business
     } else {
         $this->errors[] = "An unknown error occurred.";
     }
-
-
-
   }
 
   function followBusiness(){
@@ -165,8 +162,7 @@ class Business
         // check if user or email address already exists
         $sql = "DELETE FROM `ebabilon`.`followers` WHERE `id_business`='".$businessID."' AND `id_follower` = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($query_get_user_info)."');</script>");
+
         if($query_get_user_info){
           $joinResult = "Business Unfollowed";
           return json_encode($joinResult);
@@ -478,8 +474,6 @@ class Business
           WHERE businessList.id_business = followerList.id_business AND followerList.id_follower = '" .$userID."') as myBusinesses, ebabilon.users, ebabilon.business_categories as catList
         WHERE myBusinesses.admin = id AND catList.id_category = myBusinesses.category;";
         $query_get_my_businesses = $this->db_connection->query($sql);
-
-        //echo("<script>console.log('results_row: ".json_encode($query_get_my_businesses)."');</script>");
         
         return $query_get_my_businesses;
     }
