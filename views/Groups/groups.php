@@ -37,9 +37,76 @@ class Groups
     if (isset($_POST["leave"])) {
         $this->leaveGroup();
     }
+    if (isset($_POST["editGroup"])) {
+        $this->editGroup();
+    }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
+  }
+
+  function editGroup(){
+    if (empty($_POST['group_name'])) {
+        $this->errors[] = "Empty Name";
+        echo("<script>console.log('Error: Empty Group Name');</script>");
+
+    } elseif (strlen($_POST['group_name']) > 64 || strlen($_POST['group_name']) < 2) {
+        $this->errors[] = "Name cannot be shorter than 2 or longer than 64 characters";
+        echo("<script>console.log('Error: Name to short');</script>");
+
+    } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])) {
+        $this->errors[] = "Name does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters";
+        echo("<script>console.log('Error: Name bad schema');</script>");
+
+    } elseif (!empty($_POST['group_name'])
+        && strlen($_POST['group_name']) <= 64
+        && strlen($_POST['group_name']) >= 2
+        && preg_match('/^[a-z\d]{2,64}$/i', $_POST['group_name'])
+    ) {
+        echo("<script>console.log('Good: All Clear');</script>");
+        // create a database connection
+        $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // change character set to utf8 and check it
+        if (!$this->db_connection->set_charset("utf8")) {
+            $this->errors[] = $this->db_connection->error;
+            echo("<script>console.log('Error: DB not utf8');</script>");
+        }
+
+        // if no connection errors (= working database connection)
+        if (!$this->db_connection->connect_errno) {
+            // echo("<script>console.log('Good: DB Connection');</script>");
+            // escaping, additionally removing everything that could be (html/javascript-) code
+            // 
+            $userID = $_SESSION["id"];
+            $groupID = $_GET["group"];
+            $name = $this->db_connection->real_escape_string(strip_tags($_POST['group_name'], ENT_QUOTES));
+            $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
+            $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
+
+            $sql = "UPDATE `ebabilon`.`groups` 
+            SET name='".$name."', category='".$category."', description='".$description."'
+            WHERE id_group = '".$groupID."';";
+            $query_edit_group = $this->db_connection->query($sql);
+            echo("<script>console.log('query: ".json_encode($query_edit_group)."');</script>");
+
+            if ($query_edit_group) {
+                $this->messages[] = "Your account has been created successfully. You can now log in.";
+                echo("<script>console.log('PHP: Group edited');</script>");
+                
+                echo("<script>console.log('PHP Insert: ".json_encode($query_edit_group)."');</script>");
+                $editResult = "Edited Group";
+                return json_encode($editResult);
+            } else {
+                $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
+                echo("<script>console.log('PHP: ERROR Editing Group');</script>");
+            }
+        } else {
+            $this->errors[] = "Sorry, no database connection.";
+        }
+    } else {
+        $this->errors[] = "An unknown error occurred.";
+    }
   }
 
   function joinGroup(){
@@ -203,9 +270,7 @@ class Groups
         // get result row (as an object)
         $result_row = $query_get_user_info->fetch_object();
 
-        echo '<img src=" '. $result_row->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
-        echo '<h4>'.$result_row->name.'</h4>';
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+        return $result_row;
     }
   }
 
@@ -223,24 +288,12 @@ class Groups
         $groupID = $_GET["group"];
 
         // check if user or email address already exists
-        $sql = "SELECT groupsList.id_group, groupsList.name, groupsList.category, groupsList.description, groupsList.group_image, id, first_name, last_name
-        FROM ebabilon.groups as groupsList, ebabilon.users as userList
-        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id;";
+        $sql = "SELECT groupsList.id_group, groupsList.name, catList.name as category, groupsList.description, groupsList.group_image, id, first_name, last_name, category as catId
+        FROM ebabilon.groups as groupsList, ebabilon.users as userList, ebabilon.group_categories as catList
+        WHERE id_group = '".$groupID."' AND groupsList.admin = userList.id AND catList.id_category = groupsList.category;";
         $query_get_user_info = $this->db_connection->query($sql);
-        // get result row (as an object)
-        $result_row = $query_get_user_info->fetch_object();
-        echo("<script>console.log('PHP: getGroupDetails ".json_encode($result_row)."');</script>");
 
-        echo '<h3 style="text-align:left;">Coordinator:</h3>';
-        echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->first_name ." ".$result_row->last_name.'</h4>';
-        echo '<h3 style="text-align:left;">Description:</h3>';
-        if(isset($result_row->description)){
-          echo '<h4 style="text-align:left; padding-left:35px;">'.$result_row->description.'</h4>';
-        }else{
-          echo '<h4 style="text-align:left; padding-left:35px;"> No Description </h4>';
-        }
-
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
+        return $query_get_user_info;
     }
   }
 

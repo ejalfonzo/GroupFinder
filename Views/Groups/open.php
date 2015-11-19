@@ -84,15 +84,50 @@ $groups = new Groups();
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <div class="row">
+              <div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditG">Edit Group</a></div>
+            </div>
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="panel-body">
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php $groups->getGroup(); ?>
+                <?php 
+                $results = $groups->getGroup();
+
+                echo '<img src=" '. $results->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                echo '<h4>'.$results->name.'</h4>';
+                 ?>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php $groups->getGroupDetails(); ?>
+                <?php 
+                $groupsDetails = $groups->getGroupDetails(); 
+
+                $hasG = false;
+                  echo("<script>console.log('results_row: ".json_encode($groupsDetails)."');</script>");
+                  if($groupsDetails->num_rows >= 1){
+                    $hasG = true;
+                  }
+                  if ($hasG) {
+                      while($row = $groupsDetails->fetch_object()) {
+                        echo("<script>console.log('PHP: getGroupDetails ".json_encode($row)."');</script>");
+
+                        echo '<h3 style="text-align:left;margin-left: 1em;"> Coordinator:</h3>';
+                        echo '<h4 style="text-align:left; padding-left:35px;margin-left: 1em;"> '.$row->first_name ." ".$row->last_name.'</h4>';
+                        echo '<h3 style="text-align:left;margin-left: 1em;"> Category:</h3>';
+                        if(isset($row->category)){
+                          echo '<h4 style="text-align:left; padding-left:35px;margin-left: 1em;"> '.$row->category.'</h4>';
+                        }
+                        echo '<h3 style="text-align:left;margin-left: 1em;"> Description:</h3>';
+                        if(isset($row->description)){
+                          echo '<h4 style="text-align:left; padding-left:35px;margin-left: 1em;"> '.$row->description.'</h4>';
+                        }else{
+                          echo '<h4 style="text-align:left; padding-left:35px;margin-left: 1em;"> No Description </h4>';
+                                }
+                     }
+                 }
+
+                ?>
               </div>
             </div>
 
@@ -141,6 +176,7 @@ $groups = new Groups();
         </div>
       </div>
 
+      <!-- Leave Group Modal -->
       <div id="LeaveG" class="modal fade" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
@@ -150,7 +186,11 @@ $groups = new Groups();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php $groups->getGroup(); ?>
+                        <?php 
+                        $results = $groups->getGroup(); 
+
+                        echo '<h3>'.$results->name.'</h3>';
+                        ?>
                       </div>
                     </div>
                     <div class="modal-footer" style="text-align:center;">
@@ -160,6 +200,73 @@ $groups = new Groups();
                 </div>
             </div>
         </div>
+
+        <!-- Edit Group Modal -->
+        <div id="EditG" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                          <h1 class="modal-title" style="font-size:25px;">Edit Group</h1>
+                      </div>
+                      <div class="modal-body">
+                          <!-- action="open.php" -->
+                          <form method="post" action="" name="editGroup">
+                            <?php
+                            $groupName = $groups->getGroup()->name;
+                            $groupDetailsEdit = $groups->getGroupDetails();
+
+                            $hasB = false;
+                            echo("<script>console.log('results_row editGroup: ".json_encode($groupDetailsEdit)."');</script>");
+                            if($groupDetailsEdit->num_rows >= 1){
+                              echo("<script>console.log('has row');</script>");
+                              $hasB = true;
+                            }
+                            if ($hasB) {
+                                  $row = $groupDetailsEdit->fetch_object();
+                                  $categories = $groups->getGroupCategories();
+
+                                  echo '<input id="group_name" class="group_input form-control" value='.$groupName.' placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />';
+
+                                  //Category
+                                  echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
+                                   <div class="control-group">
+                                      <select class="form-control" placeholder="Select a Category" id="category" name="category">';
+                                  
+                                  if($categories != null){
+                                   while($rowCat = $categories->fetch_object()){
+                                    if($row->catId == $rowCat->id_category){
+                                      echo('<option selected="selected" value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      }
+                                      else{
+                                        echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
+                                      } 
+                                    }
+                                  }
+                                  echo '</select>
+                                       </div>
+                                     </div>';
+
+
+                                  //Address
+                                  if(isset($row->description)){
+                                    echo '<textarea class="form-control floating-label" placeholder="Group Description" rows="2" id="description" name="description" style="margin: 20px 0px 0px;">'.$row->description.'</textarea>';
+                                  }else{
+                                    echo '<textarea class="form-control floating-label" placeholder="Group Description" rows="2" id="description" name="description" style="margin: 20px 0px 0px;"></textarea>';
+                                  }
+                                  echo '<span class="help-block">Describe the group, so others may know about your group.</span>';
+                            }
+                            ?>
+                            <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editGroup" value="Edit Group" />
+
+                          </form>
+                      </div>
+                      <div class="modal-footer" style="text-align:center;">
+                          <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
 
 

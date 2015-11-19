@@ -32,3 +32,8 @@ require_once("Groups.php");
     $result = $groups->isMember();
     echo $result;
  }
+ if (isset($_POST["editGroup"])) {
+    $groups = new Groups();
+    $result = $groups->editGroup();
+    echo $result;
+ }
