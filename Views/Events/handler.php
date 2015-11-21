@@ -37,3 +37,8 @@ require_once("Events.php");
     $result = $events->editEvent();
     echo $result;
  }
+ if (isset($_POST["delete"])) {
+    $events = new Events();
+    $result = $events->deleteEvent();
+    echo $result;
+ }

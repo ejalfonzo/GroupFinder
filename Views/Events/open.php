@@ -57,6 +57,22 @@ $events = new Events();
          }
        });
     }
+
+    function deleteEvent(events){
+
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"delete="+events,
+         success:function(data){
+           console.log("Result",data);
+           var obj = JSON.parse(data);
+           alert(obj);
+           console.log("DELETE EVENT: ", obj);
+           window.location.href = "/Views/Events/manager.php";
+         }
+       });
+    }
     </script>
 </head>
 <body>
@@ -84,11 +100,20 @@ $events = new Events();
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <?php
+          $results = $events->getEvent();
 
-          <div class="row">
-              <div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditE">Edit Event</a></div>
-            </div>
+          // Edit only for admin
+          $adminCheck = $events->isAdmin();
 
+          echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+          if ($adminCheck) {
+            echo '<div class="row">';
+            echo '<div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditE">Edit Event</a></div>';
+            echo '</div>';
+           }
+          ?>
+          
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <div class="panel-body">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
@@ -140,12 +165,18 @@ $events = new Events();
                         }
                      }
                  }
+                 echo '</div>';
+                 echo '</div>';
+
+                 $adminCheck = $events->isAdmin();
+                 echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+                 if (!$adminCheck) {
+                  echo '<div class="panel-footer">';
+                  echo '<a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveE">Leave Event</a>';
+                  echo '</div> ';
+                 }
+
                 ?>
-              </div><!-- Details End div-->
-            </div>
-            <div class="panel-footer">
-               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveE">Leave Event</a>
-             </div> 
              </div>
 
             <div class="row panel panel-primary" >
@@ -285,11 +316,36 @@ $events = new Events();
                           </form>
                       </div>
                       <div class="modal-footer" style="text-align:center;">
+                        <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;background:red" data-toggle="modal" data-dismiss="modal" data-target="#DeleteE">Delete Event</a></div>
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                       </div>
                   </div>
               </div>
           </div>
+
+      <!-- Delete Event Modal -->
+      <div id="DeleteE" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to delete:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php 
+                        $results = $events->getEvent(); 
+                        echo '<div class="col-md-8"> <h3>'.$results->name.'</h3></div>';
+                        ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" onclick="deleteEvent(<?php echo($_GET["event"]); ?>)">Delete</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         
 
       <!-- <footer class="footer">
