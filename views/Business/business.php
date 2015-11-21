@@ -40,9 +40,61 @@ class Business
     if (isset($_POST["editBusiness"])) {
         $this->editBusiness();
     }
+    if (isset($_POST["delete"])) {
+        $this->deleteBusiness();
+    }
     // if (isset($_GET["gbusiness"])) {
     //     $this->openBusiness();
     // }
+  }
+
+  function deleteBusiness(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $this->db_connection->real_escape_string(strip_tags($_POST['delete'], ENT_QUOTES));
+        // echo("<script>console.log('PHP: getGroupDetails ".json_encode($userID)."');</script>");
+
+        // check if user or email address already exists
+        $sql = "DELETE FROM ebabilon.businesses WHERE `id_business`='".$businessID."' AND `admin` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        if($query_get_user_info){
+          $joinResult = "Business Deleted";
+          return json_encode($joinResult);
+        }
+    }
+  }
+
+  function isAdmin(){
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $businessID = $_GET["business"];
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.businesses WHERE id_business = '".$business."' AND admin = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        if($query_get_user_info != null){
+          return true;
+        }
+        else{
+            return false;
+        }
+    }
   }
 
   function editBusiness(){

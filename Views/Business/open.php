@@ -57,6 +57,22 @@ $business = new Business();
         }
        });
     }
+
+    function deleteBusiness(business){
+
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"delete="+business,
+         success:function(data){
+           console.log("Result",data);
+           var obj = JSON.parse(data);
+           alert(obj);
+           console.log("DELETE BUSINESS: ", obj);
+           window.location.href = "/Views/Business/manager.php";
+        }
+       });
+    }
     </script>
 </head>
 <body>
@@ -91,8 +107,14 @@ $business = new Business();
                 $results = $business->getBusiness(); 
 
                 echo '<div class="col-md-8"> <h1>'.$results.'</h1></div>';
+
+                // Edit only for admin
+                $adminCheck = $business->isAdmin();
+                echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+                 if ($adminCheck) {
+                  echo '<div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditB">Edit Business</a></div>';
+                 }
                 ?>
-              <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditB">Edit Business</a></div>
             </div>
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;margin:20px 0px;width: 30xp">
@@ -127,10 +149,16 @@ $business = new Business();
                         }
                      }
                  }
+
+                 //Unfollow only for follower that is not a manager
+                 $adminCheck = $business->isAdmin();
+                 echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+                 if (!$adminCheck) {
+                  echo '<div class="panel-footer">';
+                  echo '<a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#UnfollowB">Unfollow Business</a>';
+                  echo '</div> ';
+                 }
                 ?>
-                <div class="panel-footer">
-               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#UnfollowB">Unfollow Business</a>
-             </div> 
             </div>
 
                        
@@ -269,11 +297,37 @@ $business = new Business();
                           </form>
                       </div>
                       <div class="modal-footer" style="text-align:center;">
+                        <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;background:red" data-toggle="modal" data-dismiss="modal" data-target="#DeleteB">Delete Business</a></div>
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                       </div>
                   </div>
               </div>
           </div>
+
+
+      <!-- Delete Business Modal -->
+      <div id="DeleteB" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to Delete:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php 
+                        $results = $business->getBusiness(); 
+                        echo '<div class="col-md-8"> <h3>'.$results.'</h3></div>';
+                        ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" onclick="deleteBusiness(<?php echo($_GET["business"]); ?>)">Delete</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
       <!-- <footer class="footer">
@@ -307,3 +361,4 @@ $business = new Business();
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
 </body>
+</html>

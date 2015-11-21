@@ -37,3 +37,8 @@ require_once("Business.php");
     $result = $businesses->editBusiness();
     echo $result;
  }
+ if (isset($_POST["delete"])) {
+    $businesses = new Business();
+    $result = $businesses->deleteBusiness();
+    echo $result;
+ }
