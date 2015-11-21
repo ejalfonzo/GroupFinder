@@ -40,9 +40,60 @@ class Groups
     if (isset($_POST["editGroup"])) {
         $this->editGroup();
     }
+    if (isset($_POST["delete"])) {
+        $this->deleteGroup();
+    }
     // if (isset($_GET["group"])) {
     //     $this->openGroup();
     // }
+  }
+
+  function deleteGroup(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $groupID = $this->db_connection->real_escape_string(strip_tags($_POST['delete'], ENT_QUOTES));
+
+        // check if user or email address already exists
+        $sql = "DELETE FROM ebabilon.groups WHERE `id_group`='".$groupID."' AND `admin` = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        if($query_get_user_info){
+          $joinResult = "Group Deleted";
+          return json_encode($joinResult);
+        }
+    }
+  }
+
+  function isAdmin(){
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $groupID = $_GET["group"];
+
+        // check if user or email address already exists
+        $sql = "SELECT * FROM ebabilon.groups WHERE id_group = '".$groupID."' AND admin = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+
+        if($query_get_user_info != null){
+          return true;
+        }
+        else{
+            return false;
+        }
+    }
   }
 
   function editGroup(){

@@ -37,3 +37,9 @@ require_once("Groups.php");
     $result = $groups->editGroup();
     echo $result;
  }
+ if (isset($_POST["delete"])) {
+    $groups = new Groups();
+    $result = $groups->deleteGroup();
+    echo $result;
+ }
+ 

@@ -57,6 +57,23 @@ $groups = new Groups();
   		   }
   	   });
   	}
+
+    function deleteGroup(group){
+
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"delete="+group,
+         success:function(data){
+           console.log("Result",data);
+           var obj = JSON.parse(data);
+           alert(obj);
+           console.log("DELETE GROUP: ", obj);
+           window.location.href = "/Views/Groups/manager.php";
+           // createElement(obj);
+         }
+       });
+    }
   	</script>
 </head>
 <body>
@@ -84,9 +101,20 @@ $groups = new Groups();
           </ul>
         </div>
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <div class="row">
-              <div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditG">Edit Group</a></div>
-            </div>
+
+          <?php
+          $results = $groups->getGroup();
+
+          // Edit only for admin
+          $adminCheck = $groups->isAdmin();
+
+          echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+          if ($adminCheck) {
+            echo '<div class="row">';
+            echo '<div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditG">Edit Group</a></div>';
+            echo '</div>';
+           }
+          ?>
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;">
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
@@ -127,13 +155,18 @@ $groups = new Groups();
                      }
                  }
 
-                ?>
-              </div>
-            </div>
+                 echo '</div>';
+                 echo '</div>';
 
-             <div class="panel-footer">
-               <a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveG">Leave Group</a>
-             </div>
+                 $adminCheck = $groups->isAdmin();
+                 echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+                 if (!$adminCheck) {
+                  echo '<div class="panel-footer">';
+                  echo '<a href="" class="btn btn-flat btn-warning" data-toggle="modal" data-dismiss="modal" data-target="#LeaveG">Leave Group</a>';
+                  echo '</div> ';
+                 }
+
+                ?>
             </div>
 
             <div class="row panel panel-primary" >
@@ -262,11 +295,37 @@ $groups = new Groups();
                           </form>
                       </div>
                       <div class="modal-footer" style="text-align:center;">
+                        <div class="col-md-4"><a class="btn btn-info btn-raised" style="float: right;background:red" data-toggle="modal" data-dismiss="modal" data-target="#DeleteG">Delete Group</a></div>
                           <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                       </div>
                   </div>
               </div>
           </div>
+
+      <!-- Delete Group Modal -->
+      <div id="DeleteG" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="btn" class="close" data-dismiss="modal">&times;</button>
+                        <h1 class="modal-title" style="font-size:25px;">Are you sure you want to delete:</h1>
+                    </div>
+                    <div class="modal-body">
+                      <div class="portrait" style="margin:15px 250px 0px;">
+                        <?php 
+                        $results = $groups->getGroup(); 
+
+                        echo '<h3>'.$results->name.'</h3>';
+                        ?>
+                      </div>
+                    </div>
+                    <div class="modal-footer" style="text-align:center;">
+                      <button type="button" class="btn btn-warning" onclick="deleteGroup(<?php echo($_GET["group"]); ?>)">Delete</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
 
 
