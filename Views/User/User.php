@@ -28,6 +28,93 @@ class User
 
     }
 
+    function createPost(){
+      $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+      // change character set to utf8 and check it
+      if (!$this->db_connection->set_charset("utf8")) {
+          $this->errors[] = $this->db_connection->error;
+          echo("<script>console.log('Error: DB not utf8');</script>");
+      }
+      if (!$this->db_connection->connect_errno) {
+          // escaping, additionally removing everything that could be (html/javascript-) code
+          $userID = $_SESSION["id"];
+          $destinationID = $_SESSION["id"];
+          $postMessage = $this->db_connection->real_escape_string(strip_tags($_POST['createPost'], ENT_QUOTES));
+          $today = date("Y-m-d H:i:s"); //("F j, Y, g:i a")
+          echo("<script>console.log('PHP: Today? ".$today."');</script>");
+          // check if user or email address already exists
+          $sql = "INSERT INTO `ebabilon`.`posts` (`message`, `date`, `author`, `destination`)
+          VALUES ('".$postMessage."', '".$today."', '".$userID."', '".$destinationID."');";
+          $query_new_post_insert = $this->db_connection->query($sql);
+          // get result row (as an object)
+          // $result_row = $query_new_post_insert->fetch_object();
+          // echo($result_row);
+          if ($query_new_post_insert) {
+              $this->messages[] = "Your post has been created successfully. You can now log in.";
+              // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+          } else {
+              $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+              echo("<script>console.log('PHP: ERROR Post');</script>");
+          }
+      }
+    }
+
+    function deletePost(){
+      $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+      // change character set to utf8 and check it
+      if (!$this->db_connection->set_charset("utf8")) {
+          $this->errors[] = $this->db_connection->error;
+          echo("<script>console.log('Error: DB not utf8');</script>");
+      }
+      if (!$this->db_connection->connect_errno) {
+          // escaping, additionally removing everything that could be (html/javascript-) code
+          $postID = $this->db_connection->real_escape_string(strip_tags($_POST['deletePost'], ENT_QUOTES));
+
+          // check if user or email address already exists
+          $sql = "DELETE FROM `ebabilon`.`posts` WHERE `id_post`='".$postID."';";
+          $query_new_post_delete = $this->db_connection->query($sql);
+          // get result row (as an object)
+          // $result_row = $query_new_post_delete->fetch_object();
+          // echo($result_row);
+          if ($query_new_post_delete) {
+              $this->messages[] = "Your post has been created successfully. You can now log in.";
+              // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+          } else {
+              $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+              echo("<script>console.log('PHP: ERROR Post');</script>");
+          }
+      }
+    }
+
+    function getFeed(){
+      $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+      // change character set to utf8 and check it
+      if (!$this->db_connection->set_charset("utf8")) {
+          $this->errors[] = $this->db_connection->error;
+          echo("<script>console.log('Error: DB not utf8');</script>");
+      }
+      if (!$this->db_connection->connect_errno) {
+          // escaping, additionally removing everything that could be (html/javascript-) code
+          $userID = $_SESSION["id"];
+          // check if user or email address already exists
+          $sql = "SELECT postList.id_post, message, postList.date, id as authorID, first_name, last_name, user_image
+          FROM ebabilon.posts as postList, ebabilon.users as authorsList
+          WHERE author = authorsList.id AND destination = '".$userID."';";
+          $query_get_user_info = $this->db_connection->query($sql);
+          // get result row (as an object)
+          // $result_row = $query_get_user_info->fetch_object();
+          $arrayResult = array();
+          while($result_row = $query_get_user_info->fetch_object()){
+            $arrayResult[] = ($result_row);
+
+          }
+          return json_encode($arrayResult);
+        }
+      }
+
     function getUserFirstName(){
       $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 

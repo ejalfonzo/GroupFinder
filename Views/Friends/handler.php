@@ -37,3 +37,18 @@ require_once("Friends.php");
     $result = $friends->editFriend();
     echo $result;
  }
+ if (isset($_POST["getFeed"])) {
+     $friends = new Friends();
+     $result = $friends->getFeed();
+     echo $result;
+  }
+  if (isset($_POST["createPost"])) {
+     $friends = new Friends();
+     $result = $friends->createPost();
+     echo $result;
+  }
+  if (isset($_POST["deletePost"])) {
+     $friends = new Friends();
+     $result = $friends->deletePost();
+     echo $result;
+  }

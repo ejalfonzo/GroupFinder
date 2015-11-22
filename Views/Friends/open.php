@@ -41,8 +41,76 @@ $friends = new Friends();
     <script type="text/javascript" src="/js/jquery.js"></script>
     <script type="text/javascript">
 
-  	function removeFriend(friend){
+    function getFeed(){
+      var friendID = '<?php echo $_GET["friend"]; ?>';
+      console.log("Get FEED for "+ friendID);
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"getFeed="+friendID,
+         success:function(data){
+           var feed = JSON.parse(data);
+           console.log("Feed: ", feed);
+           if(feed.forEach){
+             feed.forEach(function(obj){
+               createPostElement(obj);
+             });
+           }
+         }
+       });
+     }
 
+     function createPost(){
+       var userID = '<?php echo $_SESSION["id"]; ?>';
+       console.log("createPost?");
+        $.ajax({
+          type:"post",
+          url:"handler.php",
+          data:"createPost="+$('#feedbox').val(),
+          success:function(data){
+            console.log("Create Post Result",data);
+            // var obj = JSON.parse(data);
+            // console.log("Feed: ", obj);
+            // createPostElement(obj);
+          }
+        });
+      }
+
+      function createPostElement(data){
+       $( '<div id="feed" ><div class="row" style="padding:15px 15px 0px 15px;">\
+       <div class="col-md-2"><img src="'+data.user_image+'" class="img-circle" width="90%"/></div>\
+       <div class="col-md-10">\
+       <div><b>'+(data.first_name ? data.first_name +" "+ (data.last_name ? data.last_name:""):"Annonymous")+'</b>\
+       <div class="pull-right text-muted deletePost" id="delete'+data.id_post+'" >delete</div></div>\
+       <div> '+data.message+'</div>\
+       <div class="text-muted"> <small>posted '+data.date+'</small></div>\
+       </div>\
+       </div><hr></div>').insertAfter( "#insert" ).hide().slideDown();
+       $('#feedbox').val('');
+
+       $(document).on('click','#delete'+data.id_post,function(){
+   		// 	$(this).closest('#feed').slideUp();
+        deletePost(data.id_post, $(this))
+        console.log("This ", $(this));
+   		});
+     }
+
+     $(document).on('click','#button',function(){
+  			var feed = $('#feedbox').val();
+  			if(!feed)
+  				alert('Enter the feed');
+  			else{
+    			createPost();
+    		}
+  		});
+
+
+
+      $(document).ready(function(){
+        getFeed();
+      });
+
+  	function removeFriend(friend){
   	   $.ajax({
   		   type:"post",
   		   url:"handler.php",
@@ -96,7 +164,7 @@ $friends = new Friends();
                   <?php
                   $userFriends = $friends->getFriend();
                   $hasF = false;
-                  echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
+                  // echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
                   if($userFriends->num_rows >= 1){
                     $hasF = true;
                   }
@@ -117,7 +185,7 @@ $friends = new Friends();
                   <?php
                   $userFriends = $friends->getFriendDetails();
                   $hasF = false;
-                  echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
+                  // echo("<script>console.log('getFriend: ".json_encode($userFriends)."');</script>");
                   if($userFriends->num_rows >= 1){
                     $hasF = true;
                   }
@@ -156,7 +224,7 @@ $friends = new Friends();
               <?php
                 $userFriends = $friends->getFriendsTable();
                 $hasF = false;
-                echo("<script>console.log('results_row: ".json_encode($userFriends)."');</script>");
+                // echo("<script>console.log('results_row: ".json_encode($userFriends)."');</script>");
                 if($userFriends->num_rows >= 1){
                   $hasF = true;
                 }
@@ -172,7 +240,7 @@ $friends = new Friends();
                       </tr>
                     </thead>';
                     while($row = $userFriends->fetch_object()) {
-                        echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+                        // echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
                       echo '<tr>';
                         echo   '<td><img src="'.$row->image.'" alt="" style="width:40px; height:auto;"></td>';
                         echo   '<td>'. $row->type . '</td>';
@@ -188,6 +256,34 @@ $friends = new Friends();
               ?>
             </div>
 
+            <div class="row panel panel-primary" >
+            <div class="panel-heading" style="text-align: left; font-size: 20px;">The Feed</div>
+
+            <div>
+          		<div class="row" style="padding:15px 15px 0px 15px;">
+          		  <div class="col-md-2"><img src="/images/stock/default-user.png" class="img-circle" width="90%"/></div>
+          		  <div class="col-md-10"><textarea class="form-control" id="feedbox" rows="3"></textarea><br>
+          		  <button type="button" id="button" class="btn btn-default">post</button>
+          		  </div>
+          		</div>
+          	</div>
+          	<hr>
+          		<div id="insert"></div>
+          		<div>
+          		<div class="row" id="feed" style="padding:15px 15px 0px 15px;">
+
+          		  <!-- <div class="col-md-2"><img src="/images/stock/default-user.png" class="img-circle" width="90%"/></div>
+          		  <div class="col-md-10">
+          		  <div><b>Krishna Teja</b>
+          		  <div class="pull-right text-muted" id="delete">delete</div></div>
+          		  <div> This is a sample text</div>
+          		  <div class="text-muted"> <small>posted 2 minutes ago</small></div> -->
+
+                </div>
+          		</div>
+          	</div>
+          	<br>
+
           <!-- <h2 class="sub-header">Section title</h2> -->
         </div>
       </div>
@@ -202,10 +298,10 @@ $friends = new Friends();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php 
+                        <?php
                         $userFriends = $friends->getFriend();
                         $name = $userFriends->fetch_object();
-                        echo("<script>console.log('results_row Get Friend ID: ".$_GET["friend"]."')</script>");
+                        // echo("<script>console.log('results_row Get Friend ID: ".$_GET["friend"]."')</script>");
                         echo '<h3>'.$name->user_name.'</h3>';
                         ?>
                       </div>
@@ -234,9 +330,9 @@ $friends = new Friends();
                             $friendDetails = $friends->getFriendDetails();
 
                             $hasF = false;
-                            echo("<script>console.log('results_row editFriend: ".json_encode($friendDetails)."');</script>");
+                            // echo("<script>console.log('results_row editFriend: ".json_encode($friendDetails)."');</script>");
                             if($friendDetails->num_rows >= 1){
-                              echo("<script>console.log('has row');</script>");
+                              // echo("<script>console.log('has row');</script>");
                               $hasF = true;
                             }
                             if ($hasF) {
@@ -247,7 +343,7 @@ $friends = new Friends();
                                   echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
                                    <div class="control-business">
                                       <select class="form-control" placeholder="Select a Category" id="category" name="category">';
-                                  
+
                                   if($categories != null){
                                    while($rowCat = $categories->fetch_object()){
                                     if($row->catId == $rowCat->id_category){
@@ -255,7 +351,7 @@ $friends = new Friends();
                                       }
                                       else{
                                         echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
-                                      } 
+                                      }
                                     }
                                   }
                                   echo '</select>

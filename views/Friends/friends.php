@@ -42,6 +42,92 @@ class Friends
     // }
   }
 
+function createPost(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $_SESSION["id"];
+        $friendID = $_GET["friend"];
+        // $destinationID =  $this->db_connection->real_escape_string(strip_tags($_GET["friend"], ENT_QUOTES));
+        $postMessage = $this->db_connection->real_escape_string(strip_tags($_POST['createPost'], ENT_QUOTES));
+        $today = date("Y-m-d H:i:s"); //("F j, Y, g:i a")
+        echo("PHP: friendID = ".$friendID."?");
+        // check if user or email address already exists
+        $sql = "INSERT INTO `ebabilon`.`posts` (`message`, `date`, `author`, `destination`)
+        VALUES ('".$postMessage."', '".$today."', '".$userID."', '".$friendID."');";
+        $query_new_post_insert = $this->db_connection->query($sql);
+        if ($query_new_post_insert) {
+            $this->messages[] = "Your post has been created successfully. You can now log in.";
+            // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+        } else {
+            $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+            echo("PHP: ERROR Post");
+        }
+    }
+  }
+
+  function deletePost(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+      // escaping, additionally removing everything that could be (html/javascript-) code
+      $postID = $this->db_connection->real_escape_string(strip_tags($_POST['deletePost'], ENT_QUOTES));
+
+      // check if user or email address already exists
+      $sql = "DELETE FROM `ebabilon`.`posts` WHERE `id_post`='".$postID."';";
+      $query_new_post_delete = $this->db_connection->query($sql);
+      // get result row (as an object)
+      // $result_row = $query_new_post_delete->fetch_object();
+      // echo($result_row);
+      if ($query_new_post_delete) {
+          $this->messages[] = "Your post has been created successfully. You can now log in.";
+          // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+      } else {
+          $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+          echo("<script>console.log('PHP: ERROR Post');</script>");
+      }
+    }
+  }
+
+  function getFeed(){
+    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+    // change character set to utf8 and check it
+    if (!$this->db_connection->set_charset("utf8")) {
+        $this->errors[] = $this->db_connection->error;
+        echo("<script>console.log('Error: DB not utf8');</script>");
+    }
+    if (!$this->db_connection->connect_errno) {
+        // escaping, additionally removing everything that could be (html/javascript-) code
+        $userID = $this->db_connection->real_escape_string(strip_tags($_POST['getFeed'], ENT_QUOTES));
+        echo("PHP: Feed friendID? ".$userID);
+        // check if user or email address already exists
+        $sql = "SELECT postList.id_post, message, postList.date, id as authorID, first_name, last_name, user_image
+        FROM ebabilon.posts as postList, ebabilon.users as authorsList
+        WHERE author = authorsList.id AND destination = '".$userID."';";
+        $query_get_user_info = $this->db_connection->query($sql);
+        // get result row (as an object)
+        // $result_row = $query_get_user_info->fetch_object();
+        $arrayResult = array();
+        while($result_row = $query_get_user_info->fetch_object()){
+          $arrayResult[] = ($result_row);
+
+        }
+        return json_encode($arrayResult);
+      }
+    }
+
   function editFriend(){
    // create a database connection
    $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
@@ -56,12 +142,12 @@ class Friends
    if (!$this->db_connection->connect_errno) {
    // echo("<script>console.log('Good: DB Connection');</script>");
    // escaping, additionally removing everything that could be (html/javascript-) code
-   // 
+   //
       $userID = $_SESSION["id"];
       $friendID = $_GET["friend"];
       $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
 
-      $sql = "UPDATE `ebabilon`.`friends` 
+      $sql = "UPDATE `ebabilon`.`friends`
       SET  category='".$category."'
       WHERE id_friend = '".$friendID."';";
       $query_edit_friend = $this->db_connection->query($sql);
@@ -70,7 +156,7 @@ class Friends
       if ($query_edit_friend) {
           $this->messages[] = "Your account has been created successfully. You can now log in.";
           echo("<script>console.log('PHP: business edited');</script>");
-           
+
           echo("<script>console.log('PHP Insert: ".json_encode($query_edit_friend)."');</script>");
           $editResult = "Edited Friend";
           return json_encode($editResult);
@@ -103,7 +189,7 @@ class Friends
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends
         WHERE id_friend = '".$friendID."' AND id_user = '".$userID."') LIMIT 1;";
         $query_get_user_info_2 = $this->db_connection->query($sql);
-        
+
         $sql = "INSERT INTO `ebabilon`.`friends` (`id_friend`, `id_user`)
         SELECT * FROM (SELECT '".$userID."', '".$friendID."') AS tmp
         WHERE NOT EXISTS (SELECT id_friend, id_user FROM ebabilon.friends

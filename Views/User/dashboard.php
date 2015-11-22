@@ -40,6 +40,96 @@ $user = new User();
     <!-- <link rel="stylesheet" type="text/css" href="/css/reset.css"/> -->
     <!-- <link rel="icon" href="/images/logo.ico"> -->
     <script type="text/javascript" src="/js/jquery.js"></script>
+    <script>
+
+    function getFeed(){
+      console.log("Get FEED");
+      var userID = '<?php echo $_SESSION["id"]; ?>';
+       $.ajax({
+         type:"post",
+         url:"handler.php",
+         data:"getFeed="+userID,
+         success:function(data){
+           var feed = JSON.parse(data);
+           console.log("Feed: ", feed);
+           if(feed.forEach){
+             feed.forEach(function(obj){
+               createPostElement(obj);
+             });
+           }
+         }
+       });
+     }
+
+     function createPost(){
+       var userID = '<?php echo $_SESSION["id"]; ?>';
+       console.log("createPost?");
+        $.ajax({
+          type:"post",
+          url:"handler.php",
+          data:"createPost="+$('#feedbox').val(),
+          success:function(data){
+            console.log("Create Post Result",data);
+            // var obj = JSON.parse(data);
+            // console.log("Feed: ", obj);
+            // createPostElement(obj);
+          }
+        });
+      }
+      function deletePost(id, post){
+         $.ajax({
+           type:"post",
+           url:"handler.php",
+           data:"deletePost="+id,
+           success:function(data){
+             console.log("Post Deleted", data);
+             post.closest('#feed').slideUp();
+           }
+         });
+       }
+
+     function createPostElement(data){
+       $( '<div id="feed" ><div class="row" style="padding:15px 15px 0px 15px;">\
+       <div class="col-md-2"><img src="'+data.user_image+'" class="img-circle" width="90%"/></div>\
+       <div class="col-md-10">\
+       <div><b>'+(data.first_name ? data.first_name +" "+ (data.last_name ? data.last_name:""):"Annonymous")+'</b>\
+       <div class="pull-right text-muted deletePost" id="delete'+data.id_post+'" >delete</div></div>\
+       <div> '+data.message+'</div>\
+       <div class="text-muted"> <small>posted '+data.date+'</small></div>\
+       </div>\
+       </div><hr></div>').insertAfter( "#insert" ).hide().slideDown();
+       $('#feedbox').val('');
+
+       $(document).on('click','#delete'+data.id_post,function(){
+   		// 	$(this).closest('#feed').slideUp();
+        deletePost(data.id_post, $(this))
+        console.log("This ", $(this));
+   		});
+     }
+
+
+  		$(document).on('click','#button',function(){
+  			var feed = $('#feedbox').val();
+  			if(!feed)
+  				alert('Enter the feed');
+  			else{
+    			createPost();
+    		}
+  		});
+
+
+
+      $(document).ready(function(){
+        getFeed();
+      });
+
+
+  	</script>
+    <style>
+    	.deletePost{
+    		cursor:pointer;
+    	}
+    </style>
 </head>
 <body>
 
@@ -99,7 +189,6 @@ $user = new User();
                       </thead>';
                       while($row = $table->fetch_object()) {
                         $date = date_create($row->time);
-                        // echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
                         echo '<tr>';
                           echo   '<td>'. $row->name . '</td>';
                           echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
@@ -164,7 +253,7 @@ $user = new User();
                     </thead>';
                     while($row = $users->fetch_object()) {
                       $date = date_create($row->time);
-                      echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
+                      // echo("<script>console.log('results_row: ".json_encode($row)."');</script>");
                       echo '<tr>';
                         echo   '<td>'. $row->name . '</td>';
                         echo   '<td>'. $row->first_name . ' ' . $row->last_name . '</td>';
@@ -180,8 +269,42 @@ $user = new User();
                }
             ?>
           </div>
+
+          <div class="row panel panel-primary" >
+            <div class="panel-heading" style="text-align: left; font-size: 20px;">The Feed</div>
+
+            <div>
+          		<div class="row" style="padding:15px 15px 0px 15px;">
+          		  <div class="col-md-2"><img src="/images/stock/default-user.png" class="img-circle" width="90%"/></div>
+          		  <div class="col-md-10"><textarea class="form-control" id="feedbox" rows="3"></textarea><br>
+          		  <button type="button" id="button" class="btn btn-default">post</button>
+          		  </div>
+          		</div>
+          	</div>
+          	<hr>
+          		<div id="insert"></div>
+          		<div>
+          		<div class="row" id="feed" style="padding:15px 15px 0px 15px;">
+
+          		  <!-- <div class="col-md-2"><img src="/images/stock/default-user.png" class="img-circle" width="90%"/></div>
+          		  <div class="col-md-10">
+          		  <div><b>Krishna Teja</b>
+          		  <div class="pull-right text-muted" id="delete">delete</div></div>
+          		  <div> This is a sample text</div>
+          		  <div class="text-muted"> <small>posted 2 minutes ago</small></div> -->
+
+                </div>
+          		</div>
+          	</div>
+          	<br>
+
+          </div>
+
+
         </div>
       </div>
+
+
 
       <!-- <footer class="footer">
           <div class="container">
