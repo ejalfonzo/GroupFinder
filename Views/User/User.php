@@ -42,21 +42,28 @@ class User
           $destinationID = $_SESSION["id"];
           $postMessage = $this->db_connection->real_escape_string(strip_tags($_POST['createPost'], ENT_QUOTES));
           $today = date("Y-m-d H:i:s"); //("F j, Y, g:i a")
-          echo("<script>console.log('PHP: Today? ".$today."');</script>");
+          // echo("<script>console.log('PHP: Today? ".$today."');</script>");
           // check if user or email address already exists
           $sql = "INSERT INTO `ebabilon`.`posts` (`message`, `date`, `author`, `destination`)
           VALUES ('".$postMessage."', '".$today."', '".$userID."', '".$destinationID."');";
           $query_new_post_insert = $this->db_connection->query($sql);
-          // get result row (as an object)
-          // $result_row = $query_new_post_insert->fetch_object();
-          // echo($result_row);
           if ($query_new_post_insert) {
-              $this->messages[] = "Your post has been created successfully. You can now log in.";
-              // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
-          } else {
-              $this->errors[] = "Sorry, your post failed. Please go back and try again.";
-              echo("<script>console.log('PHP: ERROR Post');</script>");
-          }
+            // echo("POSTID? ". $this->db_connection->insert_id);
+            $this->messages[] = "Your post has been created successfully. You can now log in.";
+
+            $sql = "SELECT message, date, destination, first_name, last_name, user_image
+            FROM ebabilon.posts, users
+            WHERE id = author AND id_post = '".$this->db_connection->insert_id."';";
+            $query_get_user_info = $this->db_connection->query($sql);
+            $arrayResult = array();
+            if($result_row = $query_get_user_info->fetch_object()){
+              return json_encode($result_row);
+            }
+            // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+        } else {
+            $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+            echo("PHP: ERROR Post");
+        }
       }
     }
 

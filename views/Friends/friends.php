@@ -53,17 +53,29 @@ function createPost(){
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $_SESSION["id"];
-        $friendID = $_GET["friend"];
+        $friendID = $_POST["destinationID"];
+        $postMessage = $_POST["createPost"];
         // $destinationID =  $this->db_connection->real_escape_string(strip_tags($_GET["friend"], ENT_QUOTES));
-        $postMessage = $this->db_connection->real_escape_string(strip_tags($_POST['createPost'], ENT_QUOTES));
+        // $postMessage = $this->db_connection->real_escape_string(strip_tags($_POST['createPost'], ENT_QUOTES));
         $today = date("Y-m-d H:i:s"); //("F j, Y, g:i a")
-        echo("PHP: friendID = ".$friendID."?");
-        // check if user or email address already exists
+        // echo("PHP: friendID = ".$friendID."? message ".$postMessage."?");
         $sql = "INSERT INTO `ebabilon`.`posts` (`message`, `date`, `author`, `destination`)
         VALUES ('".$postMessage."', '".$today."', '".$userID."', '".$friendID."');";
         $query_new_post_insert = $this->db_connection->query($sql);
         if ($query_new_post_insert) {
+            // echo("POSTID? ". $this->db_connection->insert_id);
             $this->messages[] = "Your post has been created successfully. You can now log in.";
+
+            $sql = "SELECT message, date, destination, first_name, last_name, user_image
+            FROM ebabilon.posts, users
+            WHERE id = author AND id_post = '".$this->db_connection->insert_id."';";
+            $query_get_user_info = $this->db_connection->query($sql);
+            $arrayResult = array();
+            if($result_row = $query_get_user_info->fetch_object()){
+              return json_encode($result_row);
+            }
+
+
             // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
         } else {
             $this->errors[] = "Sorry, your post failed. Please go back and try again.";
@@ -111,7 +123,7 @@ function createPost(){
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
         $userID = $this->db_connection->real_escape_string(strip_tags($_POST['getFeed'], ENT_QUOTES));
-        echo("PHP: Feed friendID? ".$userID);
+        // echo("PHP: Feed friendID? ".$userID);
         // check if user or email address already exists
         $sql = "SELECT postList.id_post, message, postList.date, id as authorID, first_name, last_name, user_image
         FROM ebabilon.posts as postList, ebabilon.users as authorsList

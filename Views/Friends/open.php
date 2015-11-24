@@ -43,13 +43,19 @@ $friends = new Friends();
 
     function getFeed(){
       var friendID = '<?php echo $_GET["friend"]; ?>';
-      console.log("Get FEED for "+ friendID);
        $.ajax({
          type:"post",
          url:"handler.php",
          data:"getFeed="+friendID,
          success:function(data){
            var feed = JSON.parse(data);
+           feed.sort(function(a,b){
+             if(a.date < b.date){
+               return -1
+             }else{
+               return 1
+             }
+           });
            console.log("Feed: ", feed);
            if(feed.forEach){
              feed.forEach(function(obj){
@@ -61,27 +67,41 @@ $friends = new Friends();
      }
 
      function createPost(){
-       var userID = '<?php echo $_SESSION["id"]; ?>';
+       var friendID = '<?php echo $_GET["friend"]; ?>';
+       var message = $('#feedbox').val();
        console.log("createPost?");
         $.ajax({
           type:"post",
           url:"handler.php",
-          data:"createPost="+$('#feedbox').val(),
+          data:{"destinationID":friendID, "createPost":message},
           success:function(data){
-            console.log("Create Post Result",data);
-            // var obj = JSON.parse(data);
+            console.log("Create Post: ",data);
+            var obj = JSON.parse(data);
             // console.log("Feed: ", obj);
-            // createPostElement(obj);
+            createPostElement(obj);
           }
         });
       }
 
+      function deletePost(id, post){
+         $.ajax({
+           type:"post",
+           url:"handler.php",
+           data:"deletePost="+id,
+           success:function(data){
+             console.log("Post Deleted", data);
+             post.closest('#feed').slideUp();
+           }
+         });
+       }
+
       function createPostElement(data){
+        var userID = '<?php echo $_SESSION["id"]; ?>';
        $( '<div id="feed" ><div class="row" style="padding:15px 15px 0px 15px;">\
        <div class="col-md-2"><img src="'+data.user_image+'" class="img-circle" width="90%"/></div>\
        <div class="col-md-10">\
        <div><b>'+(data.first_name ? data.first_name +" "+ (data.last_name ? data.last_name:""):"Annonymous")+'</b>\
-       <div class="pull-right text-muted deletePost" id="delete'+data.id_post+'" >delete</div></div>\
+       <div class="pull-right text-muted deletePost" id="delete'+data.id_post+'" style="'+((data.authorID != userID)? "display:none":"display:block")+'">delete</div></div>\
        <div> '+data.message+'</div>\
        <div class="text-muted"> <small>posted '+data.date+'</small></div>\
        </div>\

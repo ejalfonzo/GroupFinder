@@ -42,7 +42,7 @@ require_once("Friends.php");
      $result = $friends->getFeed();
      echo $result;
   }
-  if (isset($_POST["createPost"])) {
+  if (isset($_POST["createPost"]) && isset($_POST["destinationID"])) {
      $friends = new Friends();
      $result = $friends->createPost();
      echo $result;

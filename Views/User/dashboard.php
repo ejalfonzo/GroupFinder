@@ -51,6 +51,13 @@ $user = new User();
          data:"getFeed="+userID,
          success:function(data){
            var feed = JSON.parse(data);
+           feed.sort(function(a,b){
+             if(a.date < b.date){
+               return -1
+             }else{
+               return 1
+             }
+           });
            console.log("Feed: ", feed);
            if(feed.forEach){
              feed.forEach(function(obj){
@@ -70,9 +77,9 @@ $user = new User();
           data:"createPost="+$('#feedbox').val(),
           success:function(data){
             console.log("Create Post Result",data);
-            // var obj = JSON.parse(data);
+            var obj = JSON.parse(data);
             // console.log("Feed: ", obj);
-            // createPostElement(obj);
+            createPostElement(obj);
           }
         });
       }
