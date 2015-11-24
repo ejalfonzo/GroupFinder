@@ -1,37 +1,32 @@
-# GroupFinder v0.95
+# GroupFinder v1.0
 
-Project Phase 4
+Project Phase 5
 
 Current completed deliverables:
 - Register User
 - Log-in
 - User Dashboard
 - Search funcionality
-- Business basic functionality
-- Events basic functionality
-- Groups basic functionality
-
-For Phase 4 we completed all basic objectives from the Master Project Development Plan:
-- Events basic functionality
-- Business basic functionality
-- Search Results functionality
-
-Work was begun on:
+- Business functionality
+- Events functionality
+- Groups functionality
+- Friends funcionality
+- Password recovery
 - Post functionality
-- Friends functionality
 - Email functionality
+- Automated tests
+
+For Phase 5 we completed all basic objectives from the Master Project Development Plan.
 
 What worked well?
-Programming tasks assigned unilaterally by priority.
+Programming tasks assigned unilaterally by time allowance and priority.
 
 What didn't work well?
-Communication, tasks are still not being completed until the last moment. We're convinced that one of the members isn't doing work to a high-enough standard, it's damaging our progress.
+Timing and communication. Some of us had exams and projects due so timing and communication were a big issue this phase.
 
 What we learned?
-We need to come together, learn the requirements and deliver farther away from the deadline.
+With proper management and a well defined project, even bad communication and timing can't stop a team.
 
 
 For the next phase:
-- Post functionality
-- Friends functionality
-- Email functionality
+- There is no next phase.
