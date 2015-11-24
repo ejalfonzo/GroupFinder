@@ -21,6 +21,7 @@ echo                '<li><a href="/Views/Groups/view.php" class="btn btn-flat" s
 if ($_SESSION['user_login_status'] == 1) {
     echo            '<li><a href="/Views/Events/view.php" class="btn btn-flat" style="padding:10px; color:white;">Events</a></li>';
     echo            '<li><a href="/Views/Friends/view.php" class="btn btn-flat" style="padding:10px; color:white;">Friends</a></li>';
+    echo            '<li><a href="/Views/Business/view.php" class="btn btn-flat" style="padding:10px; color:white;">Businesses</a></li>';
 }
 echo            '</ul>';
 echo            '<ul class="nav navbar-nav navbar-right" >';
@@ -77,6 +78,7 @@ if ($_SESSION['user_login_status'] != 1) {
 
                             <button class="btn btn-lg btn-success btn-block" type="submit" name="login" value="Log in">Sign in</button>
                             <button class="btn btn-lg btn-primary btn-block" data-toggle="modal" data-dismiss="modal" data-target="#RegisterM">Register</button>
+                            <a href="Views/Recovery/view.php">Forgot Password</a>
                         </form>
                     </div>';
                 // <div class="modal-footer" style="text-align:center;">
@@ -137,6 +139,5 @@ echo                '<form method="post" action="/index.php" name="registerform"
         </div>
     </div>';
 }
-
 
 ?>
