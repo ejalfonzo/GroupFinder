@@ -34,7 +34,7 @@ class Registration
      * handles the entire registration process. checks all error possibilities
      * and creates a new user in the database if everything is fine
      */
-    private function registerNewUser()
+    public function registerNewUser()
     {
         // echo("<script>console.log('Register New User');</script>");
         if (empty($_POST['user_name'])) {
@@ -129,11 +129,14 @@ class Registration
                     $sql = "INSERT INTO users (user_name, password, email, salt, first_name, last_name)
                             VALUES('" . $user_name . "', '" . $user_password_hash . "', '" . $user_email . "', '" . $salt ."', '" . $first_name . "', '" . $last_name . "');";
                     $query_new_user_insert = $this->db_connection->query($sql);
+                    $ID = mysql_insert_id();
+                    echo("<script>console.log('Total Group Members: ".mysql_insert_id()."');</script>");
 
                     // if user has been added successfully
                     if ($query_new_user_insert) {
                         $this->messages[] = "Your account has been created successfully. You can now log in.";
                         // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+                        return $ID;
                     } else {
                         $this->errors[] = "Sorry, your registration failed. Please go back and try again.";
                         echo("<script>console.log('PHP: ERROR Registering');</script>");
