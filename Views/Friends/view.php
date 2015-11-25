@@ -27,7 +27,7 @@ $friends = new Friends();
 	   $.ajax({
 		   type:"post",
 		   url:"handler.php",
-		   data:"add="+friend,
+		   data:"addFriend="+friend,
 		   success:function(data){
 			   console.log("Result",data);
 			   // $("#search").val("");
@@ -44,7 +44,7 @@ $friends = new Friends();
 	   $.ajax({
 		   type:"post",
 		   url:"handler.php",
-		   data:"remove="+friend,
+		   data:"removeFriend="+friend,
 		   success:function(data){
 			   console.log("Result",data);
 			   // $("#search").val("");

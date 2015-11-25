@@ -316,8 +316,10 @@ function createPost(){
             FROM ebabilon.friends
             WHERE id_user = '".$userID."' AND id_friend = '".$row->id."';";
             $query_isFriend = $this->db_connection->query($sql);
+
             $result_Friend = $query_isFriend->fetch_object();
-            if($result_Friend->id == $userID){
+
+            if($result_Friend->id_user == $userID){
               $arrayResult[] =  (array('id' => $row->id,'user_name'=> $row->user_name,
                'email' => $row->email, 'image' => $row->user_image, 'isFriend' => true));
             }else{
