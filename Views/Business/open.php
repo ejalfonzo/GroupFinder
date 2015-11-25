@@ -103,8 +103,8 @@ $business = new Business();
 
           <div class="row">
 
-            <?php 
-                $results = $business->getBusiness(); 
+            <?php
+                $results = $business->getBusiness();
 
                 echo '<div class="col-md-8"> <h1>'.$results.'</h1></div>';
 
@@ -118,8 +118,8 @@ $business = new Business();
             </div>
 
             <div class="row placeholders panel panel-primary" style="margin-top:15px;margin:20px 0px;width: 30xp">
-                <?php 
-                $businessDetails = $business->getBusinessDetails(); 
+                <?php
+                $businessDetails = $business->getBusinessDetails();
 
                 $hasB = false;
                   echo("<script>console.log('results_row: ".json_encode($businessDetails)."');</script>");
@@ -161,12 +161,12 @@ $business = new Business();
                 ?>
             </div>
 
-                       
+
 
             <div class="row panel panel-primary" >
               <div class="panel-heading" style="text-align: left; font-size: 20px;">Followers</div>
-              <?php 
-              $followers = $business->getFollowersTable(); 
+              <?php
+              $followers = $business->getFollowersTable();
               $hasFs = true;
               echo("<script>console.log('results_row: ".json_encode($followers)."');</script>");
                 if($followers->num_rows >= 1){
@@ -195,7 +195,7 @@ $business = new Business();
                  </div>';
                }else if($followers != null){
                  echo '<h3 class="text-muted" style="margin-top:75px";>Business Has No Followers...</h3>';
-               }                       
+               }
               ?>
             </div>
 
@@ -213,8 +213,8 @@ $business = new Business();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php 
-                        $results = $business->getBusiness(); 
+                        <?php
+                        $results = $business->getBusiness();
                         echo '<div class="col-md-8"> <h3>'.$results.'</h3></div>';
                         ?>
                       </div>
@@ -258,7 +258,7 @@ $business = new Business();
                                   echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
                                    <div class="control-business">
                                       <select class="form-control" placeholder="Select a Category" id="category" name="category">';
-                                  
+
                                   if($categories != null){
                                    while($rowCat = $categories->fetch_object()){
                                     if($row->catId == $rowCat->id_category){
@@ -266,7 +266,7 @@ $business = new Business();
                                       }
                                       else{
                                         echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
-                                      } 
+                                      }
                                     }
                                   }
                                   echo '</select>
@@ -287,9 +287,9 @@ $business = new Business();
                                     echo '<textarea class="form-control floating-label" placeholder="Business Operational Hours" rows="2" id="opHours" name="opHours" style="margin: 20px 0px 0px;">'.$row->opHours.'</textarea>';
                                    }else{
                                     echo '<textarea class="form-control floating-label" placeholder="Business Operational Hours" rows="2" id="opHours" name="opHours" style="margin: 20px 0px 0px;"></textarea>';
-                                  }    
+                                  }
                                   echo '<span class="help-block">State the business operational hours, so others may know when and where your business operates.</span>';
-                  
+
                             }
                             ?>
                             <input class="btn btn-lg btn-success btn-block" placeholder="Description" type="submit"  name="editBusiness" value="Edit Business" />
@@ -315,8 +315,8 @@ $business = new Business();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php 
-                        $results = $business->getBusiness(); 
+                        <?php
+                        $results = $business->getBusiness();
                         echo '<div class="col-md-8"> <h3>'.$results.'</h3></div>';
                         ?>
                       </div>
@@ -348,15 +348,10 @@ $business = new Business();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
-    <script type="text/javascript" src="/js/dropdown.js"></script>
     <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();
-    $(document).ready(function() {
-      $(".select").dropdown({"optionClass": "withripple"});
-    });
-    $().dropdown({autoinit: "select"});
     </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->

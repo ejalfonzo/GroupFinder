@@ -170,15 +170,10 @@ $business = new Business();
     <script type="text/javascript" src="/js/bootstrap.js"></script>
     <script type="text/javascript" src="/js/material.js"></script>
     <script type="text/javascript" src="/js/ripples.js"></script>
-    <script type="text/javascript" src="/js/dropdown.js"></script>
     <!-- <script type="text/javascript" src="/js/selectize.min.js"></script> -->
     <script type="text/javascript" src="/js/modernizr.js"></script>
     <script>
     $.material.init();
-    $(document).ready(function() {
-      $(".select").dropdown({"optionClass": "withripple"});
-    });
-    $().dropdown({autoinit: "select"});
     </script>
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
