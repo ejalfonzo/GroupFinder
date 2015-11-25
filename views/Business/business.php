@@ -129,7 +129,7 @@ class Business
         if (!$this->db_connection->connect_errno) {
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
-            // 
+            //
             $userID = $_SESSION["id"];
             $businessID = $_GET["business"];
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['business_name'], ENT_QUOTES));
@@ -137,7 +137,7 @@ class Business
             $address = $this->db_connection->real_escape_string(strip_tags($_POST['address'], ENT_QUOTES));
             $opHours = $this->db_connection->real_escape_string(strip_tags($_POST['opHours'], ENT_QUOTES));
 
-            $sql = "UPDATE `ebabilon`.`businesses` 
+            $sql = "UPDATE `ebabilon`.`businesses`
             SET name='".$name."', address='".$address."', opHours='".$opHours."', category='".$category."'
             WHERE id_business = '".$businessID."';";
             $query_edit_business = $this->db_connection->query($sql);
@@ -146,7 +146,7 @@ class Business
             if ($query_edit_business) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: business edited');</script>");
-                
+
                 echo("<script>console.log('PHP Insert: ".json_encode($query_edit_business)."');</script>");
                 $editResult = "Edited Business";
                 return json_encode($editResult);
@@ -288,7 +288,7 @@ class Business
                'category' => $row->category, 'address' => $row->address, 'opHours' => $row->opHours, 'admin' => $row->admin,
               'isFollower' => true));
             }else{
-              $arrayResult[] =  (array('id' => $row->id_group,'name'=> $row->name,
+              $arrayResult[] =  (array('id' => $row->id_business,'name'=> $row->name,
                'category' => $row->category, 'address' => $row->address, 'opHours' => $row->opHours, 'admin' => $row->admin,
               'isFollower' => false));
             }
@@ -387,7 +387,7 @@ class Business
         $sql = "SELECT id, first_name, last_name, user_image, email
         FROM ebabilon.followers, ebabilon.users as userList
         WHERE id_follower = userList.id AND id_business = '".$businessID."'";
-        $query_get_business_followers = $this->db_connection->query($sql);        
+        $query_get_business_followers = $this->db_connection->query($sql);
         return $query_get_business_followers;
     }
   }
@@ -445,7 +445,7 @@ class Business
         if (!$this->db_connection->connect_errno) {
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
-            // 
+            //
             $userID = $_SESSION["id"];
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['business_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
@@ -454,7 +454,7 @@ class Business
 
             echo("<script>console.log('PHP Insert: ".json_encode($_POST)."');</script>");
 
-            $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`) 
+            $sql = "INSERT INTO `ebabilon`.`businesses` (`name`, `address`, `opHours`, `admin`, `category`)
             VALUES ('".$name."', '".$address."', '".$opHours."', '".$userID."', '".$category."');";
             $query_new_business_insert = $this->db_connection->query($sql);
             echo("<script>console.log('query: ".json_encode($query_new_business_insert)."');</script>");
@@ -526,7 +526,7 @@ class Business
           WHERE businessList.id_business = followerList.id_business AND followerList.id_follower = '" .$userID."') as myBusinesses, ebabilon.users, ebabilon.business_categories as catList
         WHERE myBusinesses.admin = id AND catList.id_category = myBusinesses.category;";
         $query_get_my_businesses = $this->db_connection->query($sql);
-        
+
         return $query_get_my_businesses;
     }
   }

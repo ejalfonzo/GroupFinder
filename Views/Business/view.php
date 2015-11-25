@@ -20,6 +20,7 @@ $business = new Business();
 	<link rel="stylesheet" href="/css/reset.css"> <!-- CSS reset -->
 	<link rel="stylesheet" href="/css/contentFilter-style.css"> <!-- Resource style -->
 	<script src="/js/modernizr.js"></script> <!-- Modernizr -->
+	<script type="text/javascript" src="/js/jquery.js"></script>
 
 	<title>Group Finder</title>
 	<script type="text/javascript">
@@ -66,10 +67,10 @@ $business = new Business();
 						 url:"handler.php",
 						 data:"search="+title,
 						 success:function(data){
-		 // $("#search").val("");
-		 $("#contentLocation").html("");
-		 var obj = JSON.parse(data);
-		 createElement(obj);
+							 // $("#search").val("");
+							 $("#contentLocation").html("");
+							 var obj = JSON.parse(data);
+							 createElement(obj);
 							}
 					 });
 			 }
@@ -101,7 +102,7 @@ $business = new Business();
 							 '</div>';
 							 if(user){
 								 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
-								 if(!item.isMember){
+								 if(!item.isFollower){
 										 inHTML = inHTML + '<button id="business'+item.id+'" class="btn btn-flat btn-info" onclick="followBusiness('+item.id+')" >Follow Business</button>';
 								 }else{
 										 inHTML = inHTML + '<button id="business'+item.id+'" class="btn btn-flat btn-warning" onclick="unfollowBusiness('+item.id+')" >Unfollow Business</button>';
@@ -153,9 +154,9 @@ $business = new Business();
 	<div class="panel panel-primary" style="margin:60px 0px 0px; padding:0px 50px;">
 	    <div>
 				<!-- <form method="get" action="" name="searchGroup"> -->
-	        <div class="input-business">
+	        <div class="input-group">
 	            <input type="text" id="search" class="form-control input-lg" placeholder="Search for a business" style="margin-bottom:10px; height:55px; font-size:25px;">
-	            <span class="input-business-btn">
+	            <span class="input-group-btn">
 	                <button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
 	            </span>
 	        </div><!-- /input-business -->
