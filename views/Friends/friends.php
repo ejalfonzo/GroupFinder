@@ -331,9 +331,6 @@ function createPost(){
          }
          return json_encode($arrayResult);
        }
-        // $result_row = $query_get_user_info->fetch_object();
-
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
 

@@ -87,7 +87,7 @@ class Events
         $sql = "SELECT * FROM ebabilon.events WHERE id_event = '".$eventID."' AND admin = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
 
-        if($query_get_user_info != null){
+        if($rows = $query_get_user_info->num_rows >= 1){
           return true;
         }
         else{

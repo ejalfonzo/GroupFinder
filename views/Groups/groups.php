@@ -84,14 +84,17 @@ class Groups
         $groupID = $_GET["group"];
 
         // check if user or email address already exists
-        $sql = "SELECT * FROM ebabilon.groups WHERE id_group = '".$groupID."' AND admin = '".$userID."';";
+        $sql = "SELECT *
+        FROM ebabilon.groups
+        WHERE id_group = '".$groupID."' AND admin = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
 
-        if($query_get_user_info != null){
+        if($rows = $query_get_user_info->num_rows >= 1){
+          $result_row = $query_get_user_info->fetch_object();
           return true;
         }
         else{
-            return false;
+          return false;
         }
     }
   }
@@ -128,14 +131,14 @@ class Groups
         if (!$this->db_connection->connect_errno) {
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
-            // 
+            //
             $userID = $_SESSION["id"];
             $groupID = $_GET["group"];
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['group_name'], ENT_QUOTES));
             $category = $this->db_connection->real_escape_string(strip_tags($_POST['category'], ENT_QUOTES));
             $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
 
-            $sql = "UPDATE `ebabilon`.`groups` 
+            $sql = "UPDATE `ebabilon`.`groups`
             SET name='".$name."', category='".$category."', description='".$description."'
             WHERE id_group = '".$groupID."';";
             $query_edit_group = $this->db_connection->query($sql);
@@ -144,7 +147,7 @@ class Groups
             if ($query_edit_group) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: Group edited');</script>");
-                
+
                 echo("<script>console.log('PHP Insert: ".json_encode($query_edit_group)."');</script>");
                 $editResult = "Edited Group";
                 return json_encode($editResult);

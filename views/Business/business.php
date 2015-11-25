@@ -88,7 +88,7 @@ class Business
         $sql = "SELECT * FROM ebabilon.businesses WHERE id_business = '".$business."' AND admin = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
 
-        if($query_get_user_info != null){
+        if($rows = $query_get_user_info->num_rows >= 1){
           return true;
         }
         else{

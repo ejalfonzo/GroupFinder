@@ -108,7 +108,7 @@ $groups = new Groups();
           // Edit only for admin
           $adminCheck = $groups->isAdmin();
 
-          echo("<script>console.log('isAdmin: ".json_encode($adminCheck)."');</script>");
+          echo("<script>console.log('isAdmin: ".$adminCheck."');</script>");
           if ($adminCheck) {
             echo '<div class="row">';
             echo '<div class="col-md-12"><a class="btn btn-info btn-raised" style="float: right;" data-toggle="modal" data-dismiss="modal" data-target="#EditG">Edit Group</a></div>';
