@@ -66,12 +66,23 @@ function createPost(){
             // echo("POSTID? ". $this->db_connection->insert_id);
             $this->messages[] = "Your post has been created successfully. You can now log in.";
 
-            $sql = "SELECT message, date, destination, first_name, last_name, user_image
+            $sql = "SELECT message, date, destination, first_name, last_name, user_image, email
             FROM ebabilon.posts, users
             WHERE id = author AND id_post = '".$this->db_connection->insert_id."';";
             $query_get_user_info = $this->db_connection->query($sql);
             $arrayResult = array();
             if($result_row = $query_get_user_info->fetch_object()){
+
+              $sql = "SELECT email FROM `ebabilon`.`users` WHERE id = '".$friendID."';";
+              $query_get_friend_info = $this->db_connection->query($sql);
+              if($result_friend = $query_get_friend_info->fetch_object()){
+                $subject = "You have a new post on your timeline!";
+                $message = $result_row->first_name." ".$result_row->last_name." has posted a message to your timeline.";
+                $headers = "From: noreply@groupfinder.xyz";
+
+                mail($result_friend->email, $subject, $message, $headers);
+              }
+
               return json_encode($result_row);
             }
 
