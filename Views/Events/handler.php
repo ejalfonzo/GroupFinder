@@ -21,7 +21,7 @@ require_once("Events.php");
     echo $result;
  }
 
- if (isset($_POST["leaveEvent"])) {
+ if (isset($_POST["leave"])) {
     $events = new Events();
     $result = $events->leaveEvent();
     echo $result;

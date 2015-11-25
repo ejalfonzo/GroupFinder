@@ -128,7 +128,7 @@ class Events
         if (!$this->db_connection->connect_errno) {
             // echo("<script>console.log('Good: DB Connection');</script>");
             // escaping, additionally removing everything that could be (html/javascript-) code
-            // 
+            //
             $userID = $_SESSION["id"];
             $eventID = $_GET["event"];
             $name = $this->db_connection->real_escape_string(strip_tags($_POST['event_name'], ENT_QUOTES));
@@ -137,7 +137,7 @@ class Events
             $place = $this->db_connection->real_escape_string(strip_tags($_POST['place'], ENT_QUOTES));
             $description = $this->db_connection->real_escape_string(strip_tags($_POST['description'], ENT_QUOTES));
 
-            $sql = "UPDATE `ebabilon`.`events` 
+            $sql = "UPDATE `ebabilon`.`events`
             SET name='".$name."', time='".$time."', place='".$place."', category='".$category."', description='".$description."'
             WHERE id_event = '".$eventID."';";
             $query_edit_event = $this->db_connection->query($sql);
@@ -146,7 +146,7 @@ class Events
             if ($query_edit_event) {
                 $this->messages[] = "Your account has been created successfully. You can now log in.";
                 echo("<script>console.log('PHP: business edited');</script>");
-                
+
                 echo("<script>console.log('PHP Insert: ".json_encode($query_edit_event)."');</script>");
                 $editResult = "Edited Event";
                 return json_encode($editResult);
@@ -172,15 +172,15 @@ class Events
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
-        $userID = $_SESSION["id"];
+        $userID = $this->db_connection->real_escape_string(strip_tags($_POST['userID'], ENT_QUOTES));
         $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['join'], ENT_QUOTES));
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
 
         // check if user or email address already exists
-        $sql = "INSERT INTO `ebabilon`.`members` (`id_event`, `id_member`)
+        $sql = "INSERT INTO `ebabilon`.`attendees` (`id_event`, `id_attendee`)
         SELECT * FROM (SELECT '".$eventID."', '".$userID."') AS tmp
-        WHERE NOT EXISTS (SELECT id_event, id_member FROM ebabilon.members
-        WHERE id_event = '".$eventID."' AND id_member = '".$userID."') LIMIT 1;";
+        WHERE NOT EXISTS (SELECT id_event, id_attendee FROM ebabilon.attendees
+        WHERE id_event = '".$eventID."' AND id_attendee = '".$userID."') LIMIT 1;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
@@ -207,12 +207,14 @@ class Events
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
-        $userID = $_SESSION["id"];
-        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['leaveEvent'], ENT_QUOTES));
+        $userID = $this->db_connection->real_escape_string(strip_tags($_POST['userID'], ENT_QUOTES));
+        $eventID = $this->db_connection->real_escape_string(strip_tags($_POST['leave'], ENT_QUOTES));
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($userID)."');</script>");
 
         // check if user or email address already exists
-        $sql = "DELETE FROM ebabilon.attendees WHERE `id_event`='".$eventID."' AND `id_attendee` = '".$userID."' LIMIT 1;";
+        $sql = "DELETE
+        FROM ebabilon.attendees
+        WHERE `id_event`='".$eventID."' AND `id_attendee` = '".$userID."' LIMIT 1;";
         $query_get_user_info = $this->db_connection->query($sql);
         // get result row (as an object)
         // echo("<script>console.log('PHP: getEventDetails ".json_encode($query_get_user_info)."');</script>");
@@ -265,7 +267,7 @@ class Events
     }
     if (!$this->db_connection->connect_errno) {
         // escaping, additionally removing everything that could be (html/javascript-) code
-        $userID = $_SESSION["id"];
+        $userID = $this->db_connection->real_escape_string(strip_tags($_POST['userID'], ENT_QUOTES));
         $searchStatement = $this->db_connection->real_escape_string(strip_tags($_POST['search'], ENT_QUOTES));
         // echo("<script>console.log('searh results: ".json_encode($searchStatement)."');</script>");
         // check if user or email address already exists
@@ -279,28 +281,26 @@ class Events
         if ($query_get_user_info->num_rows >= 1) {
             $arrayResult = array();
           while($row = $query_get_user_info->fetch_object()){
-            //   echo(json_encode($row));
+              // echo(json_encode($row));
             //   return $row;
-            $sql2 = "SELECT * FROM ebabilon.members WHERE id_event = '".$row->id_event."' AND id_member = '".$userID."';";
-            $query_isMember = $this->db_connection->query($sql2);
+            $sql = "SELECT *
+            FROM ebabilon.attendees
+            WHERE id_event = '".$row->id_event."' AND id_attendee = '".$userID."';";
+            $query_isMember = $this->db_connection->query($sql);
             $result_Member = $query_isMember->fetch_object();
-            if($result_Member->id_member == $userID){
+
+            if($result_Member->id_attendee == $userID){
               $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name,
                'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
-              'image' => $row->event_image, 'isMember' => true));
+              'image' => $row->event_image, 'isMember' => true, 'attendee'=>$result_Member->id_attendee, 'user'=>$userID));
             }else{
               $arrayResult[] =  (array('id' => $row->id_event,'name'=> $row->name,
                'category' => $row->category, 'description' => $row->description, 'admin' => $row->admin,
               'image' => $row->event_image, 'isMember' => false));
             }
-
-            // echo(''.$row->id_event)
          }
          return json_encode($arrayResult);
        }
-        // $result_row = $query_get_user_info->fetch_object();
-
-        // echo '<span class="text-muted">'. $result_row->name .'</span>';
     }
   }
 
@@ -494,7 +494,7 @@ class Events
 
         $sql = "SELECT * FROM ebabilon.event_categories;";
         $query_get_user_info = $this->db_connection->query($sql);
-    
+
         return $query_get_user_info;
     }
   }
@@ -511,10 +511,10 @@ class Events
         $userID = $_SESSION["id"];
 
         $sql = "SELECT myEvents.name, myEvents.category, myEvents.id_event, myEvents.place, myEvents.time, first_name, last_name
-        FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event, eventsList.place, eventsList.time 
-        FROM ebabilon.events as eventsList, ebabilon.attendees as memberList 
-        WHERE eventsList.id_event = memberList.id_event AND memberList.id_attendee = '".$userID."') as myEvents, ebabilon.users 
-        WHERE myEvents.admin = id;"; 
+        FROM (SELECT eventsList.name, eventsList.category, eventsList.admin, eventsList.id_event, eventsList.place, eventsList.time
+        FROM ebabilon.events as eventsList, ebabilon.attendees as memberList
+        WHERE eventsList.id_event = memberList.id_event AND memberList.id_attendee = '".$userID."') as myEvents, ebabilon.users
+        WHERE myEvents.admin = id;";
 
         $query_get_user_info = $this->db_connection->query($sql);
         return $query_get_user_info;

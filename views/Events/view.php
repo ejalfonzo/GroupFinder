@@ -22,66 +22,115 @@ require_once("../../config/db.php");
 	<script type="text/javascript" src="/js/jquery.js"></script>
 	<title>Group Finder</title>
 	<script type="text/javascript">
-    $(document).ready(function(){
+		var user = '<?php echo $_SESSION["id"]; ?>';
 
-         function search(){
+		function joinEvent(eventIT){
+		 $.ajax({
+			 type:"post",
+			 url:"handler.php",
+			 data:{"join":eventIT, "userID":user},
+			 success:function(data){
+				 console.log("Result",data);
+				 // $("#search").val("");
+			//    $("#eventIT"+data).html("");
+				 var obj = JSON.parse(data);
+				 alert(obj);
+				//  console.log("JOIN Event: ", obj);
+				 search();
+			 }
+		 });
+	}
 
-              var title=$("#search").val();
+	function leaveEvent(eventIT){
+		 $.ajax({
+			 type:"post",
+			 url:"handler.php",
+			 data:{"leave":eventIT, "userID":user},
+			 success:function(data){
+				 console.log("Result",data);
+				 // $("#search").val("");
+			//    $("#group"+data).html("");
+				 var obj = JSON.parse(data);
+				 alert(obj);
+				//  console.log("LEAVE Event: ", obj);
+				 search();
+				 // createElement(obj);
+			 }
+		 });
+	}
 
-              if(title!=""){
-                // $("#contentLocation").html("<img alt="search" src='ajax-loader.gif'/>");
-                 $.ajax({
-                    type:"post",
-                    url:"search.php",
-                    data:"search="+title,
-					// dataType:'json',
-                    success:function(data){
-						console.log("Result",data);
-						$("#search").val("");
-                        $("#contentLocation").html("");
-						var obj = JSON.parse(data);
-						createElement(obj);
-                     }
-                  });
-              }
-         }
+	function search(){
+		 var title=$("#search").val();
+		 if(title!=""){
+			$.ajax({
+				 type:"post",
+				 url:"search.php",
+				 data:{"search":title, "userID":user},
+				 success:function(data){
+					//  console.log("Result",data);
+					 // $("#search").val("");
+					 $("#contentLocation").html("");
+					 var obj = JSON.parse(data);
+					 createElement(obj);
+					}
+			 });
+		 }
+	}
 
-		function createElement(data){
-			console.log("Create: ", data);
-			if(data.forEach){
-				data.forEach(function(item){
-					console.log("ITEM", item);
-					var targetElement = document.getElementById('contentLocation');
-				    var li = document.createElement('li');
+	function createElement(data){
+		// console.log("Create: ", data);
+		if(data.forEach){
+			var user = '<?php echo $_SESSION["id"]; ?>';
+			data.forEach(function(item){
+				// console.log("ITEM", item);
+				var targetElement = document.getElementById('contentLocation');
+					var li = document.createElement('li');
 					li.className = "mix panel event "+ item.category;
-				    li.innerHTML =
-				                    '<div class="panel panel-primary" style="margin-bottom:0px;">'+
-									'<div class="panel-heading">'+
-									'<h3 class="panel-title">'+ item.name +'</h3>'+
-									'</div>'+
-									'<div class="panel-body">'+
-									(item.description ? item.description:"No Description Available")+
-									'</div>'+
-				                    '</div>';
-				    // Append 'foo' element to target element
-									// '<img src="'+ item.image +'" alt="Image 1"> '+
-				    targetElement.appendChild(li)
-				});
-			}else{
-				console.log("No Results");
-			}
-			var targetElement = document.getElementById('contentLocation');
-			var li = document.createElement('li');
-			li.className = "gap";
-			targetElement.appendChild(li);
-			var li2 = document.createElement('li');
-			li2.className = "gap";
-			targetElement.appendChild(li2);
-			buttonFilter.init();
-			$('.cd-gallery ul').mixItUp('filter', 'all');
-			// <li class="gap"></li>
-			// <li class="gap"></li>
+					var inHTML =  '<div class="panel panel-primary" style="margin-bottom:0px;">'+
+						 '<div class="panel-heading">'+
+						 '<h3 class="panel-title">'+ item.name +'</h3>'+
+						 '</div>'+
+						 '<div class="panel-body">'+
+						 '<div style="float: left; margin-right: 20px;">'+
+						 '<img src="'+ item.image +'" alt="Friend Image" width="40" height="40"> '+
+						 '</div>'+
+						 '<div>'+
+						 '<h3>Description:</h3>'+
+						 (item.description ? item.description:"No Description Available")+
+						 '</div>'+
+						 '</div>';
+						 if(user){
+							 inHTML = inHTML +'<div class="panel-footer" style="text-align:center;">';
+							 if(!item.isMember){
+									 inHTML = inHTML + '<button id="event'+item.id+'" class="btn btn-flat btn-info" onclick="joinEvent('+item.id+')" >Join Event</button>';
+							 }else{
+									 inHTML = inHTML + '<button id="event'+item.id+'" class="btn btn-flat btn-warning" onclick="leaveEvent('+item.id+')" >Leave Event</button>';
+							 }
+							 inHTML = inHTML + '</div>'+
+							 '</div>';
+						 }else{
+							 inHTML = inHTML +'</div>';
+						 }
+						li.innerHTML = inHTML;
+						targetElement.appendChild(li)
+			});
+		}else{
+			console.log("No Results");
 		}
+		var targetElement = document.getElementById('contentLocation');
+		var li = document.createElement('li');
+		li.className = "gap";
+		targetElement.appendChild(li);
+		var li2 = document.createElement('li');
+		li2.className = "gap";
+		targetElement.appendChild(li2);
+		buttonFilter.init();
+		$('.cd-gallery ul').mixItUp('filter', 'all');
+		// <li class="gap"></li>
+		// <li class="gap"></li>
+	}
+
+    $(document).ready(function(){
 
         $("#searchButton").click(function(){
            search();
@@ -108,7 +157,7 @@ require_once("../../config/db.php");
 		<div>
 				<!-- <form method="get" action="" name="searchGroup"> -->
 			<div class="input-group">
-				<input type="text" id="search" class="form-control input-lg" placeholder="Search for a group" style="margin-bottom:10px; height:55px; font-size:25px;">
+				<input type="text" id="search" class="form-control input-lg" placeholder="Search for events" style="margin-bottom:10px; height:55px; font-size:25px;">
 				<span class="input-group-btn">
 					<button class="btn btn-default" id="searchButton" type="button" type="submit" value="Search" class="search_button"><div class="icon-preview"><i class="mdi-action-search"></i><span></span></div></button>
 				</span>
