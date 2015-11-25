@@ -85,7 +85,7 @@ class Business
         $businessID = $_GET["business"];
 
         // check if user or email address already exists
-        $sql = "SELECT * FROM ebabilon.businesses WHERE id_business = '".$business."' AND admin = '".$userID."';";
+        $sql = "SELECT * FROM ebabilon.businesses WHERE id_business = '".$businessID."' AND admin = '".$userID."';";
         $query_get_user_info = $this->db_connection->query($sql);
 
         if($rows = $query_get_user_info->num_rows >= 1){
