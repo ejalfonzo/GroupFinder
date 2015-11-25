@@ -42,7 +42,8 @@ echo                       '<i class="mdi-action-account-circle" style="font-siz
                         <ul class="dropdown-menu">
                             <li><a href="/Views/User/dashboard.php">Dashboard</a></li>
                             <li class="divider"></li>
-                            <li><a href="javascript:void(0)">Profile</a></li>
+                            <li><a href="/Views/User/profile.php">Edit Profile</a></li>
+                            <li><a href="/Views/Friends/manager.php">My Friends</a></li>
                             <li><a href="/Views/Groups/manager.php">My Groups</a></li>
                             <li><a href="/Views/Events/manager.php">My Events</a></li>
                             <li><a href="/Views/Business/manager.php">Buisness</a></li>
