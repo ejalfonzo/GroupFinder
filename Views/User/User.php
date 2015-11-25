@@ -28,6 +28,53 @@ class User
 
     }
 
+    function editProfile(){
+      $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+      // change character set to utf8 and check it
+      if (!$this->db_connection->set_charset("utf8")) {
+          $this->errors[] = $this->db_connection->error;
+          echo("<script>console.log('Error: DB not utf8');</script>");
+      }
+      if (!$this->db_connection->connect_errno) {
+          // escaping, additionally removing everything that could be (html/javascript-) code
+          $userID = $_SESSION["id"];
+          // if(isset($_POST["useremail"])){
+          //   $username = "ejalfonzos";
+          // }
+          if(isset($_POST["firstName"])){
+            $firstName = $_POST["firstName"];
+          }
+          if(isset($_POST["lastName"])){
+            $lastName = $_POST["lastName"];
+          }
+          if(isset($_POST["email"])){
+            $email = $_POST["email"];
+          }
+
+          if(isset($_POST["password"])){
+            $newPassword = $_POST["password"];
+
+            $sql = "UPDATE `ebabilon`.`users`
+            SET `email`='".$email."', `password`='".$newPassword."', `first_name`='".$firstName."', `last_name`='".$lastName."' WHERE `id`='".$userID."';";
+          }else{
+            $sql = "UPDATE `ebabilon`.`users`
+            SET `email`='".$email."', `first_name`='".$firstName."', `last_name`='".$lastName."' WHERE `id`='".$userID."';";
+          }
+
+          $query_new_post_insert = $this->db_connection->query($sql);
+          if ($query_new_post_insert) {
+            // echo("POSTID? ". $this->db_connection->insert_id);
+            $this->messages[] = "Your post has been created successfully. You can now log in.";
+            echo("PHP: Profile Edited");
+            // echo("<script>console.log('PHP: ".json_encode($query_new_user_insert)."');</script>");
+        } else {
+            $this->errors[] = "Sorry, your post failed. Please go back and try again.";
+            echo("PHP: ERROR Post");
+        }
+      }
+    }
+
     function createPost(){
       $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -122,6 +169,27 @@ class User
         }
       }
 
+      function getUser(){
+        $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+        // change character set to utf8 and check it
+        if (!$this->db_connection->set_charset("utf8")) {
+            $this->errors[] = $this->db_connection->error;
+            echo("<script>console.log('Error: DB not utf8');</script>");
+        }
+        if (!$this->db_connection->connect_errno) {
+            // escaping, additionally removing everything that could be (html/javascript-) code
+            $user_name = $_SESSION["user_name"];
+            $email = $_SESSION['email'];
+            // check if user or email address already exists
+            $sql = "SELECT * FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
+            $query_get_user_info = $this->db_connection->query($sql);
+            // get result row (as an object)
+            $result_row = $query_get_user_info->fetch_object();
+            return json_encode($result_row);
+          }
+    }
+
     function getUserFirstName(){
       $this->db_connection = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
 
@@ -138,7 +206,7 @@ class User
           $sql = "SELECT first_name FROM users WHERE user_name = '" . $user_name . "' OR email = '" . $user_email . "';";
           $query_get_user_info = $this->db_connection->query($sql);
           // get result row (as an object)
-          $result_row = $query_get_user_info->fetch_object();  echo("<script>console.log('PHP: ".json_encode($result_row->first_name)."');</script>");
+          $result_row = $query_get_user_info->fetch_object();
           echo($result_row->first_name);
         }
   }
