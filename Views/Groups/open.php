@@ -91,8 +91,8 @@ $groups = new Groups();
         <div class="col-sm-3 col-md-2 sidebar panel" style="margin-bottom:0px;">
           <ul class="nav nav-sidebar">
             <li><a href="/Views/User/dashboard.php">Overview <span class="sr-only">(current)</span></a></li>
-            <li><a href="#">Profile</a></li>
-            <li><a href="#">Friends</a></li>
+            <li><a href="/Views/User/profile.php">Profile</a></li>
+            <li><a href="/Views/Friends/manager.php">Friends</a></li>
             <li class="active"><a href="/Views/Groups/manager.php">Groups</a></li>
             <li><a href="/Views/Events/manager.php">Events</a></li>
           </ul>
@@ -120,7 +120,7 @@ $groups = new Groups();
               <!-- <div class="" style="margin-bottom:20px;"></div> -->
               <div class="panel-body">
               <div class="col-xs-6 col-sm-3 placeholder" style="margin:40px 0px; border-right: solid 2px gainsboro;">
-                <?php 
+                <?php
                 $results = $groups->getGroup();
 
                 echo '<img src=" '. $results->group_image .' " width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
@@ -128,8 +128,8 @@ $groups = new Groups();
                  ?>
               </div>
               <div class="col-xs-18 col-sm-9 placeholder" style="padding:25px;">
-                <?php 
-                $groupsDetails = $groups->getGroupDetails(); 
+                <?php
+                $groupsDetails = $groups->getGroupDetails();
 
                 $hasG = false;
                   echo("<script>console.log('results_row: ".json_encode($groupsDetails)."');</script>");
@@ -219,8 +219,8 @@ $groups = new Groups();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php 
-                        $results = $groups->getGroup(); 
+                        <?php
+                        $results = $groups->getGroup();
 
                         echo '<h3>'.$results->name.'</h3>';
                         ?>
@@ -265,7 +265,7 @@ $groups = new Groups();
                                   echo '<div class="dropdownjs" style="margin: 10px 0px 0px;">
                                    <div class="control-group">
                                       <select class="form-control" placeholder="Select a Category" id="category" name="category">';
-                                  
+
                                   if($categories != null){
                                    while($rowCat = $categories->fetch_object()){
                                     if($row->catId == $rowCat->id_category){
@@ -273,7 +273,7 @@ $groups = new Groups();
                                       }
                                       else{
                                         echo('<option value="'.$rowCat->id_category.'">'. $rowCat->name . '</option>');
-                                      } 
+                                      }
                                     }
                                   }
                                   echo '</select>
@@ -312,8 +312,8 @@ $groups = new Groups();
                     </div>
                     <div class="modal-body">
                       <div class="portrait" style="margin:15px 250px 0px;">
-                        <?php 
-                        $results = $groups->getGroup(); 
+                        <?php
+                        $results = $groups->getGroup();
 
                         echo '<h3>'.$results->name.'</h3>';
                         ?>
