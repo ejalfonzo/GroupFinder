@@ -91,6 +91,7 @@ The Project will be split into protoype phases that will coincide with the Sprin
   3. ~~ Email functionality ~~
   4. ~~ Post functionality ~~
   5. ~~ Project Complete ~~
+  6. ~~ Bonus Socket Chat and 50%+ funcionality Automated Tests ~~
 
 
 Detailed Plans
@@ -184,4 +185,6 @@ This phase will focus on cleaning up any leftover requirements from previous pha
 - Password recovery
 - Leaving and Unfollowing Events, Groups, and Businesses
 - Editing User Profile
+- Automated Tests
 - Automated Tests for more than 50% of functionality
+- Chatroom with sockets
