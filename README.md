@@ -15,6 +15,8 @@ Current completed deliverables:
 - Post functionality
 - Email functionality
 - Automated tests
+- Automated tests for more than 50% of funcionality
+- Chatroom with sockets
 
 For Phase 5 we completed all basic objectives from the Master Project Development Plan.
 
