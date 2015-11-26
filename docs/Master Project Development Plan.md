@@ -90,7 +90,7 @@ The Project will be split into protoype phases that will coincide with the Sprin
   2. ~~ Automated Tests for Adding a Friend, joining Business, Event and Group ~~
   3. ~~ Email functionality ~~
   4. ~~ Post functionality ~~
-  5. ~~Project Complete ~~
+  5. ~~ Project Complete ~~
 
 
 Detailed Plans
@@ -184,4 +184,4 @@ This phase will focus on cleaning up any leftover requirements from previous pha
 - Password recovery
 - Leaving and Unfollowing Events, Groups, and Businesses
 - Editing User Profile
-- Automated Tests
+- Automated Tests for more than 50% of functionality
