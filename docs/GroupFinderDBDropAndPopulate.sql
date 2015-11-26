@@ -335,3 +335,47 @@ DEFAULT CHARACTER SET = utf8;
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+
+
+-- -----------------------------------------------------
+-- Fill up Categories
+-- -----------------------------------------------------
+
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('1', 'None');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('2', 'Sports');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('3', 'Technology');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('4', 'Education');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('5', 'Art');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('6', 'Music');
+INSERT INTO `ebabilon`.`business_categories` (`id_category`, `name`) VALUES ('7', 'Other');
+
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('1', 'None');
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('2', 'Family');
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('3', 'Close friends');
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('4', 'Work');
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('5', 'School');
+INSERT INTO `ebabilon`.`friends_categories` (`id_category`, `name`) VALUES ('6', 'Other');
+
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('1', 'None');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('2', 'Sports');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('3', 'Outdoors');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('4', 'Education');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('5', 'Art');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('6', 'Music');
+INSERT INTO `ebabilon`.`event_categories` (`id_category`, `name`) VALUES ('7', 'Other');
+
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('1', 'None');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('2', 'Sports');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('3', 'Technology');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('4', 'Education');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('5', 'Art');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('6', 'Games');
+INSERT INTO `ebabilon`.`group_categories` (`id_category`, `name`) VALUES ('7', 'Other');
+
+
+-- -----------------------------------------------------
+-- Fill up Test users
+-- -----------------------------------------------------
+
+INSERT INTO `ebabilon`.`users` (`id`, `user_name`, `email`, `salt`, `password`, `first_name`, `last_name`, `user_image`, `isAdmin`, `optOutEmail`) VALUES ('19', 'JSmith', 'john@smith.com', '0', '$2y$10$FMCgD5rgip88rR.83aJOsOPGnQirD0dLnscEZ5KT1qKBP/QRtZPBG', 'John', 'Smith', '/images/stock/default-user.png', '0', '0');
+INSERT INTO `ebabilon`.`users` (`id`, `user_name`, `email`, `salt`, `password`, `first_name`, `last_name`, `user_image`, `isAdmin`, `optOutEmail`) VALUES ('20', 'jane2', 'jane@smith.com', '0', '$2y$10$qFW3Y5yzykJocsxwyzbSEu0ZNQZp5ycE66n.ZMUVj9DUcFN7F4M1K', 'Jane', 'Smith', '/images/stock/default-user.png', '0', '0');
