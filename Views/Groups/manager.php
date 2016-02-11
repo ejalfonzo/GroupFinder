@@ -99,6 +99,32 @@ $groups = new Groups();
 
           </div>
 
+          <div class="row placeholders panel panel-primary" style="padding:20px;">
+              <!-- <div class="panel-heading" style="margin-bottom:20px; text-align: left; font-size: 20px;">Your Groups</div> -->
+
+              <?php
+                $myGroups = $groups->getNotGroups();
+                $hasGs = false;
+                echo("<script>console.log('results_row: ".json_encode($myGroups)."');</script>");
+                if($myGroups->num_rows >= 1){$hasGs = true;}
+                if ($hasGs) {
+                  while($row = $myGroups->fetch_object()) {
+
+                    echo '<div class="col-xs-6 col-sm-3 placeholder" style="margin-bottom:0px;">';
+                      echo '<button onclick="location.href = '."'"."/Views/Groups/open.php?group=".$row->id_group."'".';" class="btn btn-flat btn-primary" style="padding: 3px;border-radius: 50%;" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Profile">';
+                      echo   '<img src="/images/stock/members.png" width="100" height="100" class="img-responsive" alt="Generic placeholder thumbnail">';
+                      echo '</button>';
+                      echo   '<h4>'. $row->name . '</h4>';
+                      echo   '<span class="text-muted">'. $row->description . '</span>';
+                    echo '</div>';
+                 }
+               }else if($myGroups != null){
+                 echo '<h3 class="text-muted" style="margin-top:75px";>You Have No Groups...</h3>';
+               }
+               ?>
+
+          </div>
+
           <!-- <h2 class="sub-header">Section title</h2> -->
         </div>
       </div>
@@ -117,7 +143,7 @@ $groups = new Groups();
                           <form method="post" action="" name="createGroup">
 
                             <input id="group_name" class="group_input form-control" placeholder="Group Name" type="text" pattern="[a-zA-Z0-9]{2,64}" name="group_name" style="margin: 10px 0px 0px;" required />
-                            
+
                               <div class="dropdownjs" style="margin: 10px 0px 0px;">
                         				<div class="control-group">
                                   <select class="form-control" placeholder="Select a Category" id="category" name="category">
